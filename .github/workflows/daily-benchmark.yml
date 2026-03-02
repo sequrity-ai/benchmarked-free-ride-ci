@@ -1,0 +1,142 @@
+name: Daily Model Benchmarks
+
+on:
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC (more cost-effective than daily)
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      max_models:
+        description: 'Maximum number of models to test'
+        required: false
+        default: '5'  # Reduced from 10 to 5 for cost efficiency
+      scenarios:
+        description: 'Scenarios to run (comma-separated)'
+        required: false
+        default: 'file,weather,web'
+      difficulty:
+        description: 'Task difficulty (easy/medium/hard/all)'
+        required: false
+        default: 'easy'  # ONLY easy tasks (3 per scenario)
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 hours max
+
+    permissions:
+      contents: write  # Required for pushing to gh-pages
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy openclaw-sandbox
+        run: |
+          # Copy the openclaw-sandbox from parent repo
+          cp -r ../opencalw-sandbox ./opencalw-sandbox || echo "Warning: openclaw-sandbox not found in parent"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install OpenClaw CLI
+        run: |
+          npm install -g @openclaw/cli
+          openclaw --version
+
+      - name: Initialize OpenClaw
+        run: |
+          openclaw init --non-interactive || true
+          echo "OpenClaw initialized"
+
+      - name: Install required skills
+        run: |
+          # Install skills needed for benchmarks
+          clawhub install steipete/weather || echo "Warning: weather skill failed"
+          clawhub install steipete/tavily || echo "Warning: tavily skill failed"
+          clawhub install steipete/summarize || echo "Warning: summarize skill failed"
+        continue-on-error: true
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests
+          # Install openclaw-sandbox if it exists
+          if [ -d "opencalw-sandbox" ]; then
+            pip install -e ./opencalw-sandbox
+          fi
+
+      - name: Discover free models
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          python3 src/discover_models.py
+
+      - name: Run benchmarks
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          LOCAL_MODE: 'true'
+          AGENT_ID: 'main'
+        run: |
+          MAX_MODELS="${{ github.event.inputs.max_models || '5' }}"
+          SCENARIOS="${{ github.event.inputs.scenarios || 'file,weather,web' }}"
+          DIFFICULTY="${{ github.event.inputs.difficulty || 'easy' }}"
+
+          # Configuration: 5 models × 3 scenarios × 3 easy tasks = 45 total tasks
+          # Estimated runtime: ~5-10 minutes (fits well within free tier)
+          echo "Running benchmarks with:"
+          echo "  Models: $MAX_MODELS"
+          echo "  Scenarios: $SCENARIOS"
+          echo "  Difficulty: $DIFFICULTY (3 tasks per scenario)"
+
+          python3 src/run_benchmarks.py \
+            --discovered-models output/discovered_models.json \
+            --sandbox-path ./opencalw-sandbox \
+            --output-dir output/benchmarks \
+            --scenarios "$SCENARIOS" \
+            --single-turn \
+            --difficulty "$DIFFICULTY" \
+            --max-models "$MAX_MODELS"
+
+      - name: Generate reports
+        run: |
+          python3 src/generate_report.py \
+            --benchmarks-dir output/benchmarks \
+            --output-dir docs
+
+      - name: Upload benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_number }}
+          path: |
+            output/
+            docs/
+          retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          commit_message: 'Update benchmark results - ${{ github.run_number }}'
+
+      - name: Create summary
+        run: |
+          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 **Models benchmarked:** $(cat output/discovered_models.json | python3 -c "import sys, json; print(len(json.load(sys.stdin)['models']))")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 **View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 **API Endpoints:**" >> $GITHUB_STEP_SUMMARY
+          echo "- [All Models](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/models.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Leaderboard](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/leaderboard.json)" >> $GITHUB_STEP_SUMMARY

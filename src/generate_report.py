@@ -1,0 +1,423 @@
+#!/usr/bin/env python3
+"""
+Generate benchmark reports and leaderboard for GitHub Pages.
+Aggregates benchmark results and creates JSON API endpoints + HTML UI.
+"""
+
+import json
+from pathlib import Path
+from typing import List, Dict, Any
+from datetime import datetime
+import shutil
+
+
+class ReportGenerator:
+    def __init__(self, benchmarks_dir: Path, output_dir: Path):
+        self.benchmarks_dir = benchmarks_dir
+        self.output_dir = output_dir
+        self.api_dir = output_dir / "api"
+        self.history_dir = self.api_dir / "history"
+
+        # Create directories
+        self.api_dir.mkdir(parents=True, exist_ok=True)
+        self.history_dir.mkdir(parents=True, exist_ok=True)
+
+    def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
+        """Load all benchmark JSON files from the benchmarks directory."""
+        results = []
+
+        for json_file in self.benchmarks_dir.glob("benchmark_*.json"):
+            try:
+                with open(json_file, "r") as f:
+                    data = json.load(f)
+                    results.append(data)
+            except Exception as e:
+                print(f"Error loading {json_file}: {e}")
+
+        return results
+
+    def calculate_composite_score(self, result: Dict[str, Any]) -> float:
+        """
+        Calculate a composite score for a model based on:
+        - Accuracy (70% weight)
+        - Speed/latency (20% weight)
+        - Token efficiency (10% weight)
+        """
+        scenarios = result.get("scenarios", [])
+
+        if not scenarios:
+            return 0.0
+
+        # Calculate average accuracy across all scenarios
+        total_accuracy = 0
+        total_latency = 0
+        total_tasks = 0
+
+        for scenario in scenarios:
+            task_results = scenario.get("task_results", [])
+            if task_results:
+                scenario_accuracy = sum(t.get("accuracy_score", 0) for t in task_results) / len(task_results)
+                scenario_latency = sum(t.get("latency", 0) for t in task_results) / len(task_results)
+
+                total_accuracy += scenario_accuracy
+                total_latency += scenario_latency
+                total_tasks += len(task_results)
+
+        if not total_tasks:
+            return 0.0
+
+        avg_accuracy = total_accuracy / len(scenarios)
+        avg_latency = total_latency / len(scenarios)
+
+        # Normalize scores
+        # Accuracy: already 0-100
+        accuracy_score = (avg_accuracy / 100) * 0.7
+
+        # Latency: lower is better, normalize to 0-1 (assume 60s is max)
+        latency_score = max(0, 1 - (avg_latency / 60)) * 0.2
+
+        # Token efficiency: output tokens per task (lower is better)
+        total_output_tokens = 0
+        for scenario in scenarios:
+            for task in scenario.get("task_results", []):
+                total_output_tokens += task.get("output_tokens", 0)
+
+        avg_output_tokens = total_output_tokens / total_tasks if total_tasks else 0
+        # Normalize: assume 1000 tokens per task is max
+        token_efficiency_score = max(0, 1 - (avg_output_tokens / 1000)) * 0.1
+
+        composite_score = accuracy_score + latency_score + token_efficiency_score
+        return round(composite_score * 100, 2)  # Scale to 0-100
+
+    def aggregate_model_stats(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract key statistics from a benchmark result."""
+        scenarios = result.get("scenarios", [])
+
+        total_tasks = 0
+        passed_tasks = 0
+        total_latency = 0
+        total_input_tokens = 0
+        total_output_tokens = 0
+
+        for scenario in scenarios:
+            task_results = scenario.get("task_results", [])
+            total_tasks += len(task_results)
+
+            for task in task_results:
+                if task.get("success", False):
+                    passed_tasks += 1
+                total_latency += task.get("latency", 0)
+                total_input_tokens += task.get("input_tokens", 0)
+                total_output_tokens += task.get("output_tokens", 0)
+
+        avg_latency = total_latency / total_tasks if total_tasks else 0
+        accuracy = (passed_tasks / total_tasks * 100) if total_tasks else 0
+
+        return {
+            "model_id": result.get("model_id", "unknown"),
+            "quality_score": result.get("quality_score", 0),
+            "context_length": result.get("context_length", 0),
+            "benchmarked_at": result.get("benchmarked_at", ""),
+            "total_tasks": total_tasks,
+            "passed_tasks": passed_tasks,
+            "accuracy_percent": round(accuracy, 2),
+            "avg_latency_seconds": round(avg_latency, 2),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "composite_score": self.calculate_composite_score(result),
+            "scenarios": [
+                {
+                    "name": s.get("scenario_name", ""),
+                    "tasks_passed": sum(1 for t in s.get("task_results", []) if t.get("success", False)),
+                    "tasks_total": len(s.get("task_results", [])),
+                    "avg_accuracy": round(
+                        sum(t.get("accuracy_score", 0) for t in s.get("task_results", [])) /
+                        len(s.get("task_results", [])) if s.get("task_results", []) else 0,
+                        2
+                    )
+                }
+                for s in scenarios
+            ]
+        }
+
+    def generate_models_json(self, results: List[Dict[str, Any]]):
+        """Generate models.json with all model statistics."""
+        models = [self.aggregate_model_stats(r) for r in results]
+
+        output_file = self.api_dir / "models.json"
+        with open(output_file, "w") as f:
+            json.dump({
+                "generated_at": datetime.now().isoformat(),
+                "total_models": len(models),
+                "models": models
+            }, f, indent=2)
+
+        print(f"Generated {output_file}")
+
+    def generate_leaderboard_json(self, results: List[Dict[str, Any]]):
+        """Generate leaderboard.json with models ranked by composite score."""
+        models = [self.aggregate_model_stats(r) for r in results]
+
+        # Sort by composite score descending
+        models.sort(key=lambda m: m["composite_score"], reverse=True)
+
+        output_file = self.api_dir / "leaderboard.json"
+        with open(output_file, "w") as f:
+            json.dump({
+                "generated_at": datetime.now().isoformat(),
+                "total_models": len(models),
+                "leaderboard": [
+                    {
+                        "rank": i + 1,
+                        "model_id": m["model_id"],
+                        "composite_score": m["composite_score"],
+                        "accuracy_percent": m["accuracy_percent"],
+                        "avg_latency_seconds": m["avg_latency_seconds"],
+                        "context_length": m["context_length"]
+                    }
+                    for i, m in enumerate(models)
+                ]
+            }, f, indent=2)
+
+        print(f"Generated {output_file}")
+
+    def generate_history_snapshot(self, results: List[Dict[str, Any]]):
+        """Save a daily snapshot of results to history."""
+        today = datetime.now().strftime("%Y-%m-%d")
+        snapshot_file = self.history_dir / f"{today}.json"
+
+        models = [self.aggregate_model_stats(r) for r in results]
+
+        with open(snapshot_file, "w") as f:
+            json.dump({
+                "date": today,
+                "total_models": len(models),
+                "models": models
+            }, f, indent=2)
+
+        print(f"Generated history snapshot: {snapshot_file}")
+
+    def generate_html_index(self):
+        """Generate a simple HTML leaderboard page."""
+        html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmarked Free Ride - OpenRouter Model Leaderboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { opacity: 0.9; font-size: 1.1rem; }
+        .updated { margin-top: 1rem; opacity: 0.8; font-size: 0.9rem; }
+        main { padding: 2rem; }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        tr:hover { background: #f8f9fa; }
+        .rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            width: 60px;
+            text-align: center;
+        }
+        .model-id {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #212529;
+        }
+        .score {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #28a745;
+        }
+        .metric { color: #6c757d; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-gold { background: #ffd700; color: #856404; }
+        .badge-silver { background: #c0c0c0; color: #383d41; }
+        .badge-bronze { background: #cd7f32; color: #fff; }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Benchmarked Free Ride</h1>
+            <p class="subtitle">OpenRouter Free Model Leaderboard</p>
+            <p class="updated">Updated: <span id="updated-time">Loading...</span></p>
+        </header>
+        <main>
+            <div id="leaderboard" class="loading">Loading leaderboard...</div>
+        </main>
+        <footer>
+            <p>Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/openclaw/skills">OpenClaw Skills</a></p>
+        </footer>
+    </div>
+
+    <script>
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('api/leaderboard.json');
+                const data = await response.json();
+
+                document.getElementById('updated-time').textContent =
+                    new Date(data.generated_at).toLocaleString();
+
+                const badges = ['', '🥇', '🥈', '🥉'];
+
+                const tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>Score</th>
+                                <th>Accuracy</th>
+                                <th>Avg Latency</th>
+                                <th>Context</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.leaderboard.map(model => `
+                                <tr>
+                                    <td class="rank">${badges[model.rank] || model.rank}</td>
+                                    <td class="model-id">${model.model_id}</td>
+                                    <td class="score">${model.composite_score.toFixed(1)}</td>
+                                    <td class="metric">${model.accuracy_percent.toFixed(1)}%</td>
+                                    <td class="metric">${model.avg_latency_seconds.toFixed(1)}s</td>
+                                    <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('leaderboard').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('leaderboard').innerHTML =
+                    '<p style="color: red;">Error loading leaderboard data</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        loadLeaderboard();
+    </script>
+</body>
+</html>"""
+
+        output_file = self.output_dir / "index.html"
+        with open(output_file, "w") as f:
+            f.write(html_content)
+
+        print(f"Generated {output_file}")
+
+    def generate_all_reports(self):
+        """Generate all reports and outputs."""
+        print("Loading benchmark results...")
+        results = self.load_all_benchmark_results()
+
+        if not results:
+            print("No benchmark results found!")
+            return
+
+        print(f"Found {len(results)} benchmark results")
+
+        print("\nGenerating reports...")
+        self.generate_models_json(results)
+        self.generate_leaderboard_json(results)
+        self.generate_history_snapshot(results)
+        self.generate_html_index()
+
+        print("\nAll reports generated successfully!")
+        print(f"Output directory: {self.output_dir}")
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate benchmark reports")
+    parser.add_argument(
+        "--benchmarks-dir",
+        type=Path,
+        default=Path("output/benchmarks"),
+        help="Directory containing benchmark JSON files"
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("docs"),
+        help="Output directory for GitHub Pages"
+    )
+
+    args = parser.parse_args()
+
+    if not args.benchmarks_dir.exists():
+        print(f"Error: Benchmarks directory not found: {args.benchmarks_dir}")
+        exit(1)
+
+    generator = ReportGenerator(
+        benchmarks_dir=args.benchmarks_dir,
+        output_dir=args.output_dir
+    )
+
+    generator.generate_all_reports()
+
+
+if __name__ == "__main__":
+    main()
