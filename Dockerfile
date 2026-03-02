@@ -24,10 +24,10 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy source code
 COPY src/ ./src/
-COPY opencalw-sandbox/ ./opencalw-sandbox/
+COPY openclaw-benchmark/ ./openclaw-benchmark/
 
-# Install openclaw-sandbox dependencies
-WORKDIR /app/opencalw-sandbox
+# Install openclaw-benchmark dependencies
+WORKDIR /app/openclaw-benchmark
 RUN pip3 install --no-cache-dir -e .
 
 WORKDIR /app

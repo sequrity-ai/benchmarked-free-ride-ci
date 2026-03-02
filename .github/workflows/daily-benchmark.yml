@@ -30,11 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Copy openclaw-sandbox
-        run: |
-          # Copy the openclaw-sandbox from parent repo
-          cp -r ../opencalw-sandbox ./opencalw-sandbox || echo "Warning: openclaw-sandbox not found in parent"
+        with:
+          submodules: 'recursive'  # Automatically checkout submodules
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -68,9 +65,9 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install requests
-          # Install openclaw-sandbox if it exists
-          if [ -d "opencalw-sandbox" ]; then
-            pip install -e ./opencalw-sandbox
+          # Install openclaw-benchmark submodule
+          if [ -d "openclaw-benchmark" ]; then
+            pip install -e ./openclaw-benchmark
           fi
 
       - name: Discover free models
@@ -99,7 +96,7 @@ jobs:
 
           python3 src/run_benchmarks.py \
             --discovered-models output/discovered_models.json \
-            --sandbox-path ./opencalw-sandbox \
+            --sandbox-path ./openclaw-benchmark \
             --output-dir output/benchmarks \
             --scenarios "$SCENARIOS" \
             --single-turn \
