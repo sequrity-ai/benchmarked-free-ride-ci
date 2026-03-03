@@ -23,9 +23,9 @@ class BenchmarkRunner:
     def configure_openclaw_model(self, model_id: str) -> bool:
         """Configure OpenClaw to use the specified model."""
         try:
-            # Use openclaw CLI to set the model
+            # Use openclaw models set command
             result = subprocess.run(
-                ["openclaw", "config", "set", "model", model_id],
+                ["openclaw", "models", "set", f"openrouter/{model_id}"],
                 capture_output=True,
                 text=True,
                 timeout=30
@@ -33,46 +33,13 @@ class BenchmarkRunner:
 
             if result.returncode != 0:
                 print(f"Warning: Failed to set model via CLI: {result.stderr}")
-                # Try alternative: directly modify config file
-                return self._configure_model_via_config(model_id)
+                return False
 
-            print(f"Configured OpenClaw to use model: {model_id}")
+            print(f"Configured OpenClaw to use model: openrouter/{model_id}")
             return True
 
         except Exception as e:
             print(f"Error configuring model {model_id}: {e}")
-            return False
-
-    def _configure_model_via_config(self, model_id: str) -> bool:
-        """Fallback: Directly modify OpenClaw config file."""
-        try:
-            config_path = Path.home() / ".openclaw" / "config.json"
-
-            if not config_path.exists():
-                print(f"Config file not found at {config_path}")
-                return False
-
-            with open(config_path, "r") as f:
-                config = json.load(f)
-
-            # Set the model
-            if "agents" not in config:
-                config["agents"] = {}
-            if "defaults" not in config["agents"]:
-                config["agents"]["defaults"] = {}
-            if "model" not in config["agents"]["defaults"]:
-                config["agents"]["defaults"]["model"] = {}
-
-            config["agents"]["defaults"]["model"]["primary"] = f"openrouter/{model_id}"
-
-            with open(config_path, "w") as f:
-                json.dump(config, f, indent=2)
-
-            print(f"Configured model via config file: {model_id}")
-            return True
-
-        except Exception as e:
-            print(f"Error modifying config file: {e}")
             return False
 
     def run_benchmark_suite(
@@ -108,15 +75,23 @@ class BenchmarkRunner:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_file = self.output_dir / f"benchmark_{safe_model_name}_{timestamp}.json"
 
+        # Use absolute path for output file
+        output_file_abs = output_file.resolve()
+
+        # Ensure parent directory exists
+        output_file_abs.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Output file will be saved to: {output_file_abs}")
+        print(f"Parent directory exists: {output_file_abs.parent.exists()}")
+
         # Build command
         cmd = [
             "python3",
-            str(self.sandbox_path / "cli.py"),
+            "cli.py",  # Relative to cwd (sandbox_path)
             "--local",
             "benchmark-suite",
             "--scenario", ",".join(scenarios) if scenarios else "all",
             "--difficulty", difficulty,
-            "-o", str(output_file)
+            "-o", str(output_file_abs)
         ]
 
         if single_turn:
