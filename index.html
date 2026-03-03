@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benchmarked Free Ride - OpenRouter Model Leaderboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { opacity: 0.9; font-size: 1.1rem; }
+        .updated { margin-top: 1rem; opacity: 0.8; font-size: 0.9rem; }
+        main { padding: 2rem; }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        tr:hover { background: #f8f9fa; }
+        .rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            width: 60px;
+            text-align: center;
+        }
+        .model-id {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #212529;
+        }
+        .score {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #28a745;
+        }
+        .metric { color: #6c757d; }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-gold { background: #ffd700; color: #856404; }
+        .badge-silver { background: #c0c0c0; color: #383d41; }
+        .badge-bronze { background: #cd7f32; color: #fff; }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Benchmarked Free Ride</h1>
+            <p class="subtitle">OpenRouter Free Model Leaderboard</p>
+            <p class="updated">Updated: <span id="updated-time">Loading...</span></p>
+        </header>
+        <main>
+            <div id="leaderboard" class="loading">Loading leaderboard...</div>
+        </main>
+        <footer>
+            <p>Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/openclaw/skills">OpenClaw Skills</a></p>
+        </footer>
+    </div>
+
+    <script>
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('api/leaderboard.json');
+                const data = await response.json();
+
+                document.getElementById('updated-time').textContent =
+                    new Date(data.generated_at).toLocaleString();
+
+                const badges = ['', '🥇', '🥈', '🥉'];
+
+                const tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Model</th>
+                                <th>Score</th>
+                                <th>Accuracy</th>
+                                <th>Avg Latency</th>
+                                <th>Context</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.leaderboard.map(model => `
+                                <tr>
+                                    <td class="rank">${badges[model.rank] || model.rank}</td>
+                                    <td class="model-id">${model.model_id}</td>
+                                    <td class="score">${model.composite_score.toFixed(1)}</td>
+                                    <td class="metric">${model.accuracy_percent.toFixed(1)}%</td>
+                                    <td class="metric">${model.avg_latency_seconds.toFixed(1)}s</td>
+                                    <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('leaderboard').innerHTML = tableHTML;
+            } catch (error) {
+                document.getElementById('leaderboard').innerHTML =
+                    '<p style="color: red;">Error loading leaderboard data</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        loadLeaderboard();
+    </script>
+</body>
+</html>
