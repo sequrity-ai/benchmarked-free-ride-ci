@@ -11,7 +11,7 @@ on:
         required: false
         default: '5'  # Reduced from 10 to 5 for cost efficiency
       scenarios:
-        description: 'Scenarios to run (comma-separated)'
+        description: 'Scenarios to run (comma-separated: file, weather, web)'
         required: false
         default: 'file,weather,web'
       difficulty:

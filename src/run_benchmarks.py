@@ -54,7 +54,7 @@ class BenchmarkRunner:
 
         Args:
             model_id: The OpenRouter model ID
-            scenarios: List of scenarios to run (default: all)
+            scenarios: List of scenarios to run (runs each individually and merges results)
             single_turn: Use single-turn mode (faster, no OpenAI API needed)
             difficulty: Task difficulty filter (easy/medium/hard/all)
 
@@ -70,83 +70,124 @@ class BenchmarkRunner:
             print(f"Skipping benchmarks for {model_id} due to configuration error")
             return None
 
+        # Default scenarios if none specified
+        if not scenarios:
+            scenarios = ["file", "weather", "web"]
+
         # Prepare output filename
         safe_model_name = model_id.replace("/", "_").replace(":", "_")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = self.output_dir / f"benchmark_{safe_model_name}_{timestamp}.json"
 
-        # Use absolute path for output file
-        output_file_abs = output_file.resolve()
+        # Run each scenario separately and collect results
+        all_scenario_results = []
 
-        # Ensure parent directory exists
-        output_file_abs.parent.mkdir(parents=True, exist_ok=True)
-        print(f"Output file will be saved to: {output_file_abs}")
-        print(f"Parent directory exists: {output_file_abs.parent.exists()}")
+        for scenario in scenarios:
+            print(f"\n--- Running scenario: {scenario} ---\n")
 
-        # Build command
-        cmd = [
-            "python3",
-            "cli.py",  # Relative to cwd (sandbox_path)
-            "--local",
-            "benchmark-suite",
-            "--scenario", ",".join(scenarios) if scenarios else "all",
-            "--difficulty", difficulty,
-            "-o", str(output_file_abs)
-        ]
+            output_file = self.output_dir / f"benchmark_{safe_model_name}_{scenario}_{timestamp}.json"
+            output_file_abs = output_file.resolve()
+            output_file_abs.parent.mkdir(parents=True, exist_ok=True)
 
-        if single_turn:
-            cmd.append("--single-turn")
+            # Build command for single scenario
+            cmd = [
+                "python3",
+                "cli.py",
+                "--local",
+                "benchmark-suite",
+                "--scenario", scenario,
+                "--difficulty", difficulty,
+                "-o", str(output_file_abs)
+            ]
 
-        # Set environment variables
-        env = os.environ.copy()
-        env["LOCAL_MODE"] = "true"
-        env["AGENT_ID"] = "main"
+            if single_turn:
+                cmd.append("--single-turn")
 
-        print(f"Running command: {' '.join(cmd)}\n")
+            # Set environment variables
+            env = os.environ.copy()
+            env["LOCAL_MODE"] = "true"
+            env["AGENT_ID"] = "main"
 
-        try:
-            # Run benchmark
-            result = subprocess.run(
-                cmd,
-                cwd=self.sandbox_path,
-                env=env,
-                capture_output=True,
-                text=True,
-                timeout=3600  # 1 hour timeout
-            )
+            print(f"Running command: {' '.join(cmd)}\n")
 
-            print(result.stdout)
+            try:
+                # Run benchmark
+                result = subprocess.run(
+                    cmd,
+                    cwd=self.sandbox_path,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    timeout=3600  # 1 hour timeout
+                )
 
-            if result.stderr:
-                print("STDERR:", result.stderr)
+                print(result.stdout)
 
-            if result.returncode != 0:
-                print(f"Benchmark failed with return code {result.returncode}")
-                return None
+                if result.stderr:
+                    print("STDERR:", result.stderr)
 
-            # Load and return results
-            if output_file.exists():
-                with open(output_file, "r") as f:
-                    results = json.load(f)
+                if result.returncode != 0:
+                    print(f"Scenario {scenario} failed with return code {result.returncode}")
+                    continue
 
-                # Add model metadata
-                results["model_id"] = model_id
-                results["benchmarked_at"] = datetime.now().isoformat()
+                # Load scenario results
+                if output_file.exists():
+                    with open(output_file, "r") as f:
+                        scenario_result = json.load(f)
 
-                print(f"\nBenchmark completed successfully!")
-                print(f"Results saved to: {output_file}")
+                    # Extract the scenarios list from the result
+                    if "scenarios" in scenario_result:
+                        all_scenario_results.extend(scenario_result["scenarios"])
 
-                return results
-            else:
-                print(f"Output file not found: {output_file}")
-                return None
+                    print(f"Scenario {scenario} completed successfully!")
+                else:
+                    print(f"Output file not found for scenario {scenario}: {output_file}")
 
-        except subprocess.TimeoutExpired:
-            print(f"Benchmark timed out after 1 hour")
+            except subprocess.TimeoutExpired:
+                print(f"Scenario {scenario} timed out after 1 hour")
+                continue
+            except Exception as e:
+                print(f"Error running scenario {scenario}: {e}")
+                continue
+
+        # Merge all results into a single output
+        if not all_scenario_results:
+            print("No scenarios completed successfully")
             return None
-        except Exception as e:
-            print(f"Error running benchmark: {e}")
-            return None
+
+        # Create merged output file
+        merged_output = self.output_dir / f"benchmark_{safe_model_name}_{timestamp}.json"
+
+        # Calculate merged summary
+        total_tasks = sum(len(s.get("task_results", [])) for s in all_scenario_results)
+        tasks_passed = sum(
+            sum(1 for t in s.get("task_results", []) if t.get("success", False))
+            for s in all_scenario_results
+        )
+
+        merged_result = {
+            "config": {
+                "async_mode": False,
+                "local_mode": True,
+                "bot_model": None,
+                "mode": "single_turn"
+            },
+            "scenarios": all_scenario_results,
+            "summary": {
+                "total_scenarios": len(all_scenario_results),
+                "total_tasks": total_tasks,
+                "tasks_passed": tasks_passed,
+                "overall_accuracy": (tasks_passed / total_tasks * 100) if total_tasks > 0 else 0
+            },
+            "model_id": model_id,
+            "benchmarked_at": datetime.now().isoformat()
+        }
+
+        # Save merged result
+        with open(merged_output, "w") as f:
+            json.dump(merged_result, f, indent=2)
+
+        print(f"\nAll scenarios completed! Merged results saved to: {merged_output}")
+        return merged_result
 
     def run_all_discovered_models(
         self,
