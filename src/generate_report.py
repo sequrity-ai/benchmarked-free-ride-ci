@@ -22,6 +22,98 @@ class ReportGenerator:
         self.api_dir.mkdir(parents=True, exist_ok=True)
         self.history_dir.mkdir(parents=True, exist_ok=True)
 
+        # Load discovered models data for metadata lookups
+        self.discovered_models = self._load_discovered_models()
+
+    def _load_discovered_models(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Load discovered_models.json to get quality_score and context_length metadata.
+        Returns a dict mapping model_id to model data.
+        """
+        # Try to find discovered_models.json in parent directories
+        search_paths = [
+            self.benchmarks_dir.parent / "discovered_models.json",
+            self.benchmarks_dir.parent.parent / "discovered_models.json",
+            Path("output/discovered_models.json"),
+        ]
+
+        for path in search_paths:
+            if path.exists():
+                try:
+                    with open(path, "r") as f:
+                        data = json.load(f)
+                        models_dict = {}
+                        for model in data.get("models", []):
+                            model_id = model.get("id")
+                            if model_id:
+                                models_dict[model_id] = model
+                        print(f"Loaded {len(models_dict)} models from {path}")
+                        return models_dict
+                except Exception as e:
+                    print(f"Error loading discovered models from {path}: {e}")
+
+        print("Warning: Could not find discovered_models.json - model metadata may be incomplete")
+        return {}
+
+    def _infer_model_id_from_filename(self, filename: str) -> str | None:
+        """
+        Infer model_id from benchmark filename.
+        Expected format: benchmark_{model_id_with_underscores}_{timestamp}.json
+        Example: benchmark_stepfun_step-3.5-flash_free_20260303_164727.json
+                 -> stepfun/step-3.5-flash:free
+        """
+        if not filename.startswith("benchmark_"):
+            return None
+
+        # Remove 'benchmark_' prefix and '.json' suffix
+        name_part = filename[10:-5]  # Remove 'benchmark_' (10 chars) and '.json' (5 chars)
+
+        # Remove timestamp suffix (format: _YYYYMMDD_HHMMSS)
+        # Split by underscore and look for timestamp pattern
+        parts = name_part.split("_")
+
+        # Find where timestamp starts (should be last 2 parts: date and time)
+        if len(parts) >= 2:
+            # Check if last part looks like HHMMSS (6 digits)
+            if parts[-1].isdigit() and len(parts[-1]) == 6:
+                # Check if second-to-last looks like YYYYMMDD (8 digits)
+                if parts[-2].isdigit() and len(parts[-2]) == 8:
+                    # Remove timestamp parts
+                    parts = parts[:-2]
+
+        # Now reconstruct model_id
+        # Pattern: provider_model-name_variant
+        # Convert: stepfun_step-3.5-flash_free -> stepfun/step-3.5-flash:free
+        if len(parts) < 1:
+            return None
+
+        # First part is provider
+        provider = parts[0]
+
+        # Last part might be variant (free, paid, etc.)
+        variant = None
+        if len(parts) > 1 and parts[-1] in ["free", "paid", "extended"]:
+            variant = parts[-1]
+            model_parts = parts[1:-1]
+        else:
+            model_parts = parts[1:]
+
+        # Special case: if model_parts is empty and variant exists,
+        # the model name is the same as the variant (e.g., openrouter/free)
+        if not model_parts and variant:
+            model_name = variant
+            variant = None
+        else:
+            # Join model parts with hyphens
+            model_name = "-".join(model_parts) if model_parts else provider
+
+        # Construct final model_id
+        model_id = f"{provider}/{model_name}"
+        if variant:
+            model_id += f":{variant}"
+
+        return model_id
+
     def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
         """Load all benchmark JSON files from the benchmarks directory."""
         results = []
@@ -30,6 +122,14 @@ class ReportGenerator:
             try:
                 with open(json_file, "r") as f:
                     data = json.load(f)
+
+                    # If model_id is missing, try to infer from filename
+                    if not data.get("model_id") or data.get("model_id") == "unknown":
+                        model_id = self._infer_model_id_from_filename(json_file.name)
+                        if model_id:
+                            data["model_id"] = model_id
+                            print(f"Inferred model_id '{model_id}' from filename: {json_file.name}")
+
                     results.append(data)
             except Exception as e:
                 print(f"Error loading {json_file}: {e}")
@@ -113,10 +213,24 @@ class ReportGenerator:
         avg_latency = total_latency / total_tasks if total_tasks else 0
         accuracy = (passed_tasks / total_tasks * 100) if total_tasks else 0
 
+        # Get model_id
+        model_id = result.get("model_id", "unknown")
+
+        # Try to get quality_score and context_length from discovered models
+        quality_score = result.get("quality_score", 0)
+        context_length = result.get("context_length", 0)
+
+        if model_id in self.discovered_models:
+            discovered = self.discovered_models[model_id]
+            if quality_score == 0:
+                quality_score = discovered.get("quality_score", 0)
+            if context_length == 0:
+                context_length = discovered.get("context_length", 0)
+
         return {
-            "model_id": result.get("model_id", "unknown"),
-            "quality_score": result.get("quality_score", 0),
-            "context_length": result.get("context_length", 0),
+            "model_id": model_id,
+            "quality_score": quality_score,
+            "context_length": context_length,
             "benchmarked_at": result.get("benchmarked_at", ""),
             "total_tasks": total_tasks,
             "passed_tasks": passed_tasks,
