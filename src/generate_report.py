@@ -5,10 +5,10 @@ Aggregates benchmark results and creates JSON API endpoints + HTML UI.
 """
 
 import json
-from pathlib import Path
-from typing import List, Dict, Any
-from datetime import datetime
 import shutil
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List
 
 
 class ReportGenerator:
@@ -52,7 +52,9 @@ class ReportGenerator:
                 except Exception as e:
                     print(f"Error loading discovered models from {path}: {e}")
 
-        print("Warning: Could not find discovered_models.json - model metadata may be incomplete")
+        print(
+            "Warning: Could not find discovered_models.json - model metadata may be incomplete"
+        )
         return {}
 
     def _infer_model_id_from_filename(self, filename: str) -> str | None:
@@ -68,7 +70,9 @@ class ReportGenerator:
             return None
 
         # Remove 'benchmark_' prefix and '.json' suffix
-        name_part = filename[10:-5]  # Remove 'benchmark_' (10 chars) and '.json' (5 chars)
+        name_part = filename[
+            10:-5
+        ]  # Remove 'benchmark_' (10 chars) and '.json' (5 chars)
 
         # Split by underscore
         parts = name_part.split("_")
@@ -85,7 +89,15 @@ class ReportGenerator:
 
         # Remove scenario suffix if present (file, weather, web, github, gmail, etc.)
         # These come after the variant but before the timestamp
-        known_scenarios = ["file", "weather", "web", "github", "gmail", "compound", "summarize"]
+        known_scenarios = [
+            "file",
+            "weather",
+            "web",
+            "github",
+            "gmail",
+            "compound",
+            "summarize",
+        ]
         if len(parts) > 0 and parts[-1] in known_scenarios:
             parts = parts[:-1]
 
@@ -132,12 +144,22 @@ class ReportGenerator:
         skipped_individual = []
 
         # Known scenario suffixes that indicate individual (not merged) files
-        scenario_suffixes = ["_file_", "_weather_", "_web_", "_github_", "_gmail_", "_compound_", "_summarize_"]
+        scenario_suffixes = [
+            "_file_",
+            "_weather_",
+            "_web_",
+            "_github_",
+            "_gmail_",
+            "_compound_",
+            "_summarize_",
+        ]
 
         for json_file in self.benchmarks_dir.glob("benchmark_*.json"):
             # Skip individual scenario files - only load merged files
             filename = json_file.name
-            is_individual_scenario = any(suffix in filename for suffix in scenario_suffixes)
+            is_individual_scenario = any(
+                suffix in filename for suffix in scenario_suffixes
+            )
 
             if is_individual_scenario:
                 skipped_individual.append(filename)
@@ -152,14 +174,18 @@ class ReportGenerator:
                         model_id = self._infer_model_id_from_filename(json_file.name)
                         if model_id:
                             data["model_id"] = model_id
-                            print(f"Inferred model_id '{model_id}' from filename: {json_file.name}")
+                            print(
+                                f"Inferred model_id '{model_id}' from filename: {json_file.name}"
+                            )
 
                     results.append(data)
             except Exception as e:
                 print(f"Error loading {json_file}: {e}")
 
         if skipped_individual:
-            print(f"Skipped {len(skipped_individual)} individual scenario files (using merged files instead)")
+            print(
+                f"Skipped {len(skipped_individual)} individual scenario files (using merged files instead)"
+            )
 
         return results
 
@@ -183,8 +209,12 @@ class ReportGenerator:
         for scenario in scenarios:
             task_results = scenario.get("task_results", [])
             if task_results:
-                scenario_accuracy = sum(t.get("accuracy_score", 0) for t in task_results) / len(task_results)
-                scenario_latency = sum(t.get("latency", 0) for t in task_results) / len(task_results)
+                scenario_accuracy = sum(
+                    t.get("accuracy_score", 0) for t in task_results
+                ) / len(task_results)
+                scenario_latency = sum(t.get("latency", 0) for t in task_results) / len(
+                    task_results
+                )
 
                 total_accuracy += scenario_accuracy
                 total_latency += scenario_latency
@@ -269,22 +299,31 @@ class ReportGenerator:
             "scenarios": [
                 {
                     "name": s.get("scenario_name", ""),
-                    "tasks_passed": sum(1 for t in s.get("task_results", []) if t.get("success", False)),
+                    "tasks_passed": sum(
+                        1 for t in s.get("task_results", []) if t.get("success", False)
+                    ),
                     "tasks_total": len(s.get("task_results", [])),
                     "avg_accuracy": round(
-                        sum(t.get("accuracy_score", 0) for t in s.get("task_results", [])) /
-                        len(s.get("task_results", [])) if s.get("task_results", []) else 0,
-                        2
-                    )
+                        sum(
+                            t.get("accuracy_score", 0)
+                            for t in s.get("task_results", [])
+                        )
+                        / len(s.get("task_results", []))
+                        if s.get("task_results", [])
+                        else 0,
+                        2,
+                    ),
                 }
                 for s in scenarios
-            ]
+            ],
         }
 
     def generate_models_json(self, results: List[Dict[str, Any]]):
         """Generate models.json with all model statistics, including unbenchmarked models."""
         # Get stats for benchmarked models
-        benchmarked_models = {r.get("model_id"): self.aggregate_model_stats(r) for r in results}
+        benchmarked_models = {
+            r.get("model_id"): self.aggregate_model_stats(r) for r in results
+        }
 
         # Add unbenchmarked models from discovered_models
         all_models = []
@@ -294,21 +333,23 @@ class ReportGenerator:
                 all_models.append(benchmarked_models[model_id])
             else:
                 # Add as unbenchmarked with placeholder data
-                all_models.append({
-                    "model_id": model_id,
-                    "quality_score": model_data.get("quality_score", 0),
-                    "context_length": model_data.get("context_length", 0),
-                    "benchmarked_at": "",
-                    "total_tasks": 0,
-                    "passed_tasks": 0,
-                    "accuracy_percent": None,  # None indicates not benchmarked
-                    "avg_latency_seconds": None,
-                    "total_input_tokens": 0,
-                    "total_output_tokens": 0,
-                    "composite_score": 0,  # Will be sorted to bottom
-                    "scenarios": [],
-                    "is_benchmarked": False
-                })
+                all_models.append(
+                    {
+                        "model_id": model_id,
+                        "quality_score": model_data.get("quality_score", 0),
+                        "context_length": model_data.get("context_length", 0),
+                        "benchmarked_at": "",
+                        "total_tasks": 0,
+                        "passed_tasks": 0,
+                        "accuracy_percent": None,  # None indicates not benchmarked
+                        "avg_latency_seconds": None,
+                        "total_input_tokens": 0,
+                        "total_output_tokens": 0,
+                        "composite_score": 0,  # Will be sorted to bottom
+                        "scenarios": [],
+                        "is_benchmarked": False,
+                    }
+                )
 
         # Add is_benchmarked flag to benchmarked models
         for model in all_models:
@@ -317,13 +358,17 @@ class ReportGenerator:
 
         output_file = self.api_dir / "models.json"
         with open(output_file, "w") as f:
-            json.dump({
-                "generated_at": datetime.now().isoformat(),
-                "total_models": len(all_models),
-                "benchmarked_models": len(benchmarked_models),
-                "unbenchmarked_models": len(all_models) - len(benchmarked_models),
-                "models": all_models
-            }, f, indent=2)
+            json.dump(
+                {
+                    "generated_at": datetime.now().isoformat(),
+                    "total_models": len(all_models),
+                    "benchmarked_models": len(benchmarked_models),
+                    "unbenchmarked_models": len(all_models) - len(benchmarked_models),
+                    "models": all_models,
+                },
+                f,
+                indent=2,
+            )
 
         print(f"Generated {output_file}")
         print(f"  - Benchmarked: {len(benchmarked_models)}")
@@ -332,7 +377,9 @@ class ReportGenerator:
     def generate_leaderboard_json(self, results: List[Dict[str, Any]]):
         """Generate leaderboard.json with all models ranked (benchmarked + unbenchmarked)."""
         # Get benchmarked models
-        benchmarked_models = {r.get("model_id"): self.aggregate_model_stats(r) for r in results}
+        benchmarked_models = {
+            r.get("model_id"): self.aggregate_model_stats(r) for r in results
+        }
 
         # Include all discovered models
         all_models = []
@@ -343,43 +390,53 @@ class ReportGenerator:
                 all_models.append(model_entry)
             else:
                 # Unbenchmarked model
-                all_models.append({
-                    "model_id": model_id,
-                    "composite_score": 0,
-                    "accuracy_percent": None,
-                    "avg_latency_seconds": None,
-                    "context_length": model_data.get("context_length", 0),
-                    "quality_score": model_data.get("quality_score", 0),
-                    "is_benchmarked": False
-                })
+                all_models.append(
+                    {
+                        "model_id": model_id,
+                        "composite_score": 0,
+                        "accuracy_percent": None,
+                        "avg_latency_seconds": None,
+                        "context_length": model_data.get("context_length", 0),
+                        "quality_score": model_data.get("quality_score", 0),
+                        "is_benchmarked": False,
+                    }
+                )
 
         # Sort: benchmarked first (by composite score), then unbenchmarked (by quality score)
-        all_models.sort(key=lambda m: (
-            not m["is_benchmarked"],  # False (benchmarked) comes before True (unbenchmarked)
-            -m["composite_score"] if m["is_benchmarked"] else 0,
-            -m["quality_score"]
-        ))
+        all_models.sort(
+            key=lambda m: (
+                not m[
+                    "is_benchmarked"
+                ],  # False (benchmarked) comes before True (unbenchmarked)
+                -m["composite_score"] if m["is_benchmarked"] else 0,
+                -m["quality_score"],
+            )
+        )
 
         output_file = self.api_dir / "leaderboard.json"
         with open(output_file, "w") as f:
-            json.dump({
-                "generated_at": datetime.now().isoformat(),
-                "total_models": len(all_models),
-                "benchmarked_count": len(benchmarked_models),
-                "leaderboard": [
-                    {
-                        "rank": i + 1,
-                        "model_id": m["model_id"],
-                        "composite_score": m["composite_score"],
-                        "accuracy_percent": m["accuracy_percent"],
-                        "avg_latency_seconds": m["avg_latency_seconds"],
-                        "context_length": m["context_length"],
-                        "quality_score": m.get("quality_score", 0),
-                        "is_benchmarked": m["is_benchmarked"]
-                    }
-                    for i, m in enumerate(all_models)
-                ]
-            }, f, indent=2)
+            json.dump(
+                {
+                    "generated_at": datetime.now().isoformat(),
+                    "total_models": len(all_models),
+                    "benchmarked_count": len(benchmarked_models),
+                    "leaderboard": [
+                        {
+                            "rank": i + 1,
+                            "model_id": m["model_id"],
+                            "composite_score": m["composite_score"],
+                            "accuracy_percent": m["accuracy_percent"],
+                            "avg_latency_seconds": m["avg_latency_seconds"],
+                            "context_length": m["context_length"],
+                            "quality_score": m.get("quality_score", 0),
+                            "is_benchmarked": m["is_benchmarked"],
+                        }
+                        for i, m in enumerate(all_models)
+                    ],
+                },
+                f,
+                indent=2,
+            )
 
         print(f"Generated {output_file}")
 
@@ -391,11 +448,11 @@ class ReportGenerator:
         models = [self.aggregate_model_stats(r) for r in results]
 
         with open(snapshot_file, "w") as f:
-            json.dump({
-                "date": today,
-                "total_models": len(models),
-                "models": models
-            }, f, indent=2)
+            json.dump(
+                {"date": today, "total_models": len(models), "models": models},
+                f,
+                indent=2,
+            )
 
         print(f"Generated history snapshot: {snapshot_file}")
 
@@ -511,7 +568,61 @@ class ReportGenerator:
             <div id="leaderboard" class="loading">Loading leaderboard...</div>
         </main>
         <footer>
-            <p>Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/openclaw/skills">OpenClaw Skills</a></p>
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; text-align: left; font-size: 0.9rem; line-height: 1.7;">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5rem;">📋 About This Benchmark</h3>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🎯 What We Test:</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li><strong>Limited scope for efficiency:</strong> We test 3 basic scenarios on the openclaw_sandbox benchmark (File Manipulation, Weather Data, Web Search) with 9 easy-level tasks total (3 per scenario)</li>
+                        <li><strong>Single-turn only:</strong> Each task is a one-shot request without multi-turn conversations, minimizing API costs and complexity</li>
+                        <li><strong>What empty metrics mean:</strong> When you see "—" for Accuracy or Latency, it means that model hasn't been benchmarked because of quality ranking (shown as "Pending" in Score column)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🔍 How We Select Models (From 500+ Models to Top 20):</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li><strong>Step 1 - Free Filter:</strong> From OpenRouter's 500+ models, we identify models with $0.00 pricing for both prompt and completion</li>
+                        <li><strong>Step 2 - Capability Filter:</strong> We exclude models that can't run text-based agent tasks:
+                            <ul style="margin-top: 0.25rem;">
+                                <li>❌ Vision/image-only models (no text generation)</li>
+                                <li>❌ Audio/speech models (Whisper, etc.)</li>
+                                <li>❌ Embedding models (no conversational ability)</li>
+                                <li>❌ Models with &lt;4K context (too limited for agent tasks)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Step 3 - Quality Ranking (like the original FreeRide):</strong> Remaining models (~15-30) are scored using weighted criteria:
+                            <ul style="margin-top: 0.25rem;">
+                                <li>40% Context length (longer = better for complex tasks)</li>
+                                <li>30% Capabilities (function calling, structured output, etc.)</li>
+                                <li>20% Recency (newer models would likely to perform better)</li>
+                                <li>10% Provider trust (established providers like OpenAI, Meta, etc.)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Step 4 - Top 20 Selection:</strong> We actually run the benchmark for the top 20 highest-scoring models to balance comprehensive coverage with reasonable runtime (~2 hours daily)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>📊 Composite Score Calculation:</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li>70% Accuracy (tasks passed / total tasks)</li>
+                        <li>20% Speed (normalized inverse latency—lower latency = higher score)</li>
+                        <li>10% Token efficiency (normalized inverse output tokens—fewer tokens = higher score)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                    <p style="margin: 0; color: #856404;"><strong>💡 Understanding the Results:</strong></p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; color: #856404;">
+                        <li><strong>Benchmarked models</strong> (top of list): Have full metrics including composite score, accuracy, and latency</li>
+                        <li><strong>"Pending" models</strong> (bottom of list, grayed out): Discovered as top-quality free models but not yet tested. Sorted by quality score. Will be benchmarked in future runs.</li>
+                        <li><strong>Models not shown:</strong> Either not free, excluded by capability filters, or ranked below top 20 in quality scoring</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #6c757d;">Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/sequrity-ai/benchmarked-free-ride-ci">GitHub Repo</a></p>
         </footer>
     </div>
 
@@ -623,13 +734,13 @@ def main():
         "--benchmarks-dir",
         type=Path,
         default=Path("output/benchmarks"),
-        help="Directory containing benchmark JSON files"
+        help="Directory containing benchmark JSON files",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("docs"),
-        help="Output directory for GitHub Pages"
+        help="Output directory for GitHub Pages",
     )
 
     args = parser.parse_args()
@@ -639,8 +750,7 @@ def main():
         exit(1)
 
     generator = ReportGenerator(
-        benchmarks_dir=args.benchmarks_dir,
-        output_dir=args.output_dir
+        benchmarks_dir=args.benchmarks_dir, output_dir=args.output_dir
     )
 
     generator.generate_all_reports()
