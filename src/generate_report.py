@@ -58,8 +58,10 @@ class ReportGenerator:
     def _infer_model_id_from_filename(self, filename: str) -> str | None:
         """
         Infer model_id from benchmark filename.
-        Expected format: benchmark_{model_id_with_underscores}_{timestamp}.json
-        Example: benchmark_stepfun_step-3.5-flash_free_20260303_164727.json
+        Expected formats:
+        - benchmark_{provider}_{model}_{variant}_{timestamp}.json
+        - benchmark_{provider}_{model}_{variant}_{scenario}_{timestamp}.json
+        Example: benchmark_stepfun_step-3.5-flash_free_file_20260303_211904.json
                  -> stepfun/step-3.5-flash:free
         """
         if not filename.startswith("benchmark_"):
@@ -68,11 +70,11 @@ class ReportGenerator:
         # Remove 'benchmark_' prefix and '.json' suffix
         name_part = filename[10:-5]  # Remove 'benchmark_' (10 chars) and '.json' (5 chars)
 
-        # Remove timestamp suffix (format: _YYYYMMDD_HHMMSS)
-        # Split by underscore and look for timestamp pattern
+        # Split by underscore
         parts = name_part.split("_")
 
-        # Find where timestamp starts (should be last 2 parts: date and time)
+        # Remove timestamp suffix (format: _YYYYMMDD_HHMMSS)
+        # Timestamp should be last 2 parts: date and time
         if len(parts) >= 2:
             # Check if last part looks like HHMMSS (6 digits)
             if parts[-1].isdigit() and len(parts[-1]) == 6:
@@ -80,6 +82,12 @@ class ReportGenerator:
                 if parts[-2].isdigit() and len(parts[-2]) == 8:
                     # Remove timestamp parts
                     parts = parts[:-2]
+
+        # Remove scenario suffix if present (file, weather, web, github, gmail, etc.)
+        # These come after the variant but before the timestamp
+        known_scenarios = ["file", "weather", "web", "github", "gmail", "compound", "summarize"]
+        if len(parts) > 0 and parts[-1] in known_scenarios:
+            parts = parts[:-1]
 
         # Now reconstruct model_id
         # Pattern: provider_model-name_variant
@@ -115,10 +123,26 @@ class ReportGenerator:
         return model_id
 
     def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
-        """Load all benchmark JSON files from the benchmarks directory."""
+        """Load all benchmark JSON files from the benchmarks directory.
+
+        Skips individual scenario files (e.g., *_file_*.json, *_weather_*.json)
+        and only loads merged benchmark files that contain all scenarios.
+        """
         results = []
+        skipped_individual = []
+
+        # Known scenario suffixes that indicate individual (not merged) files
+        scenario_suffixes = ["_file_", "_weather_", "_web_", "_github_", "_gmail_", "_compound_", "_summarize_"]
 
         for json_file in self.benchmarks_dir.glob("benchmark_*.json"):
+            # Skip individual scenario files - only load merged files
+            filename = json_file.name
+            is_individual_scenario = any(suffix in filename for suffix in scenario_suffixes)
+
+            if is_individual_scenario:
+                skipped_individual.append(filename)
+                continue
+
             try:
                 with open(json_file, "r") as f:
                     data = json.load(f)
@@ -133,6 +157,9 @@ class ReportGenerator:
                     results.append(data)
             except Exception as e:
                 print(f"Error loading {json_file}: {e}")
+
+        if skipped_individual:
+            print(f"Skipped {len(skipped_individual)} individual scenario files (using merged files instead)")
 
         return results
 
