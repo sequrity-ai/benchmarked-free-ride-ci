@@ -167,10 +167,10 @@ def main():
     compatible_models = filter_benchmark_compatible(free_models)
     print(f"Found {len(compatible_models)} benchmark-compatible models")
 
-    print("\nSelecting top 10 models by quality score...")
-    top_models = select_top_models(compatible_models, limit=10)
+    print("\nSelecting top 20 models by quality score...")
+    top_models = select_top_models(compatible_models, limit=20)
 
-    print("\nTop 10 models:")
+    print("\nTop 20 models:")
     for i, model in enumerate(top_models, 1):
         print(f"{i}. {model['id']} (score: {model['quality_score']}, context: {model.get('context_length', 0)})")
 

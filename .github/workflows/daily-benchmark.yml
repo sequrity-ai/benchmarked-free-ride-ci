@@ -9,7 +9,7 @@ on:
       max_models:
         description: 'Maximum number of models to test'
         required: false
-        default: '5'  # Reduced from 10 to 5 for cost efficiency
+        default: '20'  # Benchmark all discovered models for comprehensive leaderboard
       scenarios:
         description: 'Scenarios to run (comma-separated: file, weather, web)'
         required: false

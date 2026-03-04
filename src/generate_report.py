@@ -282,31 +282,90 @@ class ReportGenerator:
         }
 
     def generate_models_json(self, results: List[Dict[str, Any]]):
-        """Generate models.json with all model statistics."""
-        models = [self.aggregate_model_stats(r) for r in results]
+        """Generate models.json with all model statistics, including unbenchmarked models."""
+        # Get stats for benchmarked models
+        benchmarked_models = {r.get("model_id"): self.aggregate_model_stats(r) for r in results}
+
+        # Add unbenchmarked models from discovered_models
+        all_models = []
+        for model_id, model_data in self.discovered_models.items():
+            if model_id in benchmarked_models:
+                # Use benchmarked data
+                all_models.append(benchmarked_models[model_id])
+            else:
+                # Add as unbenchmarked with placeholder data
+                all_models.append({
+                    "model_id": model_id,
+                    "quality_score": model_data.get("quality_score", 0),
+                    "context_length": model_data.get("context_length", 0),
+                    "benchmarked_at": "",
+                    "total_tasks": 0,
+                    "passed_tasks": 0,
+                    "accuracy_percent": None,  # None indicates not benchmarked
+                    "avg_latency_seconds": None,
+                    "total_input_tokens": 0,
+                    "total_output_tokens": 0,
+                    "composite_score": 0,  # Will be sorted to bottom
+                    "scenarios": [],
+                    "is_benchmarked": False
+                })
+
+        # Add is_benchmarked flag to benchmarked models
+        for model in all_models:
+            if "is_benchmarked" not in model:
+                model["is_benchmarked"] = True
 
         output_file = self.api_dir / "models.json"
         with open(output_file, "w") as f:
             json.dump({
                 "generated_at": datetime.now().isoformat(),
-                "total_models": len(models),
-                "models": models
+                "total_models": len(all_models),
+                "benchmarked_models": len(benchmarked_models),
+                "unbenchmarked_models": len(all_models) - len(benchmarked_models),
+                "models": all_models
             }, f, indent=2)
 
         print(f"Generated {output_file}")
+        print(f"  - Benchmarked: {len(benchmarked_models)}")
+        print(f"  - Unbenchmarked: {len(all_models) - len(benchmarked_models)}")
 
     def generate_leaderboard_json(self, results: List[Dict[str, Any]]):
-        """Generate leaderboard.json with models ranked by composite score."""
-        models = [self.aggregate_model_stats(r) for r in results]
+        """Generate leaderboard.json with all models ranked (benchmarked + unbenchmarked)."""
+        # Get benchmarked models
+        benchmarked_models = {r.get("model_id"): self.aggregate_model_stats(r) for r in results}
 
-        # Sort by composite score descending
-        models.sort(key=lambda m: m["composite_score"], reverse=True)
+        # Include all discovered models
+        all_models = []
+        for model_id, model_data in self.discovered_models.items():
+            if model_id in benchmarked_models:
+                model_entry = benchmarked_models[model_id]
+                model_entry["is_benchmarked"] = True
+                all_models.append(model_entry)
+            else:
+                # Unbenchmarked model
+                all_models.append({
+                    "model_id": model_id,
+                    "composite_score": 0,
+                    "accuracy_percent": None,
+                    "avg_latency_seconds": None,
+                    "context_length": model_data.get("context_length", 0),
+                    "quality_score": model_data.get("quality_score", 0),
+                    "is_benchmarked": False
+                })
+
+        # Sort: benchmarked first (by composite score), then unbenchmarked (by quality score)
+        all_models.sort(key=lambda m: (
+            not m["is_benchmarked"],  # False (benchmarked) comes before True (unbenchmarked)
+            -m["composite_score"] if m["is_benchmarked"] else 0,
+            -m["quality_score"]
+        ))
 
         output_file = self.api_dir / "leaderboard.json"
         with open(output_file, "w") as f:
             json.dump({
                 "generated_at": datetime.now().isoformat(),
-                "total_models": len(models),
+                "total_models": len(all_models),
+                "benchmarked_count": len(benchmarked_models),
                 "leaderboard": [
                     {
                         "rank": i + 1,
@@ -314,9 +373,11 @@ class ReportGenerator:
                         "composite_score": m["composite_score"],
                         "accuracy_percent": m["accuracy_percent"],
                         "avg_latency_seconds": m["avg_latency_seconds"],
-                        "context_length": m["context_length"]
+                        "context_length": m["context_length"],
+                        "quality_score": m.get("quality_score", 0),
+                        "is_benchmarked": m["is_benchmarked"]
                     }
-                    for i, m in enumerate(models)
+                    for i, m in enumerate(all_models)
                 ]
             }, f, indent=2)
 
@@ -442,6 +503,9 @@ class ReportGenerator:
             <h1>🏆 Benchmarked Free Ride</h1>
             <p class="subtitle">OpenRouter Free Model Leaderboard</p>
             <p class="updated">Updated: <span id="updated-time">Loading...</span></p>
+            <p class="subtitle" style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.85;">
+                <span id="benchmark-stats">Loading benchmark stats...</span>
+            </p>
         </header>
         <main>
             <div id="leaderboard" class="loading">Loading leaderboard...</div>
@@ -460,6 +524,14 @@ class ReportGenerator:
                 document.getElementById('updated-time').textContent =
                     new Date(data.generated_at).toLocaleString();
 
+                // Update benchmark stats
+                const benchmarkedCount = data.benchmarked_count || 0;
+                const totalCount = data.total_models || 0;
+                const unbenchmarked = totalCount - benchmarkedCount;
+                document.getElementById('benchmark-stats').textContent =
+                    `${benchmarkedCount} of ${totalCount} models benchmarked` +
+                    (unbenchmarked > 0 ? ` · ${unbenchmarked} pending` : '');
+
                 const badges = ['', '🥇', '🥈', '🥉'];
 
                 const tableHTML = `
@@ -475,16 +547,30 @@ class ReportGenerator:
                             </tr>
                         </thead>
                         <tbody>
-                            ${data.leaderboard.map(model => `
-                                <tr>
-                                    <td class="rank">${badges[model.rank] || model.rank}</td>
-                                    <td class="model-id">${model.model_id}</td>
-                                    <td class="score">${model.composite_score.toFixed(1)}</td>
-                                    <td class="metric">${model.accuracy_percent.toFixed(1)}%</td>
-                                    <td class="metric">${model.avg_latency_seconds.toFixed(1)}s</td>
-                                    <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
-                                </tr>
-                            `).join('')}
+                            ${data.leaderboard.map(model => {
+                                const isBenchmarked = model.is_benchmarked !== false;
+                                const rowStyle = isBenchmarked ? '' : 'style="opacity: 0.5; font-style: italic;"';
+                                const accuracy = isBenchmarked && model.accuracy_percent != null
+                                    ? model.accuracy_percent.toFixed(1) + '%'
+                                    : '—';
+                                const latency = isBenchmarked && model.avg_latency_seconds != null
+                                    ? model.avg_latency_seconds.toFixed(1) + 's'
+                                    : '—';
+                                const score = isBenchmarked && model.composite_score > 0
+                                    ? model.composite_score.toFixed(1)
+                                    : 'Pending';
+
+                                return `
+                                    <tr ${rowStyle}>
+                                        <td class="rank">${badges[model.rank] || model.rank}</td>
+                                        <td class="model-id">${model.model_id}${!isBenchmarked ? ' <small>(not tested)</small>' : ''}</td>
+                                        <td class="score">${score}</td>
+                                        <td class="metric">${accuracy}</td>
+                                        <td class="metric">${latency}</td>
+                                        <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 `;
