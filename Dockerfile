@@ -42,6 +42,7 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages --upgrade pip 
 
 # Copy source code
 COPY src/ ./src/
+COPY scripts/ ./scripts/
 COPY openclaw-benchmark/ ./openclaw-benchmark/
 
 # Install openclaw-benchmark dependencies

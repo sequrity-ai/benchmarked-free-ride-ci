@@ -56,6 +56,9 @@ jobs:
             -v $(pwd)/docs:/app/docs \
             benchmarked-free-ride:latest \
             bash -c "
+              echo 'Step 0: Configuring skills...'
+              bash scripts/configure_skills.sh
+
               echo 'Step 1: Discovering models...'
               python3 src/discover_models.py
 
