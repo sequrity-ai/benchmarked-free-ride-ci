@@ -226,7 +226,7 @@
 
         async function loadOpenClawLeaderboard() {
             try {
-                const response = await fetch('api/utility_leaderboard.json');
+                const response = await fetch('api/openclawbench.json');
                 const data = await response.json();
 
                 if (data.leaderboard.length === 0) {
@@ -256,7 +256,7 @@
 
         async function loadAgentDojoLeaderboard() {
             try {
-                const response = await fetch('api/safety_leaderboard.json');
+                const response = await fetch('api/agentdojo.json');
                 const data = await response.json();
 
                 if (data.leaderboard.length === 0) {
