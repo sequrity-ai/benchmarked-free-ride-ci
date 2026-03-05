@@ -1,46 +1,207 @@
 {
-  "generated_at": "2026-03-04T16:32:01.897694",
-  "total_models": 5,
+  "generated_at": "2026-03-05T00:08:33.723519",
+  "total_models": 20,
+  "benchmarked_count": 20,
   "leaderboard": [
     {
       "rank": 1,
-      "model_id": "arcee-ai/trinity-large-preview:free",
-      "composite_score": 52.28,
+      "model_id": "stepfun/step-3.5-flash:free",
+      "composite_score": 52.51,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 38.15,
-      "context_length": 131000
+      "avg_latency_seconds": 37.47,
+      "context_length": 256000,
+      "quality_score": 0.4538,
+      "is_benchmarked": true
     },
     {
       "rank": 2,
-      "model_id": "stepfun/step-3.5-flash:free",
-      "composite_score": 51.75,
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "composite_score": 51.89,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 39.75,
-      "context_length": 256000
+      "avg_latency_seconds": 39.32,
+      "context_length": 131000,
+      "quality_score": 0.4027,
+      "is_benchmarked": true
     },
     {
       "rank": 3,
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "composite_score": 32.63,
+      "composite_score": 34.2,
       "accuracy_percent": 16.67,
-      "avg_latency_seconds": 27.11,
-      "context_length": 256000
+      "avg_latency_seconds": 22.39,
+      "context_length": 256000,
+      "quality_score": 0.4284,
+      "is_benchmarked": true
     },
     {
       "rank": 4,
-      "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "composite_score": 10.43,
+      "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
+      "composite_score": 27.51,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 58.72,
-      "context_length": 262144
+      "avg_latency_seconds": 7.46,
+      "context_length": 32768,
+      "quality_score": 0.3594,
+      "is_benchmarked": true
     },
     {
       "rank": 5,
+      "model_id": "meta-llama/llama-3.2-3b-instruct:free",
+      "composite_score": 27.5,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 7.49,
+      "context_length": 131072,
+      "quality_score": 0.3024,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 6,
+      "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
+      "composite_score": 27.48,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 7.57,
+      "context_length": 32768,
+      "quality_score": 0.3594,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 7,
+      "model_id": "google/gemma-3-27b-it:free",
+      "composite_score": 27.47,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 7.6,
+      "context_length": 131072,
+      "quality_score": 0.3064,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 8,
+      "model_id": "openai/gpt-oss-20b:free",
+      "composite_score": 27.46,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 7.62,
+      "context_length": 131072,
+      "quality_score": 0.3567,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 9,
       "model_id": "openrouter/free",
+      "composite_score": 27.42,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 42.73,
+      "context_length": 200000,
+      "quality_score": 0.4326,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 10,
+      "model_id": "openai/gpt-oss-120b:free",
+      "composite_score": 27.37,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 7.88,
+      "context_length": 131072,
+      "quality_score": 0.3567,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 11,
+      "model_id": "qwen/qwen3-235b-a22b-thinking-2507",
+      "composite_score": 23.34,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 54.99,
+      "context_length": 131072,
+      "quality_score": 0.3306,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 12,
+      "model_id": "meta-llama/llama-3.3-70b-instruct:free",
+      "composite_score": 22.97,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 21.09,
+      "context_length": 128000,
+      "quality_score": 0.3012,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 13,
+      "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
+      "composite_score": 21.67,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 100.78,
+      "context_length": 131072,
+      "quality_score": 0.3337,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 14,
+      "model_id": "z-ai/glm-4.5-air:free",
+      "composite_score": 21.67,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 106.11,
+      "context_length": 131072,
+      "quality_score": 0.3007,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 15,
+      "model_id": "arcee-ai/trinity-mini:free",
+      "composite_score": 19.97,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 30.08,
+      "context_length": 131072,
+      "quality_score": 0.3713,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 16,
+      "model_id": "qwen/qwen3-coder:free",
+      "composite_score": 12.15,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 53.54,
+      "context_length": 262000,
+      "quality_score": 0.3516,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 17,
+      "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "composite_score": 11.29,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 56.13,
+      "context_length": 262144,
+      "quality_score": 0.3794,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 18,
+      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
       "composite_score": 10.0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 68.6,
-      "context_length": 200000
+      "avg_latency_seconds": 64.73,
+      "context_length": 128000,
+      "quality_score": 0.3515,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 19,
+      "model_id": "qwen/qwen3-vl-30b-a3b-thinking",
+      "composite_score": 10.0,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 113.32,
+      "context_length": 131072,
+      "quality_score": 0.3408,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 20,
+      "model_id": "nvidia/nemotron-nano-9b-v2:free",
+      "composite_score": 10.0,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 87.94,
+      "context_length": 128000,
+      "quality_score": 0.3225,
+      "is_benchmarked": true
     }
   ]
 }

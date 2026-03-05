@@ -100,12 +100,69 @@
             <h1>🏆 Benchmarked Free Ride</h1>
             <p class="subtitle">OpenRouter Free Model Leaderboard</p>
             <p class="updated">Updated: <span id="updated-time">Loading...</span></p>
+            <p class="subtitle" style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.85;">
+                <span id="benchmark-stats">Loading benchmark stats...</span>
+            </p>
         </header>
         <main>
             <div id="leaderboard" class="loading">Loading leaderboard...</div>
         </main>
         <footer>
-            <p>Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/openclaw/skills">OpenClaw Skills</a></p>
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; text-align: left; font-size: 0.9rem; line-height: 1.7;">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5rem;">📋 About This Benchmark</h3>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🎯 What We Test:</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li><strong>Limited scope for efficiency:</strong> We test 3 basic scenarios on the openclaw_sandbox benchmark (File Manipulation, Weather Data, Web Search) with 9 easy-level tasks total (3 per scenario)</li>
+                        <li><strong>Single-turn only:</strong> Each task is a one-shot request without multi-turn conversations, minimizing API costs and complexity</li>
+                        <li><strong>What empty metrics mean:</strong> When you see "—" for Accuracy or Latency, it means that model hasn't been benchmarked because of quality ranking (shown as "Pending" in Score column)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🔍 How We Select Models (From 500+ Models to Top 20):</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li><strong>Step 1 - Free Filter:</strong> From OpenRouter's 500+ models, we identify models with $0.00 pricing for both prompt and completion</li>
+                        <li><strong>Step 2 - Capability Filter:</strong> We exclude models that can't run text-based agent tasks:
+                            <ul style="margin-top: 0.25rem;">
+                                <li>❌ Vision/image-only models (no text generation)</li>
+                                <li>❌ Audio/speech models (Whisper, etc.)</li>
+                                <li>❌ Embedding models (no conversational ability)</li>
+                                <li>❌ Models with &lt;4K context (too limited for agent tasks)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Step 3 - Quality Ranking (like the original FreeRide):</strong> Remaining models (~15-30) are scored using weighted criteria:
+                            <ul style="margin-top: 0.25rem;">
+                                <li>40% Context length (longer = better for complex tasks)</li>
+                                <li>30% Capabilities (function calling, structured output, etc.)</li>
+                                <li>20% Recency (newer models would likely to perform better)</li>
+                                <li>10% Provider trust (established providers like OpenAI, Meta, etc.)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Step 4 - Top 20 Selection:</strong> We actually run the benchmark for the top 20 highest-scoring models to balance comprehensive coverage with reasonable runtime (~2 hours daily)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <p style="margin: 0.5rem 0; color: #212529;"><strong>📊 Composite Score Calculation:</strong></p>
+                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
+                        <li>70% Accuracy (tasks passed / total tasks)</li>
+                        <li>20% Speed (normalized inverse latency—lower latency = higher score)</li>
+                        <li>10% Token efficiency (normalized inverse output tokens—fewer tokens = higher score)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                    <p style="margin: 0; color: #856404;"><strong>💡 Understanding the Results:</strong></p>
+                    <ul style="margin: 0.5rem 0 0 1.5rem; color: #856404;">
+                        <li><strong>Benchmarked models</strong> (top of list): Have full metrics including composite score, accuracy, and latency</li>
+                        <li><strong>"Pending" models</strong> (bottom of list, grayed out): Discovered as top-quality free models but not yet tested. Sorted by quality score. Will be benchmarked in future runs.</li>
+                        <li><strong>Models not shown:</strong> Either not free, excluded by capability filters, or ranked below top 20 in quality scoring</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: #6c757d;">Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/sequrity-ai/benchmarked-free-ride-ci">GitHub Repo</a></p>
         </footer>
     </div>
 
@@ -117,6 +174,14 @@
 
                 document.getElementById('updated-time').textContent =
                     new Date(data.generated_at).toLocaleString();
+
+                // Update benchmark stats
+                const benchmarkedCount = data.benchmarked_count || 0;
+                const totalCount = data.total_models || 0;
+                const unbenchmarked = totalCount - benchmarkedCount;
+                document.getElementById('benchmark-stats').textContent =
+                    `${benchmarkedCount} of ${totalCount} models benchmarked` +
+                    (unbenchmarked > 0 ? ` · ${unbenchmarked} pending` : '');
 
                 const badges = ['', '🥇', '🥈', '🥉'];
 
@@ -133,16 +198,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${data.leaderboard.map(model => `
-                                <tr>
-                                    <td class="rank">${badges[model.rank] || model.rank}</td>
-                                    <td class="model-id">${model.model_id}</td>
-                                    <td class="score">${model.composite_score.toFixed(1)}</td>
-                                    <td class="metric">${model.accuracy_percent.toFixed(1)}%</td>
-                                    <td class="metric">${model.avg_latency_seconds.toFixed(1)}s</td>
-                                    <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
-                                </tr>
-                            `).join('')}
+                            ${data.leaderboard.map(model => {
+                                const isBenchmarked = model.is_benchmarked !== false;
+                                const rowStyle = isBenchmarked ? '' : 'style="opacity: 0.5; font-style: italic;"';
+                                const accuracy = isBenchmarked && model.accuracy_percent != null
+                                    ? model.accuracy_percent.toFixed(1) + '%'
+                                    : '—';
+                                const latency = isBenchmarked && model.avg_latency_seconds != null
+                                    ? model.avg_latency_seconds.toFixed(1) + 's'
+                                    : '—';
+                                const score = isBenchmarked && model.composite_score > 0
+                                    ? model.composite_score.toFixed(1)
+                                    : 'Pending';
+
+                                return `
+                                    <tr ${rowStyle}>
+                                        <td class="rank">${badges[model.rank] || model.rank}</td>
+                                        <td class="model-id">${model.model_id}${!isBenchmarked ? ' <small>(not tested)</small>' : ''}</td>
+                                        <td class="score">${score}</td>
+                                        <td class="metric">${accuracy}</td>
+                                        <td class="metric">${latency}</td>
+                                        <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 `;
