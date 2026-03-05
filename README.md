@@ -7,11 +7,11 @@ Automated daily benchmarking of free OpenRouter models with quality scoring and 
 This repository automatically:
 
 1. **Discovers** free models from OpenRouter API (like [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride))
-2. **Benchmarks** them using the [openclaw-sandbox](../opencalw-sandbox) test suite
+2. **Benchmarks** them using the [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) test suite
 3. **Scores** models based on accuracy, latency, and token efficiency
 4. **Publishes** results to a public GitHub Pages leaderboard with JSON API
 
-The companion skill [benchmarked-free-ride-skill](https://github.com/your-org/benchmarked-free-ride-skill) lets you fetch these scores and auto-configure the best free model.
+The companion skill [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) lets you fetch these scores and auto-configure the best free model.
 
 ---
 
@@ -23,7 +23,7 @@ The companion skill [benchmarked-free-ride-skill](https://github.com/your-org/be
 │                                                              │
 │  1. Discover Free Models (OpenRouter API)                   │
 │       ↓                                                      │
-│  2. Run Benchmarks (openclaw-sandbox, single-turn mode)     │
+│  2. Run Benchmarks (openclaw-benchmark, single-turn mode)   │
 │       ↓                                                      │
 │  3. Calculate Quality Scores (accuracy + latency + tokens)  │
 │       ↓                                                      │
@@ -71,15 +71,15 @@ The companion skill [benchmarked-free-ride-skill](https://github.com/your-org/be
 
 ```bash
 # Clone repo
-git clone https://github.com/your-org/benchmarked-free-ride-ci.git
+git clone https://github.com/sequrity-ai/benchmarked-free-ride-ci.git
 cd benchmarked-free-ride-ci
 
-# Copy openclaw-sandbox from parent
-cp -r ../opencalw-sandbox ./opencalw-sandbox
+# Install openclaw-benchmark submodule
+git submodule update --init --recursive
 
 # Install dependencies
 pip install -r requirements.txt
-pip install -e ./opencalw-sandbox
+pip install -e ./openclaw-benchmark
 
 # Set environment variables
 export OPENROUTER_API_KEY="your-key"
@@ -98,7 +98,7 @@ python3 src/discover_models.py
 # Run benchmarks (just top 3 models, easy tasks only for testing)
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./opencalw-sandbox \
+  --sandbox-path ./openclaw-benchmark \
   --output-dir output/benchmarks \
   --scenarios file,weather \
   --difficulty easy \
@@ -137,18 +137,16 @@ Go to **Settings → Pages**:
 - Source: Deploy from a branch
 - Branch: `gh-pages` / `/ (root)`
 
-### 4. Copy openclaw-sandbox
+### 4. Initialize openclaw-benchmark submodule
 
-The workflow expects `opencalw-sandbox` to be in the parent directory or copied into the repo:
+The repository uses openclaw-benchmark as a git submodule:
 
 ```bash
-# Option 1: Copy into repo (adds to git)
-cp -r ../opencalw-sandbox ./opencalw-sandbox
-git add opencalw-sandbox/
-git commit -m "Add openclaw-sandbox"
+# Already configured - just initialize it
+git submodule update --init --recursive
 
-# Option 2: Use git submodule (if openclaw-sandbox is its own repo)
-git submodule add https://github.com/your-org/openclaw-sandbox.git opencalw-sandbox
+# Or if setting up from scratch
+git submodule add https://github.com/sequrity-ai/openclaw-benchmark.git openclaw-benchmark
 ```
 
 ### 5. Push and Run
@@ -183,7 +181,7 @@ Selects top 10 models for benchmarking.
 
 For each model:
 1. Configures OpenClaw to use that model
-2. Runs openclaw-sandbox benchmarks in **single-turn mode**
+2. Runs openclaw-benchmark benchmarks in **single-turn mode**
    - No AI agent needed (no OpenAI API cost)
    - Direct prompts to bot, immediate validation
 3. Collects: accuracy, latency, token usage
@@ -323,7 +321,7 @@ The **benchmarked-free-ride-skill** repository contains an OpenClaw skill that:
 **Usage:**
 ```bash
 # Install skill
-clawhub install your-org/benchmarked-free-ride
+clawhub install sequrity-ai/benchmarked-free-ride
 
 # View leaderboard
 benchmarked-free-ride leaderboard
@@ -332,7 +330,7 @@ benchmarked-free-ride leaderboard
 benchmarked-free-ride auto
 ```
 
-See [benchmarked-free-ride-skill](https://github.com/your-org/benchmarked-free-ride-skill) for details.
+See [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) for details.
 
 ---
 
@@ -348,12 +346,11 @@ Ensure the workflow has the Node.js setup step:
 - run: npm install -g @openclaw/cli
 ```
 
-### Benchmark fails: "No such file opencalw-sandbox"
+### Benchmark fails: "No such file openclaw-benchmark"
 
-Copy or link `opencalw-sandbox` into the repo:
+Initialize the openclaw-benchmark submodule:
 ```bash
-cp -r ../opencalw-sandbox ./opencalw-sandbox
-git add opencalw-sandbox/
+git submodule update --init --recursive
 ```
 
 ### GitHub Pages shows 404
@@ -401,7 +398,7 @@ To benchmark **all scenarios with all difficulties:**
 
 ### Adding New Scenarios
 
-Edit `src/run_benchmarks.py` to include more scenarios from openclaw-sandbox:
+Edit `src/run_benchmarks.py` to include more scenarios from openclaw-benchmark:
 ```python
 scenarios = ["file", "weather", "web", "summarize", "gmail", "github"]
 ```
@@ -440,4 +437,5 @@ Part of the Sequrity project. See parent repository for license details.
 
 - [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride) - Original inspiration, auto-configures free models
 - [OpenClaw](https://github.com/openclaw/openclaw) - AI agent framework
-- [openclaw-sandbox](../opencalw-sandbox) - Benchmark test suite
+- [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) - Benchmark test suite
+- [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) - OpenClaw skill to fetch and auto-configure best models
