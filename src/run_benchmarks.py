@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Run OpenClaw benchmarks against discovered models.
-Integrates with the openclaw-sandbox benchmark suite.
+Supports both utility benchmarks (openclaw-sandbox) and safety benchmarks (AgentDojo).
 """
 
 import os
@@ -12,13 +12,35 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 import argparse
+import logging
+
+# Import safety benchmark functionality
+from model_mapping import is_model_supported_for_safety
+from run_safety_benchmark import run_safety_benchmark
+
+logging.basicConfig(level=logging.INFO)
 
 
 class BenchmarkRunner:
-    def __init__(self, sandbox_path: Path, output_dir: Path):
+    def __init__(
+        self,
+        sandbox_path: Path,
+        output_dir: Path,
+        agentdojo_dir: Optional[Path] = None,
+        run_safety: bool = False
+    ):
         self.sandbox_path = sandbox_path
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.agentdojo_dir = agentdojo_dir
+        self.run_safety = run_safety
+
+        # Create separate directories for utility and safety results
+        self.utility_dir = output_dir / "utility"
+        self.safety_dir = output_dir / "safety"
+        self.utility_dir.mkdir(parents=True, exist_ok=True)
+        if run_safety:
+            self.safety_dir.mkdir(parents=True, exist_ok=True)
 
     def configure_openclaw_model(self, model_id: str) -> bool:
         """Configure OpenClaw to use the specified model."""
@@ -42,7 +64,7 @@ class BenchmarkRunner:
             print(f"Error configuring model {model_id}: {e}")
             return False
 
-    def run_benchmark_suite(
+    def run_utility_benchmark(
         self,
         model_id: str,
         scenarios: Optional[List[str]] = None,
@@ -50,7 +72,7 @@ class BenchmarkRunner:
         difficulty: str = "all"
     ) -> Optional[Dict[str, Any]]:
         """
-        Run the openclaw-sandbox benchmark suite for a specific model.
+        Run the utility benchmark (openclaw-sandbox) for a specific model.
 
         Args:
             model_id: The OpenRouter model ID
@@ -84,7 +106,7 @@ class BenchmarkRunner:
         for scenario in scenarios:
             print(f"\n--- Running scenario: {scenario} ---\n")
 
-            output_file = self.output_dir / f"benchmark_{safe_model_name}_{scenario}_{timestamp}.json"
+            output_file = self.utility_dir / f"utility_{safe_model_name}_{scenario}_{timestamp}.json"
             output_file_abs = output_file.resolve()
             output_file_abs.parent.mkdir(parents=True, exist_ok=True)
 
@@ -155,7 +177,7 @@ class BenchmarkRunner:
             return None
 
         # Create merged output file
-        merged_output = self.output_dir / f"benchmark_{safe_model_name}_{timestamp}.json"
+        merged_output = self.utility_dir / f"utility_{safe_model_name}_{timestamp}.json"
 
         # Calculate merged summary
         total_tasks = sum(len(s.get("task_results", [])) for s in all_scenario_results)
@@ -188,6 +210,54 @@ class BenchmarkRunner:
 
         print(f"\nAll scenarios completed! Merged results saved to: {merged_output}")
         return merged_result
+
+    def run_safety_benchmark_for_model(self, model_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Run the safety benchmark (AgentDojo) for a specific model.
+
+        Args:
+            model_id: The OpenRouter model ID
+
+        Returns:
+            Safety benchmark results as dict, or None if failed or not supported
+        """
+        if not self.run_safety:
+            return None
+
+        if not self.agentdojo_dir:
+            print(f"Warning: AgentDojo directory not configured, skipping safety benchmark")
+            return None
+
+        if not is_model_supported_for_safety(model_id):
+            print(f"Model {model_id} not supported for safety benchmark (no AgentDojo mapping)")
+            return None
+
+        print(f"\n{'='*60}")
+        print(f"Running SAFETY benchmark for model: {model_id}")
+        print(f"{'='*60}\n")
+
+        result = run_safety_benchmark(
+            model_id=model_id,
+            agentdojo_dir=self.agentdojo_dir,
+            output_dir=self.safety_dir,
+            attack="tool_knowledge",
+            defense=None,
+            suite="workspace"
+        )
+
+        if result:
+            # Save result to file
+            safe_model_name = model_id.replace("/", "_").replace(":", "_")
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_file = self.safety_dir / f"safety_{safe_model_name}_{timestamp}.json"
+
+            with open(output_file, "w") as f:
+                json.dump(result.to_dict(), f, indent=2)
+
+            print(f"Safety benchmark results saved to: {output_file}")
+            return result.to_dict()
+
+        return None
 
     def run_all_discovered_models(
         self,
@@ -226,18 +296,30 @@ class BenchmarkRunner:
             model_id = model["id"]
             print(f"\n[{i}/{len(models)}] Benchmarking: {model_id}")
 
-            result = self.run_benchmark_suite(
+            # Run utility benchmark
+            utility_result = self.run_utility_benchmark(
                 model_id=model_id,
                 scenarios=scenarios,
                 single_turn=single_turn,
                 difficulty=difficulty
             )
 
-            if result:
+            # Run safety benchmark (if enabled)
+            safety_result = None
+            if self.run_safety:
+                safety_result = self.run_safety_benchmark_for_model(model_id)
+
+            if utility_result:
                 # Add model metadata from discovery
-                result["quality_score"] = model.get("quality_score", 0)
-                result["context_length"] = model.get("context_length", 0)
-                all_results.append(result)
+                utility_result["quality_score"] = model.get("quality_score", 0)
+                utility_result["context_length"] = model.get("context_length", 0)
+                utility_result["benchmark_type"] = "utility"
+
+                # Add safety results if available
+                if safety_result:
+                    utility_result["safety_benchmark"] = safety_result
+
+                all_results.append(utility_result)
             else:
                 print(f"Failed to benchmark {model_id}")
 
@@ -289,8 +371,28 @@ def main():
         default=None,
         help="Maximum number of models to benchmark"
     )
+    parser.add_argument(
+        "--run-safety",
+        action="store_true",
+        default=False,
+        help="Run safety benchmarks (AgentDojo) in addition to utility benchmarks"
+    )
+    parser.add_argument(
+        "--agentdojo-dir",
+        type=Path,
+        default=None,
+        help="Path to AgentDojo repository (required if --run-safety is enabled)"
+    )
 
     args = parser.parse_args()
+
+    # Validate safety benchmark configuration
+    if args.run_safety and not args.agentdojo_dir:
+        # Default to sibling directory
+        args.agentdojo_dir = Path(__file__).parent.parent / "agentdojo"
+        if not args.agentdojo_dir.exists():
+            print(f"Error: --run-safety requires --agentdojo-dir or agentdojo submodule")
+            sys.exit(1)
 
     # Validate sandbox path
     if not args.sandbox_path.exists():
@@ -306,7 +408,9 @@ def main():
     # Create runner
     runner = BenchmarkRunner(
         sandbox_path=args.sandbox_path,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        agentdojo_dir=args.agentdojo_dir,
+        run_safety=args.run_safety
     )
 
     # Parse scenarios
