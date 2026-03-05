@@ -18,6 +18,10 @@ class ReportGenerator:
         self.api_dir = output_dir / "api"
         self.history_dir = self.api_dir / "history"
 
+        # Separate directories for utility and safety benchmarks
+        self.utility_dir = benchmarks_dir / "utility"
+        self.safety_dir = benchmarks_dir / "safety"
+
         # Create directories
         self.api_dir.mkdir(parents=True, exist_ok=True)
         self.history_dir.mkdir(parents=True, exist_ok=True)
@@ -61,18 +65,27 @@ class ReportGenerator:
         """
         Infer model_id from benchmark filename.
         Expected formats:
-        - benchmark_{provider}_{model}_{variant}_{timestamp}.json
-        - benchmark_{provider}_{model}_{variant}_{scenario}_{timestamp}.json
-        Example: benchmark_stepfun_step-3.5-flash_free_file_20260303_211904.json
+        - utility_{provider}_{model}_{variant}_{timestamp}.json
+        - utility_{provider}_{model}_{variant}_{scenario}_{timestamp}.json
+        - benchmark_{provider}_{model}_{variant}_{timestamp}.json (legacy)
+        - safety_{provider}_{model}_{variant}_{timestamp}.json
+        Example: utility_stepfun_step-3.5-flash_free_file_20260303_211904.json
                  -> stepfun/step-3.5-flash:free
         """
-        if not filename.startswith("benchmark_"):
+        # Handle both new (utility_/safety_) and legacy (benchmark_) prefixes
+        prefix = None
+        if filename.startswith("utility_"):
+            prefix = "utility_"
+        elif filename.startswith("safety_"):
+            prefix = "safety_"
+        elif filename.startswith("benchmark_"):
+            prefix = "benchmark_"
+
+        if not prefix:
             return None
 
-        # Remove 'benchmark_' prefix and '.json' suffix
-        name_part = filename[
-            10:-5
-        ]  # Remove 'benchmark_' (10 chars) and '.json' (5 chars)
+        # Remove prefix and '.json' suffix
+        name_part = filename[len(prefix):-5]  # Remove prefix and '.json' (5 chars)
 
         # Split by underscore
         parts = name_part.split("_")
@@ -134,12 +147,8 @@ class ReportGenerator:
 
         return model_id
 
-    def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
-        """Load all benchmark JSON files from the benchmarks directory.
-
-        Skips individual scenario files (e.g., *_file_*.json, *_weather_*.json)
-        and only loads merged benchmark files that contain all scenarios.
-        """
+    def load_utility_benchmark_results(self) -> List[Dict[str, Any]]:
+        """Load utility benchmark results from utility/ directory."""
         results = []
         skipped_individual = []
 
@@ -154,17 +163,60 @@ class ReportGenerator:
             "_summarize_",
         ]
 
-        for json_file in self.benchmarks_dir.glob("benchmark_*.json"):
-            # Skip individual scenario files - only load merged files
-            filename = json_file.name
-            is_individual_scenario = any(
-                suffix in filename for suffix in scenario_suffixes
+        # Check both new utility/ dir and legacy benchmark_* files in root
+        search_patterns = []
+        if self.utility_dir.exists():
+            search_patterns.append((self.utility_dir, "utility_*.json"))
+        search_patterns.append((self.benchmarks_dir, "benchmark_*.json"))
+
+        for search_dir, pattern in search_patterns:
+            for json_file in search_dir.glob(pattern):
+                # Skip individual scenario files - only load merged files
+                filename = json_file.name
+                is_individual_scenario = any(
+                    suffix in filename for suffix in scenario_suffixes
+                )
+
+                if is_individual_scenario:
+                    skipped_individual.append(filename)
+                    continue
+
+                try:
+                    with open(json_file, "r") as f:
+                        data = json.load(f)
+
+                        # If model_id is missing, try to infer from filename
+                        if not data.get("model_id") or data.get("model_id") == "unknown":
+                            model_id = self._infer_model_id_from_filename(json_file.name)
+                            if model_id:
+                                data["model_id"] = model_id
+                                print(
+                                    f"Inferred model_id '{model_id}' from filename: {json_file.name}"
+                                )
+
+                        # Mark as utility benchmark
+                        data["benchmark_type"] = "utility"
+                        results.append(data)
+                except Exception as e:
+                    print(f"Error loading {json_file}: {e}")
+
+        if skipped_individual:
+            print(
+                f"Skipped {len(skipped_individual)} individual scenario files (using merged files instead)"
             )
 
-            if is_individual_scenario:
-                skipped_individual.append(filename)
-                continue
+        print(f"Loaded {len(results)} utility benchmark results")
+        return results
 
+    def load_safety_benchmark_results(self) -> List[Dict[str, Any]]:
+        """Load safety benchmark results from safety/ directory."""
+        results = []
+
+        if not self.safety_dir.exists():
+            print("No safety benchmark directory found")
+            return results
+
+        for json_file in self.safety_dir.glob("safety_*.json"):
             try:
                 with open(json_file, "r") as f:
                     data = json.load(f)
@@ -174,20 +226,40 @@ class ReportGenerator:
                         model_id = self._infer_model_id_from_filename(json_file.name)
                         if model_id:
                             data["model_id"] = model_id
-                            print(
-                                f"Inferred model_id '{model_id}' from filename: {json_file.name}"
-                            )
 
+                    # Mark as safety benchmark
+                    data["benchmark_type"] = "safety"
                     results.append(data)
             except Exception as e:
                 print(f"Error loading {json_file}: {e}")
 
-        if skipped_individual:
-            print(
-                f"Skipped {len(skipped_individual)} individual scenario files (using merged files instead)"
-            )
-
+        print(f"Loaded {len(results)} safety benchmark results")
         return results
+
+    def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
+        """Load all benchmark results (utility + safety)."""
+        utility_results = self.load_utility_benchmark_results()
+        safety_results = self.load_safety_benchmark_results()
+
+        # Merge utility and safety results by model_id
+        merged_results = {}
+
+        for result in utility_results:
+            model_id = result.get("model_id")
+            if model_id:
+                merged_results[model_id] = result
+
+        # Add safety results to corresponding utility results
+        for safety_result in safety_results:
+            model_id = safety_result.get("model_id")
+            if model_id:
+                if model_id in merged_results:
+                    merged_results[model_id]["safety_benchmark"] = safety_result
+                else:
+                    # Model has safety results but no utility results
+                    merged_results[model_id] = {"model_id": model_id, "safety_benchmark": safety_result}
+
+        return list(merged_results.values())
 
     def calculate_composite_score(self, result: Dict[str, Any]) -> float:
         """
@@ -705,6 +777,115 @@ class ReportGenerator:
 
         print(f"Generated {output_file}")
 
+    def generate_safety_leaderboard_json(self, results: List[Dict[str, Any]]):
+        """Generate safety_leaderboard.json with models ranked by security score."""
+        # Filter models with safety benchmarks
+        safety_models = []
+        for r in results:
+            safety_data = r.get("safety_benchmark")
+            if safety_data:
+                model_id = r.get("model_id")
+                safety_models.append({
+                    "model_id": model_id,
+                    "security_score": safety_data.get("security_percent", 0),
+                    "utility_score": safety_data.get("utility_percent", 0),
+                    "total_user_tasks": safety_data.get("total_user_tasks", 0),
+                    "passed_user_tasks": safety_data.get("passed_user_tasks", 0),
+                    "total_injection_tasks": safety_data.get("total_injection_tasks", 0),
+                    "passed_injection_tasks": safety_data.get("passed_injection_tasks", 0),
+                    "agentdojo_model": safety_data.get("agentdojo_model", ""),
+                })
+
+        # Sort by security score (higher is better)
+        safety_models.sort(key=lambda m: -m["security_score"])
+
+        output_file = self.api_dir / "safety_leaderboard.json"
+        with open(output_file, "w") as f:
+            json.dump(
+                {
+                    "generated_at": datetime.now().isoformat(),
+                    "total_models": len(safety_models),
+                    "leaderboard": [
+                        {
+                            "rank": i + 1,
+                            **m
+                        }
+                        for i, m in enumerate(safety_models)
+                    ],
+                },
+                f,
+                indent=2,
+            )
+
+        print(f"Generated {output_file} with {len(safety_models)} models")
+
+    def generate_utility_leaderboard_json(self, results: List[Dict[str, Any]]):
+        """Generate utility_leaderboard.json - same as old leaderboard.json but explicitly named."""
+        # This is the existing utility leaderboard logic
+        benchmarked_models = {}
+        for r in results:
+            model_id = r.get("model_id")
+            # Only include if it has utility benchmark data
+            if r.get("scenarios") or r.get("summary"):
+                benchmarked_models[model_id] = self.aggregate_model_stats(r)
+
+        # Include all discovered models
+        all_models = []
+        for model_id, model_data in self.discovered_models.items():
+            if model_id in benchmarked_models:
+                model_entry = benchmarked_models[model_id]
+                model_entry["is_benchmarked"] = True
+                all_models.append(model_entry)
+            else:
+                # Unbenchmarked model
+                all_models.append(
+                    {
+                        "model_id": model_id,
+                        "composite_score": 0,
+                        "accuracy_percent": None,
+                        "avg_latency_seconds": None,
+                        "context_length": model_data.get("context_length", 0),
+                        "quality_score": model_data.get("quality_score", 0),
+                        "is_benchmarked": False,
+                    }
+                )
+
+        # Sort: benchmarked first (by composite score), then unbenchmarked (by quality score)
+        all_models.sort(
+            key=lambda m: (
+                not m["is_benchmarked"],
+                -m["composite_score"] if m["is_benchmarked"] else 0,
+                -m["quality_score"],
+            )
+        )
+
+        output_file = self.api_dir / "utility_leaderboard.json"
+        with open(output_file, "w") as f:
+            json.dump(
+                {
+                    "generated_at": datetime.now().isoformat(),
+                    "total_models": len(all_models),
+                    "benchmarked_count": len(benchmarked_models),
+                    "leaderboard": [
+                        {
+                            "rank": i + 1,
+                            "model_id": m["model_id"],
+                            "composite_score": m["composite_score"],
+                            "accuracy_percent": m["accuracy_percent"],
+                            "avg_latency_seconds": m["avg_latency_seconds"],
+                            "context_length": m["context_length"],
+                            "quality_score": m.get("quality_score", 0),
+                            "is_benchmarked": m["is_benchmarked"],
+                        }
+                        for i, m in enumerate(all_models)
+                    ],
+                },
+                f,
+                indent=2,
+            )
+
+        print(f"Generated {output_file} with {len(all_models)} models")
+
     def generate_all_reports(self):
         """Generate all reports and outputs."""
         print("Loading benchmark results...")
@@ -718,7 +899,9 @@ class ReportGenerator:
 
         print("\nGenerating reports...")
         self.generate_models_json(results)
-        self.generate_leaderboard_json(results)
+        self.generate_leaderboard_json(results)  # Legacy combined leaderboard
+        self.generate_utility_leaderboard_json(results)  # NEW: Utility leaderboard
+        self.generate_safety_leaderboard_json(results)  # NEW: Safety leaderboard
         self.generate_history_snapshot(results)
         self.generate_html_index()
 
