@@ -2,6 +2,8 @@
 
 Automated daily benchmarking of free OpenRouter models with quality scoring and public leaderboard.
 
+**🌐 Live Leaderboard:** https://sequrity-ai.github.io/benchmarked-free-ride-ci/
+
 ## What This Does
 
 This repository automatically:
@@ -209,7 +211,7 @@ Aggregates all benchmark results and generates:
 
 Workflow automatically deploys `docs/` to `gh-pages` branch.
 
-**Live URL:** `https://YOUR_USERNAME.github.io/benchmarked-free-ride-ci/`
+**Live URL:** https://sequrity-ai.github.io/benchmarked-free-ride-ci/
 
 ---
 
