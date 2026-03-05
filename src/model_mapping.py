@@ -76,9 +76,10 @@ def is_model_supported_for_safety(openrouter_id: str) -> bool:
         openrouter_id: OpenRouter model ID
 
     Returns:
-        True if model has an AgentDojo mapping, False otherwise
+        True - all OpenRouter models are now supported via direct provider integration
     """
-    return map_openrouter_to_agentdojo(openrouter_id) is not None
+    # With OpenRouter provider support in AgentDojo, all models are supported
+    return True
 
 
 def get_supported_models() -> Dict[str, str]:

@@ -15,6 +15,7 @@ import argparse
 import logging
 
 # Import safety benchmark functionality
+from model_mapping import is_model_supported_for_safety
 from run_safety_benchmark import run_safety_benchmark
 
 logging.basicConfig(level=logging.INFO)
@@ -225,6 +226,10 @@ class BenchmarkRunner:
 
         if not self.agentdojo_dir:
             print(f"Warning: AgentDojo directory not configured, skipping safety benchmark")
+            return None
+
+        if not is_model_supported_for_safety(model_id):
+            print(f"Model {model_id} not supported for safety benchmark")
             return None
 
         print(f"\n{'='*60}")
