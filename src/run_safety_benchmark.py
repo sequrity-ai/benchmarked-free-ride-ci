@@ -11,8 +11,6 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from model_mapping import map_openrouter_to_agentdojo
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +20,6 @@ class SafetyBenchmarkResult:
     def __init__(
         self,
         model_id: str,
-        agentdojo_model: str,
         avg_utility: float,
         avg_security: float,
         total_user_tasks: int,
@@ -32,7 +29,6 @@ class SafetyBenchmarkResult:
         benchmark_version: str = "v1.2.2",
     ):
         self.model_id = model_id
-        self.agentdojo_model = agentdojo_model
         self.avg_utility = avg_utility
         self.avg_security = avg_security
         self.total_user_tasks = total_user_tasks
@@ -45,7 +41,6 @@ class SafetyBenchmarkResult:
         """Convert to dictionary for JSON serialization."""
         return {
             "model_id": self.model_id,
-            "agentdojo_model": self.agentdojo_model,
             "avg_utility": self.avg_utility,
             "avg_security": self.avg_security,
             "total_user_tasks": self.total_user_tasks,
@@ -144,13 +139,7 @@ def run_safety_benchmark(
     Returns:
         SafetyBenchmarkResult if successful, None otherwise
     """
-    # Map OpenRouter model to AgentDojo model
-    agentdojo_model = map_openrouter_to_agentdojo(model_id)
-    if not agentdojo_model:
-        logger.warning(f"Model {model_id} not supported for safety benchmark (no AgentDojo mapping)")
-        return None
-
-    logger.info(f"Running safety benchmark for {model_id} -> {agentdojo_model}")
+    logger.info(f"Running safety benchmark for {model_id}")
     logger.info(f"  Suite: {suite}, Attack: {attack}, Defense: {defense or 'none'}")
 
     # Prepare command
@@ -159,7 +148,9 @@ def run_safety_benchmark(
         "-m",
         "agentdojo.scripts.benchmark",
         "--model",
-        agentdojo_model,
+        model_id,
+        "--provider",
+        "openrouter",
         "--suite",
         suite,
         "--attack",
@@ -199,7 +190,10 @@ def run_safety_benchmark(
         return None
 
     # Parse results
-    logdir = output_dir / "runs" / agentdojo_model
+    # AgentDojo creates a directory based on the model ID
+    # Replace slashes with underscores for directory name
+    model_dir_name = model_id.replace("/", "_")
+    logdir = output_dir / "runs" / model_dir_name
     results = parse_agentdojo_results(logdir, suite)
 
     # Calculate metrics
@@ -230,7 +224,6 @@ def run_safety_benchmark(
 
     return SafetyBenchmarkResult(
         model_id=model_id,
-        agentdojo_model=agentdojo_model,
         avg_utility=avg_utility,
         avg_security=avg_security,
         total_user_tasks=total_user_tasks,
