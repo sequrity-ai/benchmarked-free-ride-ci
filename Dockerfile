@@ -44,9 +44,14 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages --upgrade pip 
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY openclaw-benchmark/ ./openclaw-benchmark/
+COPY agentdojo/ ./agentdojo/
 
 # Install openclaw-benchmark dependencies
 WORKDIR /app/openclaw-benchmark
+RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
+
+# Install AgentDojo dependencies
+WORKDIR /app/agentdojo
 RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 
 # Verify installation

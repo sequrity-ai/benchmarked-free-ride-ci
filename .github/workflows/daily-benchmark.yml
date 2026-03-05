@@ -74,7 +74,9 @@ jobs:
                 --scenarios '$SCENARIOS' \
                 --single-turn \
                 --difficulty '$DIFFICULTY' \
-                --max-models $MAX_MODELS
+                --max-models $MAX_MODELS \
+                --run-safety \
+                --agentdojo-dir ./agentdojo
 
               echo 'Step 3: Generating reports...'
               python3 src/generate_report.py \
