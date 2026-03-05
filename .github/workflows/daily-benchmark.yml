@@ -43,7 +43,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: |
-          MAX_MODELS="${{ github.event.inputs.max_models || '5' }}"
+          MAX_MODELS="${{ github.event.inputs.max_models || '20' }}"
           SCENARIOS="${{ github.event.inputs.scenarios || 'file,weather,web' }}"
           DIFFICULTY="${{ github.event.inputs.difficulty || 'easy' }}"
 
