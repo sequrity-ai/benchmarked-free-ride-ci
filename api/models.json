@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-03-05T00:08:33.722312",
+  "generated_at": "2026-03-05T03:33:57.061702",
   "total_models": 20,
-  "benchmarked_models": 20,
-  "unbenchmarked_models": 0,
+  "benchmarked_models": 5,
+  "unbenchmarked_models": 15,
   "models": [
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4538,
+      "quality_score": 0.4537,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-04T22:32:21.349814",
+      "benchmarked_at": "2026-03-05T03:14:45.948274",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 37.47,
+      "avg_latency_seconds": 38.29,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 52.51,
+      "composite_score": 52.24,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -34,16 +34,16 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.4326,
+      "quality_score": 0.4325,
       "context_length": 200000,
-      "benchmarked_at": "2026-03-04T22:37:14.847463",
+      "benchmarked_at": "2026-03-05T03:21:14.448583",
       "total_tasks": 6,
       "passed_tasks": 1,
       "accuracy_percent": 16.67,
-      "avg_latency_seconds": 42.73,
+      "avg_latency_seconds": 60.24,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.42,
+      "composite_score": 21.67,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -62,16 +62,16 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4284,
+      "quality_score": 0.4283,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-04T22:40:07.597339",
+      "benchmarked_at": "2026-03-05T03:24:22.977809",
       "total_tasks": 6,
       "passed_tasks": 1,
       "accuracy_percent": 16.67,
-      "avg_latency_seconds": 22.39,
+      "avg_latency_seconds": 25.23,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 34.2,
+      "composite_score": 33.26,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -90,16 +90,16 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.4027,
+      "quality_score": 0.4026,
       "context_length": 131000,
-      "benchmarked_at": "2026-03-04T22:44:40.762450",
+      "benchmarked_at": "2026-03-05T03:27:54.647474",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 39.32,
+      "avg_latency_seconds": 29.04,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 51.89,
+      "composite_score": 55.32,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -118,16 +118,16 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.3794,
+      "quality_score": 0.3793,
       "context_length": 262144,
-      "benchmarked_at": "2026-03-04T22:50:55.542397",
+      "benchmarked_at": "2026-03-05T03:33:57.011794",
       "total_tasks": 6,
       "passed_tasks": 0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 56.13,
+      "avg_latency_seconds": 54.02,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 11.29,
+      "composite_score": 11.99,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -146,423 +146,228 @@
     },
     {
       "model_id": "arcee-ai/trinity-mini:free",
-      "quality_score": 0.3713,
+      "quality_score": 0.3712,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T22:54:33.886614",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 30.08,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 19.97,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
-      "quality_score": 0.3594,
+      "quality_score": 0.3593,
       "context_length": 32768,
-      "benchmarked_at": "2026-03-04T22:56:06.238470",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.57,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.48,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
-      "quality_score": 0.3594,
+      "quality_score": 0.3593,
       "context_length": 32768,
-      "benchmarked_at": "2026-03-04T22:57:28.071973",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.46,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.51,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3567,
+      "quality_score": 0.3566,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T22:59:01.962620",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.88,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.37,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3567,
+      "quality_score": 0.3566,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:00:25.112294",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.62,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.46,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.3516,
+      "quality_score": 0.3515,
       "context_length": 262000,
-      "benchmarked_at": "2026-03-04T23:06:23.846539",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 53.54,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 12.15,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.3515,
+      "quality_score": 0.3514,
       "context_length": 128000,
-      "benchmarked_at": "2026-03-04T23:13:29.735800",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 64.73,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 10.0,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "qwen/qwen3-vl-30b-a3b-thinking",
-      "quality_score": 0.3408,
+      "quality_score": 0.3407,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:25:27.415456",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 113.32,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 10.0,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
-      "quality_score": 0.3337,
+      "quality_score": 0.3336,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:36:09.552187",
-      "total_tasks": 6,
-      "passed_tasks": 1,
-      "accuracy_percent": 16.67,
-      "avg_latency_seconds": 100.78,
+      "benchmarked_at": "",
+      "total_tasks": 0,
+      "passed_tasks": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 21.67,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "qwen/qwen3-235b-a22b-thinking-2507",
-      "quality_score": 0.3306,
+      "quality_score": 0.3305,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:42:16.690831",
-      "total_tasks": 6,
-      "passed_tasks": 1,
-      "accuracy_percent": 16.67,
-      "avg_latency_seconds": 54.99,
+      "benchmarked_at": "",
+      "total_tasks": 0,
+      "passed_tasks": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 23.34,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.3225,
+      "quality_score": 0.3224,
       "context_length": 128000,
-      "benchmarked_at": "2026-03-04T23:51:41.522714",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 87.94,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 10.0,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "google/gemma-3-27b-it:free",
-      "quality_score": 0.3064,
+      "quality_score": 0.3063,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:53:13.880948",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.6,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.47,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "meta-llama/llama-3.2-3b-instruct:free",
       "quality_score": 0.3024,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-04T23:54:35.959300",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 7.49,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 27.5,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "meta-llama/llama-3.3-70b-instruct:free",
       "quality_score": 0.3012,
       "context_length": 128000,
-      "benchmarked_at": "2026-03-04T23:57:19.758803",
-      "total_tasks": 6,
+      "benchmarked_at": "",
+      "total_tasks": 0,
       "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 21.09,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 22.97,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     },
     {
       "model_id": "z-ai/glm-4.5-air:free",
-      "quality_score": 0.3007,
+      "quality_score": 0.3006,
       "context_length": 131072,
-      "benchmarked_at": "2026-03-05T00:08:33.675062",
-      "total_tasks": 6,
-      "passed_tasks": 1,
-      "accuracy_percent": 16.67,
-      "avg_latency_seconds": 106.11,
+      "benchmarked_at": "",
+      "total_tasks": 0,
+      "passed_tasks": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 21.67,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ],
-      "is_benchmarked": true
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
     }
   ]
 }
