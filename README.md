@@ -7,11 +7,11 @@ Automated daily benchmarking of free OpenRouter models with quality scoring and 
 This repository automatically:
 
 1. **Discovers** free models from OpenRouter API (like [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride))
-2. **Benchmarks** them using the [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) test suite
+2. **Benchmarks** them using the [openclaw-benchmark](https://github.com/Aaron-Zhao123/openclaw-benchmark) test suite
 3. **Scores** models based on accuracy, latency, and token efficiency
 4. **Publishes** results to a public GitHub Pages leaderboard with JSON API
 
-The companion skill [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) lets you fetch these scores and auto-configure the best free model.
+The companion skill [benchmarked-free-ride-skill](https://github.com/Aaron-Zhao123/benchmarked-free-ride-skill) lets you fetch these scores and auto-configure the best free model.
 
 ---
 
@@ -71,7 +71,7 @@ The companion skill [benchmarked-free-ride-skill](https://github.com/sequrity-ai
 
 ```bash
 # Clone repo
-git clone https://github.com/sequrity-ai/benchmarked-free-ride-ci.git
+git clone https://github.com/Aaron-Zhao123/benchmarked-free-ride-ci.git
 cd benchmarked-free-ride-ci
 
 # Install openclaw-benchmark submodule
@@ -146,7 +146,7 @@ The repository uses openclaw-benchmark as a git submodule:
 git submodule update --init --recursive
 
 # Or if setting up from scratch
-git submodule add https://github.com/sequrity-ai/openclaw-benchmark.git openclaw-benchmark
+git submodule add https://github.com/Aaron-Zhao123/openclaw-benchmark.git openclaw-benchmark
 ```
 
 ### 5. Push and Run
@@ -321,7 +321,7 @@ The **benchmarked-free-ride-skill** repository contains an OpenClaw skill that:
 **Usage:**
 ```bash
 # Install skill
-clawhub install sequrity-ai/benchmarked-free-ride
+clawhub install Aaron-Zhao123/benchmarked-free-ride
 
 # View leaderboard
 benchmarked-free-ride leaderboard
@@ -330,7 +330,7 @@ benchmarked-free-ride leaderboard
 benchmarked-free-ride auto
 ```
 
-See [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) for details.
+See [benchmarked-free-ride-skill](https://github.com/Aaron-Zhao123/benchmarked-free-ride-skill) for details.
 
 ---
 
@@ -437,5 +437,5 @@ Part of the Sequrity project. See parent repository for license details.
 
 - [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride) - Original inspiration, auto-configures free models
 - [OpenClaw](https://github.com/openclaw/openclaw) - AI agent framework
-- [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) - Benchmark test suite
-- [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) - OpenClaw skill to fetch and auto-configure best models
+- [openclaw-benchmark](https://github.com/Aaron-Zhao123/openclaw-benchmark) - Benchmark test suite
+- [benchmarked-free-ride-skill](https://github.com/Aaron-Zhao123/benchmarked-free-ride-skill) - OpenClaw skill to fetch and auto-configure best models
