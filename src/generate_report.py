@@ -529,23 +529,23 @@ class ReportGenerator:
         print(f"Generated history snapshot: {snapshot_file}")
 
     def generate_html_index(self):
-        """Generate a simple HTML leaderboard page."""
+        """Generate HTML with landing page and tabs for OpenClawBench and AgentDojo leaderboards."""
         html_content = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benchmarked Free Ride - OpenRouter Model Leaderboard</title>
+    <title>Benchmarked Free Ride - Dual Leaderboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 2rem;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -560,222 +560,281 @@ class ReportGenerator:
         }
         h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .subtitle { opacity: 0.9; font-size: 1.1rem; }
-        .updated { margin-top: 1rem; opacity: 0.8; font-size: 0.9rem; }
-        main { padding: 2rem; }
-        .loading {
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 1.5rem;
             text-align: center;
-            padding: 3rem;
-            color: #666;
-            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
+        .nav-tab:hover { background: #e9ecef; color: #495057; }
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
         }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        .nav-tab .icon { font-size: 1.5rem; display: block; margin-bottom: 0.25rem; }
+
+        .tab-content { display: none; padding: 2rem; }
+        .tab-content.active { display: block; }
+
+        .landing { text-align: center; padding: 3rem 2rem; }
+        .landing h2 { font-size: 2rem; color: #212529; margin-bottom: 1rem; }
+        .landing p { font-size: 1.1rem; color: #6c757d; max-width: 800px; margin: 0 auto 2rem; line-height: 1.6; }
+
+        .benchmark-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
+        .card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .card h3 { font-size: 1.5rem; color: #495057; margin-bottom: 0.5rem; }
+        .card p { font-size: 1rem; color: #6c757d; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
         th {
             background: #f8f9fa;
             font-weight: 600;
             color: #495057;
             text-transform: uppercase;
             font-size: 0.85rem;
-            letter-spacing: 0.5px;
         }
         tr:hover { background: #f8f9fa; }
-        .rank {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #667eea;
-            width: 60px;
+        .rank { font-size: 1.2rem; font-weight: bold; color: #667eea; text-align: center; width: 60px; }
+        .model-id { font-family: 'Monaco', monospace; font-size: 0.9rem; }
+        .score { font-size: 1.1rem; font-weight: 600; color: #28a745; }
+        .empty-state {
             text-align: center;
-        }
-        .model-id {
-            font-family: 'Monaco', 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: #212529;
-        }
-        .score {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #28a745;
-        }
-        .metric { color: #6c757d; }
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-        .badge-gold { background: #ffd700; color: #856404; }
-        .badge-silver { background: #c0c0c0; color: #383d41; }
-        .badge-bronze { background: #cd7f32; color: #fff; }
-        footer {
-            text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
         }
-        a { color: #667eea; text-decoration: none; }
-        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🏆 Benchmarked Free Ride</h1>
-            <p class="subtitle">OpenRouter Free Model Leaderboard</p>
-            <p class="updated">Updated: <span id="updated-time">Loading...</span></p>
-            <p class="subtitle" style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.85;">
-                <span id="benchmark-stats">Loading benchmark stats...</span>
-            </p>
         </header>
-        <main>
-            <div id="leaderboard" class="loading">Loading leaderboard...</div>
-        </main>
-        <footer>
-            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; text-align: left; font-size: 0.9rem; line-height: 1.7;">
-                <h3 style="margin-top: 0; font-size: 1.1rem; color: #495057; border-bottom: 2px solid #dee2e6; padding-bottom: 0.5rem;">📋 About This Benchmark</h3>
 
-                <div style="margin-top: 1rem;">
-                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🎯 What We Test:</strong></p>
-                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
-                        <li><strong>Limited scope for efficiency:</strong> We test 3 basic scenarios on the openclaw_sandbox benchmark (File Manipulation, Weather Data, Web Search) with 9 easy-level tasks total (3 per scenario)</li>
-                        <li><strong>Single-turn only:</strong> Each task is a one-shot request without multi-turn conversations, minimizing API costs and complexity</li>
-                        <li><strong>What empty metrics mean:</strong> When you see "—" for Accuracy or Latency, it means that model hasn't been benchmarked because of quality ranking (shown as "Pending" in Score column)</li>
-                    </ul>
+        <nav class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('overview')">
+                <span class="icon">🏠</span>
+                <span>Overview</span>
+            </div>
+            <div class="nav-tab" onclick="showTab('openclaw')">
+                <span class="icon">⚡</span>
+                <span>OpenClawBench</span>
+            </div>
+            <div class="nav-tab" onclick="showTab('agentdojo')">
+                <span class="icon">🛡️</span>
+                <span>AgentDojo</span>
+            </div>
+        </nav>
+
+        <div id="overview" class="tab-content active">
+            <div class="landing">
+                <h2>Comprehensive Model Evaluation</h2>
+                <p>
+                    We benchmark free OpenRouter models across two critical dimensions using industry-standard frameworks.
+                    Each benchmark tests different aspects of AI agent capabilities.
+                </p>
+
+                <div class="benchmark-cards">
+                    <div class="card" onclick="showTab('openclaw')">
+                        <div class="icon">⚡</div>
+                        <h3>OpenClawBench</h3>
+                        <p>
+                            <strong>What it tests:</strong> Task completion capabilities including file manipulation, web search, and weather queries.
+                            <br><strong>How it works:</strong> Single-turn task execution across 3 scenarios with 9 easy-level tasks total (3 per scenario).
+                            <br><strong>Scoring:</strong> Composite score = 70% accuracy + 20% speed + 10% token efficiency
+                        </p>
+                    </div>
+
+                    <div class="card" onclick="showTab('agentdojo')">
+                        <div class="icon">🛡️</div>
+                        <h3>AgentDojo</h3>
+                        <p>
+                            <strong>What it tests:</strong> Prompt injection resistance and security in agentic scenarios.
+                            <br><strong>How it works:</strong> Workspace suite with tool_knowledge attacks testing whether models follow malicious instructions.
+                            <br><strong>Scoring:</strong> Security score (% of attacks blocked) and utility score (% of legitimate tasks completed under attack)
+                        </p>
+                    </div>
                 </div>
 
-                <div style="margin-top: 1rem;">
-                    <p style="margin: 0.5rem 0; color: #212529;"><strong>🔍 How We Select Models (From 500+ Models to Top 20):</strong></p>
-                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
-                        <li><strong>Step 1 - Free Filter:</strong> From OpenRouter's 500+ models, we identify models with $0.00 pricing for both prompt and completion</li>
-                        <li><strong>Step 2 - Capability Filter:</strong> We exclude models that can't run text-based agent tasks:
-                            <ul style="margin-top: 0.25rem;">
-                                <li>❌ Vision/image-only models (no text generation)</li>
-                                <li>❌ Audio/speech models (Whisper, etc.)</li>
-                                <li>❌ Embedding models (no conversational ability)</li>
-                                <li>❌ Models with &lt;4K context (too limited for agent tasks)</li>
-                            </ul>
-                        </li>
-                        <li><strong>Step 3 - Quality Ranking (like the original FreeRide):</strong> Remaining models (~15-30) are scored using weighted criteria:
-                            <ul style="margin-top: 0.25rem;">
-                                <li>40% Context length (longer = better for complex tasks)</li>
-                                <li>30% Capabilities (function calling, structured output, etc.)</li>
-                                <li>20% Recency (newer models would likely to perform better)</li>
-                                <li>10% Provider trust (established providers like OpenAI, Meta, etc.)</li>
-                            </ul>
-                        </li>
-                        <li><strong>Step 4 - Top 20 Selection:</strong> We actually run the benchmark for the top 20 highest-scoring models to balance comprehensive coverage with reasonable runtime (~2 hours daily)</li>
+                <div style="margin-top: 2rem; padding: 1.5rem; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                    <h3 style="margin-top: 0; color: #1976D2; font-size: 1.2rem;">📚 How OpenClawBench Works</h3>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        OpenClawBench evaluates models on practical task completion through single-turn interactions:
+                    </p>
+                    <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                        <li><strong>File Manipulation:</strong> Create, read, transform, and extract data from files (JSON, CSV, Markdown)</li>
+                        <li><strong>Web Search:</strong> Query information from the web and synthesize results</li>
+                        <li><strong>Weather Data:</strong> Retrieve and process weather information for different locations</li>
                     </ul>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        Each task receives a <strong>binary score</strong> (100% pass or 0% fail) based on whether the agent successfully completed the objective.
+                        The final ranking uses a <strong>composite score</strong> weighted by accuracy (70%), speed (20%), and token efficiency (10%).
+                    </p>
                 </div>
 
-                <div style="margin-top: 1rem;">
-                    <p style="margin: 0.5rem 0; color: #212529;"><strong>📊 Composite Score Calculation:</strong></p>
-                    <ul style="margin: 0.5rem 0 1rem 1.5rem; color: #495057;">
-                        <li>70% Accuracy (tasks passed / total tasks)</li>
-                        <li>20% Speed (normalized inverse latency—lower latency = higher score)</li>
-                        <li>10% Token efficiency (normalized inverse output tokens—fewer tokens = higher score)</li>
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: #fff3e0; border-radius: 8px; border-left: 4px solid #FF9800; text-align: left;">
+                    <h3 style="margin-top: 0; color: #E65100; font-size: 1.2rem;">🛡️ How AgentDojo Works</h3>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        AgentDojo tests whether AI agents can resist prompt injection attacks while maintaining utility:
+                    </p>
+                    <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                        <li><strong>User Tasks:</strong> Legitimate requests the agent should complete (baseline utility)</li>
+                        <li><strong>Injection Tasks:</strong> Same requests but with hidden malicious instructions injected via tool outputs</li>
+                        <li><strong>Attack Type:</strong> tool_knowledge attacks embed instructions in file contents, API responses, etc.</li>
                     </ul>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        Models are scored on two dimensions:
+                    </p>
+                    <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                        <li><strong>Security Score:</strong> Percentage of injection attacks successfully blocked (higher = more secure)</li>
+                        <li><strong>Utility Score:</strong> Percentage of legitimate tasks completed correctly under attack conditions</li>
+                    </ul>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        Models are ranked by <strong>security score</strong> as the primary metric, with utility score shown for context.
+                    </p>
                 </div>
 
-                <div style="margin-top: 1rem; padding: 0.75rem; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
-                    <p style="margin: 0; color: #856404;"><strong>💡 Understanding the Results:</strong></p>
-                    <ul style="margin: 0.5rem 0 0 1.5rem; color: #856404;">
-                        <li><strong>Benchmarked models</strong> (top of list): Have full metrics including composite score, accuracy, and latency</li>
-                        <li><strong>"Pending" models</strong> (bottom of list, grayed out): Discovered as top-quality free models but not yet tested. Sorted by quality score. Will be benchmarked in future runs.</li>
-                        <li><strong>Models not shown:</strong> Either not free, excluded by capability filters, or ranked below top 20 in quality scoring</li>
-                    </ul>
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <p style="color: #856404; text-align: left; font-size: 0.95rem; margin: 0; line-height: 1.7;">
+                        <strong>📝 Note:</strong> Not all models support AgentDojo testing.
+                        Only models with compatible API interfaces and proper model mappings appear in the AgentDojo leaderboard.
+                        All free OpenRouter models are tested on OpenClawBench, but only a subset can be evaluated on AgentDojo
+                        due to framework limitations and model availability.
+                    </p>
                 </div>
             </div>
-            <p style="font-size: 0.85rem; color: #6c757d;">Data updated daily via GitHub Actions | <a href="api/models.json">Raw Data (JSON)</a> | <a href="https://github.com/sequrity-ai/benchmarked-free-ride-ci">GitHub Repo</a></p>
-        </footer>
+        </div>
+
+        <div id="openclaw" class="tab-content">
+            <h2 style="margin-bottom: 0.5rem; color: #212529;">⚡ OpenClawBench</h2>
+            <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                Task completion benchmark • Ranked by composite score (accuracy + speed + efficiency)
+            </p>
+            <div id="openclaw-leaderboard">Loading...</div>
+        </div>
+
+        <div id="agentdojo" class="tab-content">
+            <h2 style="margin-bottom: 0.5rem; color: #212529;">🛡️ AgentDojo</h2>
+            <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                Prompt injection security benchmark • Ranked by security score (higher = more secure)
+            </p>
+            <div id="agentdojo-leaderboard">Loading...</div>
+        </div>
     </div>
 
     <script>
-        async function loadLeaderboard() {
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.closest('.nav-tab').classList.add('active');
+        }
+
+        async function loadOpenClawLeaderboard() {
             try {
-                const response = await fetch('api/leaderboard.json');
+                const response = await fetch('api/utility_leaderboard.json');
                 const data = await response.json();
 
-                document.getElementById('updated-time').textContent =
-                    new Date(data.generated_at).toLocaleString();
+                if (data.leaderboard.length === 0) {
+                    document.getElementById('openclaw-leaderboard').innerHTML =
+                        '<div class="empty-state">No OpenClaw benchmarks available yet</div>';
+                    return;
+                }
 
-                // Update benchmark stats
-                const benchmarkedCount = data.benchmarked_count || 0;
-                const totalCount = data.total_models || 0;
-                const unbenchmarked = totalCount - benchmarkedCount;
-                document.getElementById('benchmark-stats').textContent =
-                    `${benchmarkedCount} of ${totalCount} models benchmarked` +
-                    (unbenchmarked > 0 ? ` · ${unbenchmarked} pending` : '');
-
-                const badges = ['', '🥇', '🥈', '🥉'];
-
-                const tableHTML = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Model</th>
-                                <th>Score</th>
-                                <th>Accuracy</th>
-                                <th>Avg Latency</th>
-                                <th>Context</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.leaderboard.map(model => {
-                                const isBenchmarked = model.is_benchmarked !== false;
-                                const rowStyle = isBenchmarked ? '' : 'style="opacity: 0.5; font-style: italic;"';
-                                const accuracy = isBenchmarked && model.accuracy_percent != null
-                                    ? model.accuracy_percent.toFixed(1) + '%'
-                                    : '—';
-                                const latency = isBenchmarked && model.avg_latency_seconds != null
-                                    ? model.avg_latency_seconds.toFixed(1) + 's'
-                                    : '—';
-                                const score = isBenchmarked && model.composite_score > 0
-                                    ? model.composite_score.toFixed(1)
-                                    : 'Pending';
-
-                                return `
-                                    <tr ${rowStyle}>
-                                        <td class="rank">${badges[model.rank] || model.rank}</td>
-                                        <td class="model-id">${model.model_id}${!isBenchmarked ? ' <small>(not tested)</small>' : ''}</td>
-                                        <td class="score">${score}</td>
-                                        <td class="metric">${accuracy}</td>
-                                        <td class="metric">${latency}</td>
-                                        <td class="metric">${(model.context_length / 1000).toFixed(0)}K</td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                `;
-
-                document.getElementById('leaderboard').innerHTML = tableHTML;
-            } catch (error) {
-                document.getElementById('leaderboard').innerHTML =
-                    '<p style="color: red;">Error loading leaderboard data</p>';
-                console.error('Error:', error);
+                const html = `<table>
+                    <tr><th>Rank</th><th>Model</th><th>Score</th><th>Accuracy</th><th>Latency</th></tr>
+                    ${data.leaderboard.map(m => `
+                        <tr>
+                            <td class="rank">${m.rank}</td>
+                            <td class="model-id">${m.model_id}</td>
+                            <td class="score">${m.composite_score.toFixed(1)}</td>
+                            <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
+                            <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
+                        </tr>
+                    `).join('')}
+                </table>`;
+                document.getElementById('openclaw-leaderboard').innerHTML = html;
+            } catch (e) {
+                document.getElementById('openclaw-leaderboard').innerHTML =
+                    '<div class="empty-state">Error loading OpenClaw benchmark data</div>';
             }
         }
 
-        loadLeaderboard();
+        async function loadAgentDojoLeaderboard() {
+            try {
+                const response = await fetch('api/safety_leaderboard.json');
+                const data = await response.json();
+
+                if (data.leaderboard.length === 0) {
+                    document.getElementById('agentdojo-leaderboard').innerHTML =
+                        '<div class="empty-state">No AgentDojo benchmarks available yet</div>';
+                    return;
+                }
+
+                const html = `<table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Security Score</th>
+                        <th>Utility Score</th>
+                        <th>Attacks Blocked</th>
+                    </tr>
+                    ${data.leaderboard.map(m => `
+                        <tr>
+                            <td class="rank">${m.rank}</td>
+                            <td class="model-id">${m.model_id}</td>
+                            <td class="score">${m.security_score.toFixed(1)}%</td>
+                            <td>${m.utility_score.toFixed(1)}%</td>
+                            <td>${m.total_injection_tasks - m.passed_injection_tasks}/${m.total_injection_tasks}</td>
+                        </tr>
+                    `).join('')}
+                </table>`;
+                document.getElementById('agentdojo-leaderboard').innerHTML = html;
+            } catch (e) {
+                document.getElementById('agentdojo-leaderboard').innerHTML =
+                    '<div class="empty-state">Error loading AgentDojo benchmark data</div>';
+            }
+        }
+
+        loadOpenClawLeaderboard();
+        loadAgentDojoLeaderboard();
     </script>
 </body>
-</html>"""
+</html>
+"""
 
         output_file = self.output_dir / "index.html"
         with open(output_file, "w") as f:
             f.write(html_content)
 
         print(f"Generated {output_file}")
+
 
     def generate_safety_leaderboard_json(self, results: List[Dict[str, Any]]):
         """Generate safety_leaderboard.json with models ranked by security score."""
