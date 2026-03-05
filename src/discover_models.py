@@ -167,16 +167,20 @@ def main():
     compatible_models = filter_benchmark_compatible(free_models)
     print(f"Found {len(compatible_models)} benchmark-compatible models")
 
-    print("\nSelecting top 20 models by quality score...")
-    top_models = select_top_models(compatible_models, limit=20)
+    print("\nRanking models by quality score...")
+    # Rank ALL compatible models (not just top N) so leaderboard can show all
+    ranked_models = select_top_models(compatible_models, limit=len(compatible_models))
 
-    print("\nTop 20 models:")
-    for i, model in enumerate(top_models, 1):
+    print(f"\nTop 20 models (will be benchmarked):")
+    for i, model in enumerate(ranked_models[:20], 1):
         print(f"{i}. {model['id']} (score: {model['quality_score']}, context: {model.get('context_length', 0)})")
+
+    if len(ranked_models) > 20:
+        print(f"\n... and {len(ranked_models) - 20} more models (will appear as 'Pending' on leaderboard)")
 
     print("\nSaving results...")
     output_dir = Path("output")
-    save_discovered_models(top_models, output_dir)
+    save_discovered_models(ranked_models, output_dir)
 
     print("\nDone!")
 
