@@ -758,7 +758,7 @@ class ReportGenerator:
 
         async function loadOpenClawLeaderboard() {
             try {
-                const response = await fetch('api/utility_leaderboard.json');
+                const response = await fetch('api/openclawbench.json');
                 const data = await response.json();
 
                 if (data.leaderboard.length === 0) {
@@ -788,7 +788,7 @@ class ReportGenerator:
 
         async function loadAgentDojoLeaderboard() {
             try {
-                const response = await fetch('api/safety_leaderboard.json');
+                const response = await fetch('api/agentdojo.json');
                 const data = await response.json();
 
                 if (data.leaderboard.length === 0) {
@@ -858,7 +858,7 @@ class ReportGenerator:
         # Sort by security score (higher is better)
         safety_models.sort(key=lambda m: -m["security_score"])
 
-        output_file = self.api_dir / "safety_leaderboard.json"
+        output_file = self.api_dir / "agentdojo.json"
         with open(output_file, "w") as f:
             json.dump(
                 {
@@ -918,7 +918,7 @@ class ReportGenerator:
             )
         )
 
-        output_file = self.api_dir / "utility_leaderboard.json"
+        output_file = self.api_dir / "openclawbench.json"
         with open(output_file, "w") as f:
             json.dump(
                 {
