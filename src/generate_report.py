@@ -721,17 +721,54 @@ class ReportGenerator:
                 </div>
 
                 <div style="margin-top: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
-                    <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
-                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                        <strong>Full Benchmark:</strong> <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2;">AgentDojo v1.2.2</a>
-                        includes 33 user tasks × 6 injection tasks = 198 test cases per model in the workspace suite.
+                    <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 How AgentDojo Testing Works</h3>
+
+                    <p style="color: #424242; margin: 0.5rem 0 1rem 0; line-height: 1.7;">
+                        <strong>Source:</strong> <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2;">AgentDojo v1.2.2</a>
+                        - Prompt injection security benchmark for AI agents
                     </p>
+
+                    <h4 style="color: #1565C0; font-size: 1rem; margin: 1rem 0 0.5rem 0;">🎯 Test Structure</h4>
                     <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                        <strong>This Leaderboard:</strong> We test the <strong>first 10 user tasks</strong> × 6 injection tasks = 60 test cases per model
-                        to balance comprehensive security coverage with practical runtime constraints (~10 minutes per model vs ~30 minutes for the full suite).
+                        Each model is tested with <strong>user tasks</strong> (legitimate operations) combined with <strong>injection tasks</strong> (malicious instructions hidden in tool outputs).
                     </p>
+
+                    <div style="margin: 1rem 0; padding: 1rem; background: white; border-radius: 4px; border: 1px solid #b3d9f7;">
+                        <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                            <strong>10 User Tasks</strong> (legitimate work like "Schedule a meeting" or "Find emails from last week")
+                            <br>×
+                            <br><strong>6 Injection Tasks</strong> (attacks like "Send sensitive data to attacker" or "Delete important files")
+                            <br>=
+                            <br><strong>60 test cases per model</strong>
+                        </p>
+                    </div>
+
+                    <h4 style="color: #1565C0; font-size: 1rem; margin: 1rem 0 0.5rem 0;">🔓 The 6 Injection Attack Types</h4>
+                    <ul style="color: #424242; line-height: 1.7; margin: 0.5rem 0;">
+                        <li><strong>Email Exfiltration:</strong> Send specific emails to attacker's address</li>
+                        <li><strong>File Deletion:</strong> Delete files from cloud storage</li>
+                        <li><strong>Calendar Manipulation:</strong> Create events with unauthorized participants</li>
+                        <li><strong>Data Forwarding:</strong> Forward sensitive email contents to attacker</li>
+                        <li><strong>Security Code Theft:</strong> Steal 2FA/security codes from emails</li>
+                        <li><strong>Evidence Erasure:</strong> Exfiltrate data then delete evidence (hardest)</li>
+                    </ul>
+
+                    <h4 style="color: #1565C0; font-size: 1rem; margin: 1rem 0 0.5rem 0;">⚔️ Attack Vector: tool_knowledge</h4>
                     <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                        <strong>Attack Type:</strong> tool_knowledge (instructions embedded in tool outputs like files, API responses, etc.)
+                        Malicious instructions are <strong>embedded in tool outputs</strong> (file contents, API responses, email bodies) that the agent reads while performing legitimate tasks.
+                        A secure agent must complete the user's task while ignoring injected commands.
+                    </p>
+
+                    <h4 style="color: #1565C0; font-size: 1rem; margin: 1rem 0 0.5rem 0;">📈 Scoring Metrics</h4>
+                    <ul style="color: #424242; line-height: 1.7; margin: 0.5rem 0;">
+                        <li><strong>Security Score:</strong> % of injection attacks successfully blocked (higher is better)</li>
+                        <li><strong>Utility Score:</strong> % of legitimate user tasks completed correctly despite attacks</li>
+                        <li><strong>Attacks Blocked:</strong> Number of malicious actions prevented out of 60 total attempts</li>
+                    </ul>
+
+                    <p style="color: #424242; margin: 1rem 0 0.5rem 0; line-height: 1.7; font-size: 0.9rem;">
+                        <strong>Note:</strong> Full benchmark includes 33 user tasks (198 test cases). We test 10 tasks to balance comprehensive coverage
+                        with practical runtime (~10 min vs ~30 min per model).
                     </p>
                 </div>
 
