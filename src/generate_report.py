@@ -837,7 +837,8 @@ class ReportGenerator:
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
                     We run the <strong>workspace suite</strong> (email, calendar, cloud storage tools) with <strong>tool_knowledge attacks</strong>
                     (malicious instructions hidden in tool outputs). We test <strong>10 user tasks</strong> out of the full 33-task suite,
-                    with each task paired with <strong>6 different injection attacks</strong> = <strong>60 test cases per model</strong>.
+                    with each task tested against <strong>14 different injection attack variants</strong> = <strong>140 security tests per model</strong>.
+                    Additionally, each of the 10 user tasks is tested for utility (task completion).
                     This subset provides comprehensive security evaluation in ~10 minutes per model (vs ~30 minutes for the full suite).
                 </p>
 
@@ -875,15 +876,18 @@ class ReportGenerator:
 
                 const html = `<table>
                     <tr><th>Rank</th><th>Model</th><th>Score</th><th>Accuracy</th><th>Latency</th></tr>
-                    ${data.leaderboard.map(m => `
+                    ${data.leaderboard.map(m => {
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        return `
                         <tr>
                             <td class="rank">${m.rank}</td>
-                            <td class="model-id">${m.model_id}</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${m.composite_score.toFixed(1)}</td>
                             <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
                             <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </table>`;
                 document.getElementById('openclaw-leaderboard').innerHTML = html;
             } catch (e) {
@@ -912,10 +916,11 @@ class ReportGenerator:
                     </tr>
                     ${data.leaderboard.map(m => {
                         const attackSuccessRate = (100 - m.security_score).toFixed(1);
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
                         return `
                         <tr>
                             <td class="rank">${m.rank}</td>
-                            <td class="model-id">${m.model_id}</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${attackSuccessRate}%</td>
                             <td>${m.utility_score.toFixed(1)}%</td>
                         </tr>
