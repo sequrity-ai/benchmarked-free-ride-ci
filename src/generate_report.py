@@ -810,8 +810,40 @@ class ReportGenerator:
         <div id="agentdojo" class="tab-content">
             <h2 style="margin-bottom: 0.5rem; color: #212529;">🛡️ AgentDojo</h2>
             <p style="color: #6c757d; margin-bottom: 1.5rem;">
-                Prompt injection security benchmark • Ranked by security score (higher = more secure)
+                Prompt injection security benchmark • Ranked by attack success rate (lower = more secure)
             </p>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Source:</strong> <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2;">AgentDojo v1.2.2</a>
+                    - Prompt injection security benchmark for AI agents
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Suite:</strong> workspace (email, calendar, cloud storage tools)
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Attack Type:</strong> tool_knowledge (malicious instructions hidden in tool outputs)
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Test Cases:</strong> 10 user tasks × 6 injection tasks = 60 tests per model
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Scoring:</strong>
+                </p>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Attack Success Rate = (Attacks Succeeded / Total Attacks) × 100</strong><br>
+                        <span style="font-size: 0.9rem; color: #616161;">Lower is better - shows what % of injection attacks succeeded (0% = perfect security)</span>
+                    </li>
+                    <li><strong>Utility Score = (Tasks Completed / Total Tasks) × 100</strong><br>
+                        <span style="font-size: 0.9rem; color: #616161;">Higher is better - shows task completion rate while under attack</span>
+                    </li>
+                </ul>
+                <p style="color: #616161; margin: 1rem 0 0 0; line-height: 1.7; font-size: 0.9rem;">
+                    <strong>Note:</strong> Full benchmark has 33 user tasks (198 test cases). We test 10 tasks for faster benchmarking (~10 min vs ~30 min per model).
+                </p>
+            </div>
+
             <div id="agentdojo-leaderboard">Loading...</div>
         </div>
     </div>
@@ -869,19 +901,20 @@ class ReportGenerator:
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Security Score</th>
-                        <th>Utility Score</th>
-                        <th>Attacks Blocked</th>
+                        <th>Attack Success Rate ↓</th>
+                        <th>Utility Score ↑</th>
                     </tr>
-                    ${data.leaderboard.map(m => `
+                    ${data.leaderboard.map(m => {
+                        const attackSuccessRate = (100 - m.security_score).toFixed(1);
+                        return `
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id">${m.model_id}</td>
-                            <td class="score">${m.security_score.toFixed(1)}%</td>
+                            <td class="score">${attackSuccessRate}%</td>
                             <td>${m.utility_score.toFixed(1)}%</td>
-                            <td>${m.total_injection_tasks - m.passed_injection_tasks}/${m.total_injection_tasks}</td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </table>`;
                 document.getElementById('agentdojo-leaderboard').innerHTML = html;
             } catch (e) {
