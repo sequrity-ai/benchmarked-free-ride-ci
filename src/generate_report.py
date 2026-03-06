@@ -789,19 +789,28 @@ class ReportGenerator:
 
             <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
                 <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Source:</strong> <a href="https://github.com/Josephrp/openclawbench" target="_blank" style="color: #1976D2;">openclawbench</a>
-                    - Task completion benchmark for AI agents
+                    <a href="https://github.com/sequrity-ai/openclawbench" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">OpenClawBench</a>
+                    is a task completion benchmark that tests AI agents' ability to use tools and complete real-world tasks.
+                    Agents are evaluated on file manipulation, weather lookups, and web searches using a simulated bot interface.
                 </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Scenarios:</strong> File manipulation, Weather lookup, Web search
+                    We run <strong>3 scenarios</strong> (file, weather, web) with <strong>easy difficulty tasks</strong> in <strong>single-turn mode</strong>
+                    (the agent provides one complete response per task). This subset provides fast benchmarking (~2-5 minutes per model)
+                    while covering core capabilities. Each scenario contains 3 tasks for a total of 9 tasks per model.
                 </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Difficulty:</strong> Easy tasks (single-turn mode for speed)
-                </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Scoring:</strong> Composite score combining task accuracy, execution speed, and efficiency
-                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Rank:</strong> Position in the leaderboard (1 = best)</li>
+                    <li><strong>Model:</strong> OpenRouter model identifier</li>
+                    <li><strong>Score:</strong> Composite metric combining task accuracy (% correct), execution speed, and efficiency (higher is better)</li>
+                    <li><strong>Tasks Passed:</strong> Number of tasks completed successfully out of 9 total tasks</li>
+                </ul>
             </div>
 
             <div id="openclaw-leaderboard">Loading...</div>
@@ -815,33 +824,30 @@ class ReportGenerator:
 
             <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
                 <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Source:</strong> <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2;">AgentDojo v1.2.2</a>
-                    - Prompt injection security benchmark for AI agents
+                    <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">AgentDojo v1.2.2</a>
+                    is a prompt injection security benchmark that tests AI agents' resistance to adversarial attacks.
+                    It evaluates whether agents can complete legitimate tasks while resisting malicious instructions
+                    embedded in tool outputs (emails, files, API responses). Developed by ETH Zurich's SPY Lab.
                 </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Suite:</strong> workspace (email, calendar, cloud storage tools)
+                    We run the <strong>workspace suite</strong> (email, calendar, cloud storage tools) with <strong>tool_knowledge attacks</strong>
+                    (malicious instructions hidden in tool outputs). We test <strong>10 user tasks</strong> out of the full 33-task suite,
+                    with each task paired with <strong>6 different injection attacks</strong> = <strong>60 test cases per model</strong>.
+                    This subset provides comprehensive security evaluation in ~10 minutes per model (vs ~30 minutes for the full suite).
                 </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Attack Type:</strong> tool_knowledge (malicious instructions hidden in tool outputs)
-                </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Test Cases:</strong> 10 user tasks × 6 injection tasks = 60 tests per model
-                </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Scoring:</strong>
-                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
                 <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
-                    <li><strong>Attack Success Rate = (Attacks Succeeded / Total Attacks) × 100</strong><br>
-                        <span style="font-size: 0.9rem; color: #616161;">Lower is better - shows what % of injection attacks succeeded (0% = perfect security)</span>
-                    </li>
-                    <li><strong>Utility Score = (Tasks Completed / Total Tasks) × 100</strong><br>
-                        <span style="font-size: 0.9rem; color: #616161;">Higher is better - shows task completion rate while under attack</span>
-                    </li>
+                    <li><strong>Rank:</strong> Position in the leaderboard (1 = most secure)</li>
+                    <li><strong>Model:</strong> OpenRouter model identifier</li>
+                    <li><strong>Attack Success Rate:</strong> Percentage of injection attacks that succeeded. Formula: (Attacks Succeeded / Total Attacks) × 100. <strong>Lower is better</strong> — 0% means perfect security, 100% means all attacks succeeded.</li>
+                    <li><strong>Utility Score:</strong> Percentage of legitimate tasks completed while under attack. Formula: (Tasks Completed / Total Tasks) × 100. <strong>Higher is better</strong> — shows the agent maintains functionality despite adversarial conditions.</li>
                 </ul>
-                <p style="color: #616161; margin: 1rem 0 0 0; line-height: 1.7; font-size: 0.9rem;">
-                    <strong>Note:</strong> Full benchmark has 33 user tasks (198 test cases). We test 10 tasks for faster benchmarking (~10 min vs ~30 min per model).
-                </p>
             </div>
 
             <div id="agentdojo-leaderboard">Loading...</div>
