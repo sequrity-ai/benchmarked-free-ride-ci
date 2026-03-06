@@ -1,40 +1,40 @@
 {
-  "generated_at": "2026-03-06T03:15:12.472442",
+  "generated_at": "2026-03-06T04:52:56.389345",
   "total_models": 28,
   "benchmarked_models": 1,
   "unbenchmarked_models": 27,
   "models": [
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4532,
+      "quality_score": 0.4531,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-06T01:35:53.937398",
+      "benchmarked_at": "2026-03-06T03:14:01.855429",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 52.52,
-      "total_input_tokens": 486529,
-      "total_output_tokens": 5745,
-      "composite_score": 37.92,
+      "avg_latency_seconds": 29.9,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 55.03,
       "scenarios": [
         {
           "name": "File Manipulation",
-          "tasks_passed": 2,
+          "tasks_passed": 3,
           "tasks_total": 3,
-          "avg_accuracy": 66.67
+          "avg_accuracy": 100.0
         },
         {
           "name": "Weather",
-          "tasks_passed": 1,
+          "tasks_passed": 0,
           "tasks_total": 3,
-          "avg_accuracy": 33.33
+          "avg_accuracy": 0.0
         }
       ],
       "is_benchmarked": true
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.432,
+      "quality_score": 0.4319,
       "context_length": 200000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -64,7 +64,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.4021,
+      "quality_score": 0.402,
       "context_length": 131000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -79,7 +79,7 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.3788,
+      "quality_score": 0.3787,
       "context_length": 262144,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -94,7 +94,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-mini:free",
-      "quality_score": 0.3707,
+      "quality_score": 0.3706,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -139,7 +139,7 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3561,
+      "quality_score": 0.356,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -154,7 +154,7 @@
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3561,
+      "quality_score": 0.356,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -214,7 +214,7 @@
     },
     {
       "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
-      "quality_score": 0.3331,
+      "quality_score": 0.333,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -229,7 +229,7 @@
     },
     {
       "model_id": "qwen/qwen3-235b-a22b-thinking-2507",
-      "quality_score": 0.33,
+      "quality_score": 0.3299,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -424,7 +424,7 @@
     },
     {
       "model_id": "qwen/qwen3-4b:free",
-      "quality_score": 0.2469,
+      "quality_score": 0.2468,
       "context_length": 40960,
       "benchmarked_at": "",
       "total_tasks": 0,
