@@ -720,12 +720,25 @@ class ReportGenerator:
                     </p>
                 </div>
 
+                <div style="margin-top: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                    <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        <strong>Full Benchmark:</strong> <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2;">AgentDojo v1.2.2</a>
+                        includes 33 user tasks × 6 injection tasks = 198 test cases per model in the workspace suite.
+                    </p>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        <strong>This Leaderboard:</strong> We test the <strong>first 10 user tasks</strong> × 6 injection tasks = 60 test cases per model
+                        to balance comprehensive security coverage with practical runtime constraints (~10 minutes per model vs ~30 minutes for the full suite).
+                    </p>
+                    <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                        <strong>Attack Type:</strong> tool_knowledge (instructions embedded in tool outputs like files, API responses, etc.)
+                    </p>
+                </div>
+
                 <div style="margin-top: 1.5rem; padding: 1.5rem; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
                     <p style="color: #856404; text-align: left; font-size: 0.95rem; margin: 0; line-height: 1.7;">
-                        <strong>📝 Note:</strong> Not all models support AgentDojo testing.
-                        Only models with compatible API interfaces and proper model mappings appear in the AgentDojo leaderboard.
-                        All free OpenRouter models are tested on OpenClawBench, but only a subset can be evaluated on AgentDojo
-                        due to framework limitations and model availability.
+                        <strong>📝 Note:</strong> All free OpenRouter models are tested.
+                        Models use the OpenRouter provider integration with AgentDojo, enabling security testing for any model accessible via OpenRouter's API.
                     </p>
                 </div>
             </div>
@@ -736,6 +749,24 @@ class ReportGenerator:
             <p style="color: #6c757d; margin-bottom: 1.5rem;">
                 Task completion benchmark • Ranked by composite score (accuracy + speed + efficiency)
             </p>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Source:</strong> <a href="https://github.com/Josephrp/openclaw-benchmark" target="_blank" style="color: #1976D2;">openclaw-benchmark</a>
+                    - Task completion benchmark for AI agents
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Scenarios:</strong> File manipulation, Weather lookup, Web search
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Difficulty:</strong> Easy tasks (single-turn mode for speed)
+                </p>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <strong>Scoring:</strong> Composite score combining task accuracy, execution speed, and efficiency
+                </p>
+            </div>
+
             <div id="openclaw-leaderboard">Loading...</div>
         </div>
 
