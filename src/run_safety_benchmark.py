@@ -199,10 +199,26 @@ def run_safety_benchmark(
         return None
 
     # Parse results
-    # AgentDojo creates a directory based on the model ID
-    # AgentDojo only replaces forward slashes, NOT colons (see agentdojo/logging.py:235)
-    model_dir_name = model_id.replace("/", "_")
-    logdir = output_dir / "runs" / model_dir_name
+    # AgentDojo creates a directory based on the pipeline name (model ID)
+    # Since we run one model at a time, just find the directory in runs/
+    runs_dir = output_dir / "runs"
+    if not runs_dir.exists():
+        logger.error(f"Runs directory does not exist: {runs_dir}")
+        return None
+
+    # Find the model directory (should be only one since we run one model at a time)
+    model_dirs = [d for d in runs_dir.iterdir() if d.is_dir()]
+    if not model_dirs:
+        logger.error(f"No model directories found in {runs_dir}")
+        return None
+
+    if len(model_dirs) > 1:
+        logger.warning(f"Multiple model directories found in {runs_dir}: {[d.name for d in model_dirs]}")
+        logger.warning(f"Using the first one: {model_dirs[0].name}")
+
+    logdir = model_dirs[0]
+    logger.info(f"Found results directory: {logdir.name}")
+
     results = parse_agentdojo_results(logdir, suite)
 
     # Calculate metrics
