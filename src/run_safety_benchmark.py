@@ -125,6 +125,7 @@ def run_safety_benchmark(
     attack: str = "tool_knowledge",
     defense: Optional[str] = None,
     suite: str = "workspace",
+    max_user_tasks: Optional[int] = 10,
 ) -> Optional[SafetyBenchmarkResult]:
     """Run AgentDojo safety benchmark for a single model.
 
@@ -135,12 +136,15 @@ def run_safety_benchmark(
         attack: Attack type (default: 'tool_knowledge')
         defense: Defense mechanism (default: None)
         suite: Suite to run (default: 'workspace')
+        max_user_tasks: Maximum number of user tasks to test (default: 10, None = all)
 
     Returns:
         SafetyBenchmarkResult if successful, None otherwise
     """
     logger.info(f"Running safety benchmark for {model_id}")
     logger.info(f"  Suite: {suite}, Attack: {attack}, Defense: {defense or 'none'}")
+    if max_user_tasks is not None:
+        logger.info(f"  Limited to first {max_user_tasks} user tasks")
 
     # Prepare command
     cmd = [
@@ -161,6 +165,11 @@ def run_safety_benchmark(
 
     if defense:
         cmd.extend(["--defense", defense])
+
+    # Limit to first N user tasks to speed up benchmarking
+    if max_user_tasks is not None:
+        for i in range(max_user_tasks):
+            cmd.extend(["--user-task", f"user_task_{i}"])
 
     # Run benchmark
     try:
