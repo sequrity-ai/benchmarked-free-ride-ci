@@ -89,7 +89,10 @@ jobs:
         with:
           name: benchmark-results-${{ github.run_number }}
           path: |
-            output/
+            output/discovered_models.json
+            output/discovered_models.txt
+            output/benchmarks/utility/
+            output/benchmarks/safety/*.json
             docs/
           retention-days: 30
 
