@@ -147,6 +147,8 @@ def run_safety_benchmark(
         logger.info(f"  Limited to first {max_user_tasks} user tasks")
 
     # Prepare command
+    # Use absolute path for logdir so it's not relative to agentdojo cwd
+    logdir_abs = (output_dir / "runs").resolve()
     cmd = [
         sys.executable,
         "-m",
@@ -160,7 +162,7 @@ def run_safety_benchmark(
         "--attack",
         attack,
         "--logdir",
-        str(output_dir / "runs"),
+        str(logdir_abs),
     ]
 
     if defense:
