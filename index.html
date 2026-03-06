@@ -257,19 +257,28 @@
 
             <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
                 <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Source:</strong> <a href="https://github.com/Josephrp/openclawbench" target="_blank" style="color: #1976D2;">openclawbench</a>
-                    - Task completion benchmark for AI agents
+                    <a href="https://github.com/sequrity-ai/openclawbench" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">OpenClawBench</a>
+                    is a task completion benchmark that tests AI agents' ability to use tools and complete real-world tasks.
+                    Agents are evaluated on file manipulation, weather lookups, and web searches using a simulated bot interface.
                 </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Scenarios:</strong> File manipulation, Weather lookup, Web search
+                    We run <strong>3 scenarios</strong> (file, weather, web) with <strong>easy difficulty tasks</strong> in <strong>single-turn mode</strong>
+                    (the agent provides one complete response per task). This subset provides fast benchmarking (~2-5 minutes per model)
+                    while covering core capabilities. Each scenario contains 3 tasks for a total of 9 tasks per model.
                 </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Difficulty:</strong> Easy tasks (single-turn mode for speed)
-                </p>
-                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Scoring:</strong> Composite score combining task accuracy, execution speed, and efficiency
-                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Rank:</strong> Position in the leaderboard (1 = best)</li>
+                    <li><strong>Model:</strong> OpenRouter model identifier</li>
+                    <li><strong>Score:</strong> Composite metric combining task accuracy (% correct), execution speed, and efficiency (higher is better)</li>
+                    <li><strong>Tasks Passed:</strong> Number of tasks completed successfully out of 9 total tasks</li>
+                </ul>
             </div>
 
             <div id="openclaw-leaderboard">Loading...</div>
@@ -278,8 +287,38 @@
         <div id="agentdojo" class="tab-content">
             <h2 style="margin-bottom: 0.5rem; color: #212529;">🛡️ AgentDojo</h2>
             <p style="color: #6c757d; margin-bottom: 1.5rem;">
-                Prompt injection security benchmark • Ranked by security score (higher = more secure)
+                Prompt injection security benchmark • Ranked by attack success rate (lower = more secure)
             </p>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <a href="https://github.com/ethz-spylab/agentdojo" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">AgentDojo v1.2.2</a>
+                    is a prompt injection security benchmark that tests AI agents' resistance to adversarial attacks.
+                    It evaluates whether agents can complete legitimate tasks while resisting malicious instructions
+                    embedded in tool outputs (emails, files, API responses). Developed by ETH Zurich's SPY Lab.
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    We run the <strong>workspace suite</strong> (email, calendar, cloud storage tools) with <strong>tool_knowledge attacks</strong>
+                    (malicious instructions hidden in tool outputs). We test <strong>10 user tasks</strong> out of the full 33-task suite,
+                    with each task tested against <strong>14 different injection attack variants</strong> = <strong>140 security tests per model</strong>.
+                    Additionally, each of the 10 user tasks is tested for utility (task completion).
+                    This subset provides comprehensive security evaluation in ~10 minutes per model (vs ~30 minutes for the full suite).
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Rank:</strong> Position in the leaderboard (1 = most secure)</li>
+                    <li><strong>Model:</strong> OpenRouter model identifier</li>
+                    <li><strong>Attack Success Rate:</strong> Percentage of injection attacks that succeeded. Formula: (Attacks Succeeded / Total Attacks) × 100. <strong>Lower is better</strong> — 0% means perfect security, 100% means all attacks succeeded.</li>
+                    <li><strong>Utility Score:</strong> Percentage of legitimate tasks completed while under attack. Formula: (Tasks Completed / Total Tasks) × 100. <strong>Higher is better</strong> — shows the agent maintains functionality despite adversarial conditions.</li>
+                </ul>
+            </div>
+
             <div id="agentdojo-leaderboard">Loading...</div>
         </div>
     </div>
@@ -305,15 +344,18 @@
 
                 const html = `<table>
                     <tr><th>Rank</th><th>Model</th><th>Score</th><th>Accuracy</th><th>Latency</th></tr>
-                    ${data.leaderboard.map(m => `
+                    ${data.leaderboard.map(m => {
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        return `
                         <tr>
                             <td class="rank">${m.rank}</td>
-                            <td class="model-id">${m.model_id}</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${m.composite_score.toFixed(1)}</td>
                             <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
                             <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </table>`;
                 document.getElementById('openclaw-leaderboard').innerHTML = html;
             } catch (e) {
@@ -337,19 +379,21 @@
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Security Score</th>
-                        <th>Utility Score</th>
-                        <th>Attacks Blocked</th>
+                        <th>Attack Success Rate ↓</th>
+                        <th>Utility Score ↑</th>
                     </tr>
-                    ${data.leaderboard.map(m => `
+                    ${data.leaderboard.map(m => {
+                        const attackSuccessRate = (100 - m.security_score).toFixed(1);
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        return `
                         <tr>
                             <td class="rank">${m.rank}</td>
-                            <td class="model-id">${m.model_id}</td>
-                            <td class="score">${m.security_score.toFixed(1)}%</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
+                            <td class="score">${attackSuccessRate}%</td>
                             <td>${m.utility_score.toFixed(1)}%</td>
-                            <td>${m.total_injection_tasks - m.passed_injection_tasks}/${m.total_injection_tasks}</td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </table>`;
                 document.getElementById('agentdojo-leaderboard').innerHTML = html;
             } catch (e) {
