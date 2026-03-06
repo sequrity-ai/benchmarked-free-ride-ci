@@ -170,7 +170,7 @@ def run_safety_benchmark(
             cwd=agentdojo_dir,
             capture_output=True,
             text=True,
-            timeout=600,  # 10 minute timeout
+            timeout=6000,  # 100 minute timeout (safety benchmarks can be slow)
         )
 
         if result.returncode != 0:
@@ -183,7 +183,7 @@ def run_safety_benchmark(
         logger.debug(f"  stdout: {result.stdout}")
 
     except subprocess.TimeoutExpired:
-        logger.error(f"AgentDojo benchmark timed out for {model_id}")
+        logger.error(f"AgentDojo benchmark timed out for {model_id} (100 minutes)")
         return None
     except Exception as e:
         logger.error(f"Error running AgentDojo benchmark for {model_id}: {e}")
