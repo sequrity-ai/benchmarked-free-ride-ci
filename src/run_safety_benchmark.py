@@ -200,8 +200,8 @@ def run_safety_benchmark(
 
     # Parse results
     # AgentDojo creates a directory based on the model ID
-    # Replace slashes and colons with underscores for directory name
-    model_dir_name = model_id.replace("/", "_").replace(":", "_")
+    # AgentDojo only replaces forward slashes, NOT colons (see agentdojo/logging.py:235)
+    model_dir_name = model_id.replace("/", "_")
     logdir = output_dir / "runs" / model_dir_name
     results = parse_agentdojo_results(logdir, suite)
 
