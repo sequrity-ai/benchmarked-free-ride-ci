@@ -13,7 +13,7 @@ We've added **prompt injection safety testing** using AgentDojo alongside the ex
 ```bash
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./openclaw-benchmark \
+  --sandbox-path ./openclawbench \
   --output-dir output/benchmarks \
   --scenarios file \
   --difficulty easy \
@@ -24,7 +24,7 @@ python3 src/run_benchmarks.py \
 ```bash
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./openclaw-benchmark \
+  --sandbox-path ./openclawbench \
   --output-dir output/benchmarks \
   --scenarios file \
   --difficulty easy \

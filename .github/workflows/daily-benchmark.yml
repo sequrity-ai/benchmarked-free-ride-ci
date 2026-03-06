@@ -69,7 +69,7 @@ jobs:
 
               python3 src/run_benchmarks.py \
                 --discovered-models output/discovered_models.json \
-                --sandbox-path ./openclaw-benchmark \
+                --sandbox-path ./openclawbench \
                 --output-dir output/benchmarks \
                 --scenarios '$SCENARIOS' \
                 --single-turn \

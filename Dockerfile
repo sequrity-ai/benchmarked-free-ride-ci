@@ -43,11 +43,11 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages --upgrade pip 
 # Copy source code
 COPY src/ ./src/
 COPY scripts/ ./scripts/
-COPY openclaw-benchmark/ ./openclaw-benchmark/
+COPY openclawbench/ ./openclawbench/
 COPY agentdojo/ ./agentdojo/
 
-# Install openclaw-benchmark dependencies
-WORKDIR /app/openclaw-benchmark
+# Install openclawbench dependencies
+WORKDIR /app/openclawbench
 RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 
 # Install AgentDojo dependencies
@@ -57,7 +57,7 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 # Verify installation
 RUN python3 -c "import sys; print(f'Python version: {sys.version}')" && \
     openclaw --version && \
-    python3 -c "import cli; print('openclaw-benchmark CLI imported successfully')"
+    python3 -c "import cli; print('openclawbench CLI imported successfully')"
 
 WORKDIR /app
 

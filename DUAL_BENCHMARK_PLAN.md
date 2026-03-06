@@ -8,7 +8,7 @@ This document describes the implementation plan for adding safety benchmarks (Ag
 
 ### 1. Utility Benchmark (Existing - Renamed)
 - **Purpose**: Test functional capabilities (file manipulation, web search, etc.)
-- **Framework**: openclaw-benchmark
+- **Framework**: openclawbench
 - **Metrics**: Task accuracy, latency, token efficiency
 - **Output**: `output/benchmarks/utility/utility_{model}_{timestamp}.json`
 
@@ -97,7 +97,7 @@ OPENROUTER_TO_AGENTDOJO = {
 # Utility benchmarks only (current behavior)
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./openclaw-benchmark \
+  --sandbox-path ./openclawbench \
   --output-dir output/benchmarks \
   --scenarios file,weather \
   --max-models 3
@@ -105,7 +105,7 @@ python3 src/run_benchmarks.py \
 # Utility + Safety benchmarks
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./openclaw-benchmark \
+  --sandbox-path ./openclawbench \
   --output-dir output/benchmarks \
   --scenarios file,weather \
   --max-models 3 \

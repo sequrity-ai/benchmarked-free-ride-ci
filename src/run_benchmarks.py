@@ -332,8 +332,8 @@ def main():
     parser.add_argument(
         "--sandbox-path",
         type=Path,
-        default=Path("/app/openclaw-benchmark"),
-        help="Path to openclaw-benchmark directory"
+        default=Path("/app/openclawbench"),
+        help="Path to openclawbench directory"
     )
     parser.add_argument(
         "--output-dir",

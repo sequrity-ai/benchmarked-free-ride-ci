@@ -790,7 +790,7 @@ class ReportGenerator:
             <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
                 <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
-                    <strong>Source:</strong> <a href="https://github.com/Josephrp/openclaw-benchmark" target="_blank" style="color: #1976D2;">openclaw-benchmark</a>
+                    <strong>Source:</strong> <a href="https://github.com/Josephrp/openclawbench" target="_blank" style="color: #1976D2;">openclawbench</a>
                     - Task completion benchmark for AI agents
                 </p>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">

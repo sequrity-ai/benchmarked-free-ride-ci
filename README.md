@@ -9,7 +9,7 @@ Automated daily benchmarking of free OpenRouter models with quality scoring and 
 This repository automatically:
 
 1. **Discovers** free models from OpenRouter API (like [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride))
-2. **Benchmarks** them using the [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) test suite
+2. **Benchmarks** them using the [openclawbench](https://github.com/sequrity-ai/openclawbench) test suite
 3. **Scores** models based on accuracy, latency, and token efficiency
 4. **Publishes** results to a public GitHub Pages leaderboard with JSON API
 
@@ -25,7 +25,7 @@ The companion skill [benchmarked-free-ride-skill](https://github.com/sequrity-ai
 │                                                              │
 │  1. Discover Free Models (OpenRouter API)                   │
 │       ↓                                                      │
-│  2. Run Benchmarks (openclaw-benchmark, single-turn mode)   │
+│  2. Run Benchmarks (openclawbench, single-turn mode)   │
 │       ↓                                                      │
 │  3. Calculate Quality Scores (accuracy + latency + tokens)  │
 │       ↓                                                      │
@@ -76,12 +76,12 @@ The companion skill [benchmarked-free-ride-skill](https://github.com/sequrity-ai
 git clone https://github.com/sequrity-ai/benchmarked-free-ride-ci.git
 cd benchmarked-free-ride-ci
 
-# Install openclaw-benchmark submodule
+# Install openclawbench submodule
 git submodule update --init --recursive
 
 # Install dependencies
 pip install -r requirements.txt
-pip install -e ./openclaw-benchmark
+pip install -e ./openclawbench
 
 # Set environment variables
 export OPENROUTER_API_KEY="your-key"
@@ -100,7 +100,7 @@ python3 src/discover_models.py
 # Run benchmarks (just top 3 models, easy tasks only for testing)
 python3 src/run_benchmarks.py \
   --discovered-models output/discovered_models.json \
-  --sandbox-path ./openclaw-benchmark \
+  --sandbox-path ./openclawbench \
   --output-dir output/benchmarks \
   --scenarios file,weather \
   --difficulty easy \
@@ -139,16 +139,16 @@ Go to **Settings → Pages**:
 - Source: Deploy from a branch
 - Branch: `gh-pages` / `/ (root)`
 
-### 4. Initialize openclaw-benchmark submodule
+### 4. Initialize openclawbench submodule
 
-The repository uses openclaw-benchmark as a git submodule:
+The repository uses openclawbench as a git submodule:
 
 ```bash
 # Already configured - just initialize it
 git submodule update --init --recursive
 
 # Or if setting up from scratch
-git submodule add https://github.com/sequrity-ai/openclaw-benchmark.git openclaw-benchmark
+git submodule add https://github.com/sequrity-ai/openclawbench.git openclawbench
 ```
 
 ### 5. Push and Run
@@ -183,7 +183,7 @@ Selects top 10 models for benchmarking.
 
 For each model:
 1. Configures OpenClaw to use that model
-2. Runs openclaw-benchmark benchmarks in **single-turn mode**
+2. Runs openclawbench benchmarks in **single-turn mode**
    - No AI agent needed (no OpenAI API cost)
    - Direct prompts to bot, immediate validation
 3. Collects: accuracy, latency, token usage
@@ -348,9 +348,9 @@ Ensure the workflow has the Node.js setup step:
 - run: npm install -g @openclaw/cli
 ```
 
-### Benchmark fails: "No such file openclaw-benchmark"
+### Benchmark fails: "No such file openclawbench"
 
-Initialize the openclaw-benchmark submodule:
+Initialize the openclawbench submodule:
 ```bash
 git submodule update --init --recursive
 ```
@@ -400,7 +400,7 @@ To benchmark **all scenarios with all difficulties:**
 
 ### Adding New Scenarios
 
-Edit `src/run_benchmarks.py` to include more scenarios from openclaw-benchmark:
+Edit `src/run_benchmarks.py` to include more scenarios from openclawbench:
 ```python
 scenarios = ["file", "weather", "web", "summarize", "gmail", "github"]
 ```
@@ -439,5 +439,5 @@ Part of the Sequrity project. See parent repository for license details.
 
 - [FreeRide](https://github.com/openclaw/skills/tree/main/skills/shaivpidadi/free-ride) - Original inspiration, auto-configures free models
 - [OpenClaw](https://github.com/openclaw/openclaw) - AI agent framework
-- [openclaw-benchmark](https://github.com/sequrity-ai/openclaw-benchmark) - Benchmark test suite
+- [openclawbench](https://github.com/sequrity-ai/openclawbench) - Benchmark test suite
 - [benchmarked-free-ride-skill](https://github.com/sequrity-ai/benchmarked-free-ride-skill) - OpenClaw skill to fetch and auto-configure best models

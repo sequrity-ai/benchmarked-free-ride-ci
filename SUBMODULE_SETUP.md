@@ -1,6 +1,6 @@
 # Submodule Setup Instructions
 
-This repository uses `openclaw-benchmark` as a git submodule.
+This repository uses `openclawbench` as a git submodule.
 
 ## Quick Setup
 
@@ -8,17 +8,17 @@ This repository uses `openclaw-benchmark` as a git submodule.
 cd benchmarked-free-ride-ci
 
 # Add the submodule
-git submodule add https://github.com/sequrity-ai/openclaw-benchmark.git openclaw-benchmark
+git submodule add https://github.com/sequrity-ai/openclawbench.git openclawbench
 
 # Commit and push
 git add .
-git commit -m "Add openclaw-benchmark as submodule"
+git commit -m "Add openclawbench as submodule"
 git push
 ```
 
 ## What Was Updated
 
-All references to the benchmark suite have been updated from `opencalw-sandbox` to `openclaw-benchmark`:
+All references to the benchmark suite have been updated from `opencalw-sandbox` to `openclawbench`:
 
 ✅ `.github/workflows/daily-benchmark.yml` - Workflow now uses submodule
 ✅ `src/run_benchmarks.py` - Default path updated
@@ -35,7 +35,7 @@ The workflow automatically checks out submodules:
     submodules: 'recursive'
 ```
 
-This means the `openclaw-benchmark` directory will be available during CI runs.
+This means the `openclawbench` directory will be available during CI runs.
 
 ## Local Development
 
@@ -55,16 +55,16 @@ git submodule update --init --recursive
 
 ## Updating the Submodule
 
-To pull latest changes from openclaw-benchmark:
+To pull latest changes from openclawbench:
 
 ```bash
-cd openclaw-benchmark
+cd openclawbench
 git pull origin main
 cd ..
 
 # Commit the submodule update
-git add openclaw-benchmark
-git commit -m "Update openclaw-benchmark to latest"
+git add openclawbench
+git commit -m "Update openclawbench to latest"
 git push
 ```
 
@@ -72,7 +72,7 @@ git push
 
 Benefits:
 - ✅ No code duplication
-- ✅ Always uses the public openclaw-benchmark repo
+- ✅ Always uses the public openclawbench repo
 - ✅ Can pin to specific commits if needed
 - ✅ Easier to keep in sync with upstream
 - ✅ CI automatically gets the benchmark suite
