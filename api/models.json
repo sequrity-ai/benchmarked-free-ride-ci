@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-03-06T13:57:38.924960",
-  "total_models": 28,
+  "generated_at": "2026-03-06T16:02:26.730611",
+  "total_models": 27,
   "benchmarked_models": 1,
-  "unbenchmarked_models": 27,
+  "unbenchmarked_models": 26,
   "models": [
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4529,
+      "quality_score": 0.4528,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-06T13:36:09.442739",
+      "benchmarked_at": "2026-03-06T15:38:18.809192",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 37.16,
+      "avg_latency_seconds": 46.31,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 52.61,
+      "composite_score": 49.56,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -34,7 +34,7 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.4317,
+      "quality_score": 0.4316,
       "context_length": 200000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -64,7 +64,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.4018,
+      "quality_score": 0.4017,
       "context_length": 131000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -168,9 +168,9 @@
       "is_benchmarked": false
     },
     {
-      "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.3507,
-      "context_length": 262000,
+      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "quality_score": 0.3506,
+      "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
       "passed_tasks": 0,
@@ -183,9 +183,9 @@
       "is_benchmarked": false
     },
     {
-      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "model_id": "qwen/qwen3-coder:free",
       "quality_score": 0.3506,
-      "context_length": 128000,
+      "context_length": 262000,
       "benchmarked_at": "",
       "total_tasks": 0,
       "passed_tasks": 0,
@@ -214,22 +214,7 @@
     },
     {
       "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
-      "quality_score": 0.3328,
-      "context_length": 131072,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "qwen/qwen3-235b-a22b-thinking-2507",
-      "quality_score": 0.3297,
+      "quality_score": 0.3327,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -334,7 +319,7 @@
     },
     {
       "model_id": "mistralai/mistral-small-3.1-24b-instruct:free",
-      "quality_score": 0.2774,
+      "quality_score": 0.2773,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -349,7 +334,7 @@
     },
     {
       "model_id": "google/gemma-3-4b-it:free",
-      "quality_score": 0.2672,
+      "quality_score": 0.2671,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -379,7 +364,7 @@
     },
     {
       "model_id": "google/gemma-3n-e4b-it:free",
-      "quality_score": 0.2646,
+      "quality_score": 0.2645,
       "context_length": 8192,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -409,7 +394,7 @@
     },
     {
       "model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-      "quality_score": 0.2518,
+      "quality_score": 0.2517,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -424,7 +409,7 @@
     },
     {
       "model_id": "qwen/qwen3-4b:free",
-      "quality_score": 0.2466,
+      "quality_score": 0.2465,
       "context_length": 40960,
       "benchmarked_at": "",
       "total_tasks": 0,
