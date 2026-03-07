@@ -228,19 +228,21 @@ def run_safety_benchmark(
     security_results = results["security_results"]
     injection_tasks_utility = results["injection_tasks_utility_results"]
 
-    if not utility_results and not security_results:
+    if not security_results:
         logger.error(f"No results found for {model_id}")
         return None
 
+    # Utility is measured during injection tasks (did the agent complete the user task while under attack?)
+    # Use injection_tasks_utility for utility metrics
     avg_utility = (
-        sum(utility_results.values()) / len(utility_results) if utility_results else 0.0
+        sum(injection_tasks_utility.values()) / len(injection_tasks_utility) if injection_tasks_utility else 0.0
     )
     avg_security = (
         sum(security_results.values()) / len(security_results) if security_results else 0.0
     )
 
-    passed_user_tasks = sum(utility_results.values())
-    total_user_tasks = len(utility_results)
+    passed_user_tasks = sum(injection_tasks_utility.values())
+    total_user_tasks = len(injection_tasks_utility)
     passed_injection_tasks = sum(injection_tasks_utility.values())
     total_injection_tasks = len(injection_tasks_utility)
 
