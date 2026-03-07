@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-03-06T23:23:46.314352",
+  "generated_at": "2026-03-07T18:12:52.909766",
   "total_models": 27,
   "benchmarked_models": 1,
   "unbenchmarked_models": 26,
   "models": [
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4527,
+      "quality_score": 0.4522,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-06T23:04:28.274356",
+      "benchmarked_at": "2026-03-07T17:52:01.877639",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 31.3,
+      "avg_latency_seconds": 31.77,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 54.57,
+      "composite_score": 54.41,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -34,7 +34,7 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.4315,
+      "quality_score": 0.431,
       "context_length": 200000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -49,7 +49,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4273,
+      "quality_score": 0.4269,
       "context_length": 256000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -64,7 +64,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.4016,
+      "quality_score": 0.4011,
       "context_length": 131000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -79,7 +79,7 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.3783,
+      "quality_score": 0.3779,
       "context_length": 262144,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -94,7 +94,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-mini:free",
-      "quality_score": 0.3702,
+      "quality_score": 0.3698,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -109,7 +109,7 @@
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
-      "quality_score": 0.3583,
+      "quality_score": 0.3579,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -124,7 +124,7 @@
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
-      "quality_score": 0.3583,
+      "quality_score": 0.3579,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -139,7 +139,7 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3556,
+      "quality_score": 0.3552,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -154,7 +154,7 @@
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3556,
+      "quality_score": 0.3552,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -168,23 +168,8 @@
       "is_benchmarked": false
     },
     {
-      "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.3505,
-      "context_length": 262000,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.3504,
+      "quality_score": 0.35,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -198,8 +183,23 @@
       "is_benchmarked": false
     },
     {
+      "model_id": "qwen/qwen3-coder:free",
+      "quality_score": 0.35,
+      "context_length": 262000,
+      "benchmarked_at": "",
+      "total_tasks": 0,
+      "passed_tasks": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 0,
+      "scenarios": [],
+      "is_benchmarked": false
+    },
+    {
       "model_id": "qwen/qwen3-vl-30b-a3b-thinking",
-      "quality_score": 0.3397,
+      "quality_score": 0.3393,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -214,7 +214,7 @@
     },
     {
       "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
-      "quality_score": 0.3326,
+      "quality_score": 0.3321,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -229,7 +229,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.3214,
+      "quality_score": 0.321,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -244,7 +244,7 @@
     },
     {
       "model_id": "google/gemma-3-27b-it:free",
-      "quality_score": 0.3053,
+      "quality_score": 0.3049,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -289,7 +289,7 @@
     },
     {
       "model_id": "z-ai/glm-4.5-air:free",
-      "quality_score": 0.2996,
+      "quality_score": 0.2992,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -304,7 +304,7 @@
     },
     {
       "model_id": "google/gemma-3n-e2b-it:free",
-      "quality_score": 0.2916,
+      "quality_score": 0.2912,
       "context_length": 8192,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -319,7 +319,7 @@
     },
     {
       "model_id": "mistralai/mistral-small-3.1-24b-instruct:free",
-      "quality_score": 0.2771,
+      "quality_score": 0.2767,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -334,7 +334,7 @@
     },
     {
       "model_id": "google/gemma-3-4b-it:free",
-      "quality_score": 0.2669,
+      "quality_score": 0.2665,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -349,7 +349,7 @@
     },
     {
       "model_id": "google/gemma-3-12b-it:free",
-      "quality_score": 0.2669,
+      "quality_score": 0.2665,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -364,7 +364,7 @@
     },
     {
       "model_id": "google/gemma-3n-e4b-it:free",
-      "quality_score": 0.2643,
+      "quality_score": 0.2639,
       "context_length": 8192,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -394,7 +394,7 @@
     },
     {
       "model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-      "quality_score": 0.2516,
+      "quality_score": 0.2511,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -409,7 +409,7 @@
     },
     {
       "model_id": "qwen/qwen3-4b:free",
-      "quality_score": 0.2464,
+      "quality_score": 0.2459,
       "context_length": 40960,
       "benchmarked_at": "",
       "total_tasks": 0,
