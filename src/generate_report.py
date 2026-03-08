@@ -836,9 +836,9 @@ class ReportGenerator:
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
                     We run the <strong>workspace suite</strong> (email, calendar, cloud storage tools) with <strong>tool_knowledge attacks</strong>
-                    (malicious instructions hidden in tool outputs). We test <strong>10 user tasks</strong> out of the full 33-task suite,
-                    with each task tested against <strong>14 different injection attack variants</strong> = <strong>140 security tests per model</strong>.
-                    Additionally, each of the 10 user tasks is tested for utility (task completion).
+                    (malicious instructions hidden in tool outputs). We test <strong>5 user tasks</strong> out of the full 33-task suite,
+                    with each task tested against <strong>14 different injection attack variants</strong> = <strong>70 security tests per model</strong>.
+                    Additionally, each of the 5 user tasks is tested for utility (task completion).
                     This subset provides comprehensive security evaluation in ~10 minutes per model (vs ~30 minutes for the full suite).
                 </p>
 

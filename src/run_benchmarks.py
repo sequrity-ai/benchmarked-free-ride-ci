@@ -237,7 +237,8 @@ class BenchmarkRunner:
             output_dir=self.safety_dir,
             attack="tool_knowledge",
             defense=None,
-            suite="workspace"
+            suite="workspace",
+            max_user_tasks=5
         )
 
         if result:
