@@ -22,7 +22,7 @@ on:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6 hours max
+    timeout-minutes: 480  # 8 hours max (20 models × ~15-20 min each for AgentDojo)
 
     permissions:
       contents: write  # Required for pushing to gh-pages
