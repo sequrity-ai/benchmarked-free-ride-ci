@@ -238,7 +238,8 @@ class BenchmarkRunner:
             attack="tool_knowledge",
             defense=None,
             suite="workspace",
-            max_user_tasks=5
+            max_user_tasks=10,
+            attacks_per_task=1
         )
 
         if result:

@@ -6,6 +6,7 @@ Only runs the 'workspace' suite with 'tool_knowledge' attack for efficiency.
 
 import json
 import logging
+import random
 import subprocess
 import sys
 from pathlib import Path
@@ -53,6 +54,38 @@ class SafetyBenchmarkResult:
             else 0.0,
             "security_percent": (self.avg_security * 100),
         }
+
+
+def get_all_injection_task_ids(agentdojo_dir: Path, suite: str = "workspace") -> list[str]:
+    """Get all available injection task IDs for a suite by listing task classes.
+
+    Args:
+        agentdojo_dir: Path to AgentDojo repository
+        suite: Suite name (default: 'workspace')
+
+    Returns:
+        List of injection task IDs (e.g., ["injection_task_0", "injection_task_1", ...])
+    """
+    # For the workspace suite in v1, there are injection tasks 0-5
+    # We return the IDs that AgentDojo expects
+    injection_task_ids = []
+
+    # Read the injection_tasks.py file to count the number of InjectionTask classes
+    if suite == "workspace":
+        # Look for InjectionTask classes in the workspace suite
+        injection_file = agentdojo_dir / "src" / "agentdojo" / "default_suites" / "v1" / suite / "injection_tasks.py"
+        if injection_file.exists():
+            with open(injection_file) as f:
+                content = f.read()
+
+            # Count InjectionTask classes (e.g., "class InjectionTask0", "class InjectionTask1", etc.)
+            import re
+            matches = re.findall(r'class InjectionTask(\d+)', content)
+            for task_num in matches:
+                injection_task_ids.append(f"injection_task_{task_num}")
+
+    logger.info(f"Found {len(injection_task_ids)} injection tasks for suite '{suite}': {injection_task_ids}")
+    return injection_task_ids
 
 
 def parse_agentdojo_results(logdir: Path, suite: str = "workspace") -> Dict[str, Any]:
@@ -126,6 +159,7 @@ def run_safety_benchmark(
     defense: Optional[str] = None,
     suite: str = "workspace",
     max_user_tasks: Optional[int] = 10,
+    attacks_per_task: int = 1,
 ) -> Optional[SafetyBenchmarkResult]:
     """Run AgentDojo safety benchmark for a single model.
 
@@ -137,6 +171,7 @@ def run_safety_benchmark(
         defense: Defense mechanism (default: None)
         suite: Suite to run (default: 'workspace')
         max_user_tasks: Maximum number of user tasks to test (default: 10, None = all)
+        attacks_per_task: Number of randomly sampled injection attacks per user task (default: 1)
 
     Returns:
         SafetyBenchmarkResult if successful, None otherwise
@@ -145,6 +180,23 @@ def run_safety_benchmark(
     logger.info(f"  Suite: {suite}, Attack: {attack}, Defense: {defense or 'none'}")
     if max_user_tasks is not None:
         logger.info(f"  Limited to first {max_user_tasks} user tasks")
+    logger.info(f"  Attacks per task: {attacks_per_task}")
+
+    # Get all available injection tasks for random sampling
+    all_injection_tasks = get_all_injection_task_ids(agentdojo_dir, suite)
+    if not all_injection_tasks:
+        logger.error(f"No injection tasks found for suite '{suite}'")
+        return None
+
+    # Randomly sample injection tasks (with seed for reproducibility)
+    # Use model_id as seed so the same model always gets the same attacks
+    rng = random.Random(hash(model_id) % (2**32))
+    sampled_injection_tasks = rng.sample(
+        all_injection_tasks,
+        min(attacks_per_task, len(all_injection_tasks))
+    )
+
+    logger.info(f"Randomly sampled {len(sampled_injection_tasks)} injection tasks: {sampled_injection_tasks}")
 
     # Prepare command
     # Use absolute path for logdir so it's not relative to agentdojo cwd
@@ -172,6 +224,10 @@ def run_safety_benchmark(
     if max_user_tasks is not None:
         for i in range(max_user_tasks):
             cmd.extend(["--user-task", f"user_task_{i}"])
+
+    # Add randomly sampled injection tasks
+    for injection_task_id in sampled_injection_tasks:
+        cmd.extend(["--injection-task", injection_task_id])
 
     # Run benchmark
     try:
