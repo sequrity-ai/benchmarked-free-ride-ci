@@ -3,17 +3,44 @@
   "total_models": 3,
   "models": [
     {
-      "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4512,
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "quality_score": 0.4259,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-09T13:51:44.392894",
+      "benchmarked_at": "2026-03-09T15:35:09.275669",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 26.92,
+      "avg_latency_seconds": 27.41,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 56.03,
+      "composite_score": 55.86,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "stepfun/step-3.5-flash:free",
+      "quality_score": 0.4512,
+      "context_length": 256000,
+      "benchmarked_at": "2026-03-09T15:01:59.078745",
+      "total_tasks": 6,
+      "passed_tasks": 3,
+      "accuracy_percent": 50.0,
+      "avg_latency_seconds": 54.34,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 46.89,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -33,41 +60,14 @@
       "model_id": "openrouter/free",
       "quality_score": 0.43,
       "context_length": 200000,
-      "benchmarked_at": "2026-03-09T13:57:53.181698",
-      "total_tasks": 6,
-      "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 33.11,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 18.96,
-      "scenarios": [
-        {
-          "name": "File Manipulation",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "Weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        }
-      ]
-    },
-    {
-      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4259,
-      "context_length": 256000,
-      "benchmarked_at": "2026-03-09T14:19:54.769800",
+      "benchmarked_at": "2026-03-09T15:12:37.721938",
       "total_tasks": 6,
       "passed_tasks": 1,
       "accuracy_percent": 16.67,
-      "avg_latency_seconds": 24.39,
+      "avg_latency_seconds": 71.65,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 33.54,
+      "composite_score": 21.67,
       "scenarios": [
         {
           "name": "File Manipulation",
