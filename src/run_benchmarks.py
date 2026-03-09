@@ -45,8 +45,14 @@ class BenchmarkRunner:
         """Configure OpenClaw to use the specified model."""
         try:
             # Use openclaw models set command
+            # Only add openrouter/ prefix if not already present
+            if model_id.startswith("openrouter/"):
+                full_model_id = model_id
+            else:
+                full_model_id = f"openrouter/{model_id}"
+
             result = subprocess.run(
-                ["openclaw", "models", "set", f"openrouter/{model_id}"],
+                ["openclaw", "models", "set", full_model_id],
                 capture_output=True,
                 text=True,
                 timeout=30
@@ -56,7 +62,7 @@ class BenchmarkRunner:
                 print(f"Warning: Failed to set model via CLI: {result.stderr}")
                 return False
 
-            print(f"Configured OpenClaw to use model: openrouter/{model_id}")
+            print(f"Configured OpenClaw to use model: {full_model_id}")
             return True
 
         except Exception as e:
