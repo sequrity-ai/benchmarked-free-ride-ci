@@ -1,0 +1,87 @@
+{
+  "date": "2026-03-09",
+  "total_models": 3,
+  "models": [
+    {
+      "model_id": "stepfun/step-3.5-flash:free",
+      "quality_score": 0.4512,
+      "context_length": 256000,
+      "benchmarked_at": "2026-03-09T13:51:44.392894",
+      "total_tasks": 6,
+      "passed_tasks": 3,
+      "accuracy_percent": 50.0,
+      "avg_latency_seconds": 26.92,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 56.03,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "openrouter/free",
+      "quality_score": 0.43,
+      "context_length": 200000,
+      "benchmarked_at": "2026-03-09T13:57:53.181698",
+      "total_tasks": 6,
+      "passed_tasks": 0,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 33.11,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 18.96,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "quality_score": 0.4259,
+      "context_length": 256000,
+      "benchmarked_at": "2026-03-09T14:19:54.769800",
+      "total_tasks": 6,
+      "passed_tasks": 1,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 24.39,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 33.54,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 1,
+          "tasks_total": 3,
+          "avg_accuracy": 33.33
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ]
+    }
+  ]
+}

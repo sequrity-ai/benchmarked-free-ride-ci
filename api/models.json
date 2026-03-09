@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-03-07T18:12:52.909766",
+  "generated_at": "2026-03-09T14:24:47.220576",
   "total_models": 27,
-  "benchmarked_models": 1,
-  "unbenchmarked_models": 26,
+  "benchmarked_models": 3,
+  "unbenchmarked_models": 24,
   "models": [
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4522,
+      "quality_score": 0.4512,
       "context_length": 256000,
-      "benchmarked_at": "2026-03-07T17:52:01.877639",
+      "benchmarked_at": "2026-03-09T13:51:44.392894",
       "total_tasks": 6,
       "passed_tasks": 3,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 31.77,
+      "avg_latency_seconds": 26.92,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 54.41,
+      "composite_score": 56.03,
       "scenarios": [
         {
           "name": "File Manipulation",
@@ -34,37 +34,63 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.431,
+      "quality_score": 0.43,
       "context_length": 200000,
-      "benchmarked_at": "",
-      "total_tasks": 0,
+      "benchmarked_at": "2026-03-09T13:57:53.181698",
+      "total_tasks": 6,
       "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 33.11,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
+      "composite_score": 18.96,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ],
+      "is_benchmarked": true
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4269,
+      "quality_score": 0.4259,
       "context_length": 256000,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
+      "benchmarked_at": "2026-03-09T14:19:54.769800",
+      "total_tasks": 6,
+      "passed_tasks": 1,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 24.39,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
+      "composite_score": 33.54,
+      "scenarios": [
+        {
+          "name": "File Manipulation",
+          "tasks_passed": 1,
+          "tasks_total": 3,
+          "avg_accuracy": 33.33
+        },
+        {
+          "name": "Weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ],
+      "is_benchmarked": true
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.4011,
+      "quality_score": 0.4001,
       "context_length": 131000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -79,7 +105,7 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.3779,
+      "quality_score": 0.3769,
       "context_length": 262144,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -94,7 +120,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-mini:free",
-      "quality_score": 0.3698,
+      "quality_score": 0.3688,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -109,7 +135,7 @@
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
-      "quality_score": 0.3579,
+      "quality_score": 0.3569,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -124,7 +150,7 @@
     },
     {
       "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
-      "quality_score": 0.3579,
+      "quality_score": 0.3569,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -139,7 +165,7 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3552,
+      "quality_score": 0.3542,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -154,7 +180,7 @@
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3552,
+      "quality_score": 0.3542,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -169,7 +195,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.35,
+      "quality_score": 0.349,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -184,7 +210,7 @@
     },
     {
       "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.35,
+      "quality_score": 0.349,
       "context_length": 262000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -199,7 +225,7 @@
     },
     {
       "model_id": "qwen/qwen3-vl-30b-a3b-thinking",
-      "quality_score": 0.3393,
+      "quality_score": 0.3383,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -214,7 +240,7 @@
     },
     {
       "model_id": "qwen/qwen3-vl-235b-a22b-thinking",
-      "quality_score": 0.3321,
+      "quality_score": 0.3311,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -229,7 +255,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.321,
+      "quality_score": 0.32,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -244,7 +270,7 @@
     },
     {
       "model_id": "google/gemma-3-27b-it:free",
-      "quality_score": 0.3049,
+      "quality_score": 0.3039,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -289,7 +315,7 @@
     },
     {
       "model_id": "z-ai/glm-4.5-air:free",
-      "quality_score": 0.2992,
+      "quality_score": 0.2982,
       "context_length": 131072,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -304,7 +330,7 @@
     },
     {
       "model_id": "google/gemma-3n-e2b-it:free",
-      "quality_score": 0.2912,
+      "quality_score": 0.2902,
       "context_length": 8192,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -319,7 +345,7 @@
     },
     {
       "model_id": "mistralai/mistral-small-3.1-24b-instruct:free",
-      "quality_score": 0.2767,
+      "quality_score": 0.2757,
       "context_length": 128000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -334,7 +360,7 @@
     },
     {
       "model_id": "google/gemma-3-4b-it:free",
-      "quality_score": 0.2665,
+      "quality_score": 0.2655,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -349,7 +375,7 @@
     },
     {
       "model_id": "google/gemma-3-12b-it:free",
-      "quality_score": 0.2665,
+      "quality_score": 0.2655,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -364,7 +390,7 @@
     },
     {
       "model_id": "google/gemma-3n-e4b-it:free",
-      "quality_score": 0.2639,
+      "quality_score": 0.2629,
       "context_length": 8192,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -394,7 +420,7 @@
     },
     {
       "model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-      "quality_score": 0.2511,
+      "quality_score": 0.2501,
       "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -409,7 +435,7 @@
     },
     {
       "model_id": "qwen/qwen3-4b:free",
-      "quality_score": 0.2459,
+      "quality_score": 0.2449,
       "context_length": 40960,
       "benchmarked_at": "",
       "total_tasks": 0,
