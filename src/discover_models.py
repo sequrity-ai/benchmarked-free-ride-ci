@@ -148,6 +148,14 @@ def save_discovered_models(models: List[Dict[str, Any]], output_dir: Path):
 
     print(f"Saved model IDs to {model_ids_file}")
 
+    # Save model IDs in GitHub Actions matrix format (JSON array)
+    matrix_file = output_dir / "matrix_models.json"
+    model_ids = [model['id'] for model in models]
+    with open(matrix_file, "w") as f:
+        json.dump(model_ids, f)
+
+    print(f"Saved matrix format to {matrix_file}")
+
 
 def main():
     api_key = os.environ.get("OPENROUTER_API_KEY")
