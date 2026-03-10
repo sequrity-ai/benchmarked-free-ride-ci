@@ -9,7 +9,7 @@ on:
       max_models:
         description: 'Maximum number of models to test'
         required: false
-        default: '20'  # Benchmark all discovered models for comprehensive leaderboard
+        default: '15'  # Optimized for 6-hour GitHub Actions limit (~18 min/model)
       scenarios:
         description: 'Scenarios to run (comma-separated: file, weather, web)'
         required: false
@@ -22,7 +22,7 @@ on:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 480  # 8 hours max (20 models × ~15-20 min each for AgentDojo)
+    timeout-minutes: 360  # 6 hours (GitHub Actions free tier limit)
 
     permissions:
       contents: write  # Required for pushing to gh-pages
