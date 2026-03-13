@@ -1,186 +1,186 @@
 {
-  "generated_at": "2026-03-12T07:08:16.178135",
+  "generated_at": "2026-03-13T07:34:47.095570",
   "total_models": 28,
   "benchmarked_count": 20,
   "leaderboard": [
     {
       "rank": 1,
       "model_id": "stepfun/step-3.5-flash:free",
-      "composite_score": 58.23,
+      "composite_score": 58.87,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 20.31,
+      "avg_latency_seconds": 18.4,
       "context_length": 256000,
-      "quality_score": 0.4498,
+      "quality_score": 0.4493,
       "is_benchmarked": true
     },
     {
       "rank": 2,
-      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
-      "composite_score": 54.52,
+      "model_id": "openrouter/hunter-alpha",
+      "composite_score": 49.35,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 31.43,
-      "context_length": 262144,
-      "quality_score": 0.5046,
+      "avg_latency_seconds": 46.94,
+      "context_length": 1048576,
+      "quality_score": 0.7693,
       "is_benchmarked": true
     },
     {
       "rank": 3,
-      "model_id": "arcee-ai/trinity-large-preview:free",
-      "composite_score": 51.67,
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "composite_score": 48.11,
       "accuracy_percent": 50.0,
-      "avg_latency_seconds": 39.98,
-      "context_length": 131000,
-      "quality_score": 0.3987,
+      "avg_latency_seconds": 50.68,
+      "context_length": 262144,
+      "quality_score": 0.5041,
       "is_benchmarked": true
     },
     {
       "rank": 4,
-      "model_id": "openrouter/healer-alpha",
-      "composite_score": 45.78,
-      "accuracy_percent": 50.0,
-      "avg_latency_seconds": 57.65,
-      "context_length": 262144,
-      "quality_score": 0.4747,
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "composite_score": 47.52,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 17.44,
+      "context_length": 256000,
+      "quality_score": 0.4239,
       "is_benchmarked": true
     },
     {
       "rank": 5,
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "composite_score": 45.0,
+      "accuracy_percent": 50.0,
+      "avg_latency_seconds": 83.5,
+      "context_length": 131000,
+      "quality_score": 0.3982,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 6,
       "model_id": "openai/gpt-oss-120b:free",
       "composite_score": 28.38,
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 4.85,
       "context_length": 131072,
-      "quality_score": 0.3528,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 6,
-      "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
-      "composite_score": 28.37,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 4.88,
-      "context_length": 32768,
-      "quality_score": 0.3555,
+      "quality_score": 0.3522,
       "is_benchmarked": true
     },
     {
       "rank": 7,
-      "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
+      "model_id": "openai/gpt-oss-20b:free",
       "composite_score": 28.37,
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 4.89,
-      "context_length": 32768,
-      "quality_score": 0.3555,
+      "context_length": 131072,
+      "quality_score": 0.3522,
       "is_benchmarked": true
     },
     {
       "rank": 8,
-      "model_id": "openai/gpt-oss-20b:free",
-      "composite_score": 28.36,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 4.92,
-      "context_length": 131072,
-      "quality_score": 0.3528,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 9,
       "model_id": "google/gemma-3-27b-it:free",
-      "composite_score": 28.35,
+      "composite_score": 28.37,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 4.96,
-      "context_length": 131072,
-      "quality_score": 0.3025,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 10,
-      "model_id": "meta-llama/llama-3.2-3b-instruct:free",
-      "composite_score": 28.35,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 4.94,
+      "avg_latency_seconds": 4.88,
       "context_length": 131072,
       "quality_score": 0.3024,
       "is_benchmarked": true
     },
     {
-      "rank": 11,
-      "model_id": "meta-llama/llama-3.3-70b-instruct:free",
-      "composite_score": 26.87,
+      "rank": 9,
+      "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
+      "composite_score": 28.36,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 9.4,
+      "avg_latency_seconds": 4.91,
+      "context_length": 32768,
+      "quality_score": 0.3549,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 10,
+      "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
+      "composite_score": 28.36,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 4.92,
+      "context_length": 32768,
+      "quality_score": 0.3549,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 11,
+      "model_id": "meta-llama/llama-3.2-3b-instruct:free",
+      "composite_score": 28.33,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 5.0,
+      "context_length": 131072,
+      "quality_score": 0.3024,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 12,
+      "model_id": "arcee-ai/trinity-mini:free",
+      "composite_score": 26.13,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 11.6,
+      "context_length": 131072,
+      "quality_score": 0.3668,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 13,
+      "model_id": "openrouter/healer-alpha",
+      "composite_score": 21.67,
+      "accuracy_percent": 16.67,
+      "avg_latency_seconds": 74.06,
+      "context_length": 262144,
+      "quality_score": 0.4742,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 14,
+      "model_id": "openrouter/free",
+      "composite_score": 15.27,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 44.2,
+      "context_length": 200000,
+      "quality_score": 0.4281,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 15,
+      "model_id": "qwen/qwen3-coder:free",
+      "composite_score": 14.34,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 46.98,
+      "context_length": 262000,
+      "quality_score": 0.3471,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 16,
+      "model_id": "meta-llama/llama-3.3-70b-instruct:free",
+      "composite_score": 13.94,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 48.19,
       "context_length": 128000,
       "quality_score": 0.3012,
       "is_benchmarked": true
     },
     {
-      "rank": 12,
-      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "composite_score": 25.83,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 12.5,
-      "context_length": 256000,
-      "quality_score": 0.4245,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 13,
-      "model_id": "arcee-ai/trinity-mini:free",
-      "composite_score": 22.09,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 23.73,
-      "context_length": 131072,
-      "quality_score": 0.3674,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 14,
-      "model_id": "openrouter/hunter-alpha",
-      "composite_score": 21.67,
-      "accuracy_percent": 16.67,
-      "avg_latency_seconds": 95.89,
-      "context_length": 1048576,
-      "quality_score": 0.7698,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 15,
-      "model_id": "openrouter/free",
-      "composite_score": 17.04,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 38.89,
-      "context_length": 200000,
-      "quality_score": 0.4286,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 16,
-      "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "composite_score": 14.28,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 47.17,
-      "context_length": 262144,
-      "quality_score": 0.3755,
-      "is_benchmarked": true
-    },
-    {
       "rank": 17,
-      "model_id": "qwen/qwen3-coder:free",
-      "composite_score": 14.08,
+      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "composite_score": 11.77,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 47.76,
-      "context_length": 262000,
-      "quality_score": 0.3476,
+      "avg_latency_seconds": 54.7,
+      "context_length": 128000,
+      "quality_score": 0.347,
       "is_benchmarked": true
     },
     {
       "rank": 18,
-      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "composite_score": 10.0,
+      "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "composite_score": 11.59,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 65.18,
-      "context_length": 128000,
-      "quality_score": 0.3476,
+      "avg_latency_seconds": 55.24,
+      "context_length": 262144,
+      "quality_score": 0.3749,
       "is_benchmarked": true
     },
     {
@@ -188,9 +188,9 @@
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
       "composite_score": 10.0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 96.85,
+      "avg_latency_seconds": 128.45,
       "context_length": 128000,
-      "quality_score": 0.3186,
+      "quality_score": 0.3181,
       "is_benchmarked": true
     },
     {
@@ -198,9 +198,9 @@
       "model_id": "z-ai/glm-4.5-air:free",
       "composite_score": 10.0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 106.5,
+      "avg_latency_seconds": 131.85,
       "context_length": 131072,
-      "quality_score": 0.2968,
+      "quality_score": 0.2962,
       "is_benchmarked": true
     },
     {
@@ -210,7 +210,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 8192,
-      "quality_score": 0.2888,
+      "quality_score": 0.2882,
       "is_benchmarked": false
     },
     {
@@ -220,7 +220,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 128000,
-      "quality_score": 0.2743,
+      "quality_score": 0.2738,
       "is_benchmarked": false
     },
     {
@@ -230,7 +230,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 32768,
-      "quality_score": 0.2641,
+      "quality_score": 0.2636,
       "is_benchmarked": false
     },
     {
@@ -240,7 +240,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 32768,
-      "quality_score": 0.2641,
+      "quality_score": 0.2635,
       "is_benchmarked": false
     },
     {
@@ -250,7 +250,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 8192,
-      "quality_score": 0.2615,
+      "quality_score": 0.261,
       "is_benchmarked": false
     },
     {
@@ -270,7 +270,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 32768,
-      "quality_score": 0.2487,
+      "quality_score": 0.2482,
       "is_benchmarked": false
     },
     {
@@ -280,7 +280,7 @@
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 40960,
-      "quality_score": 0.2435,
+      "quality_score": 0.243,
       "is_benchmarked": false
     }
   ]
