@@ -245,7 +245,7 @@ class BenchmarkRunner:
             defense=None,
             suite="workspace",
             max_user_tasks=10,
-            attacks_per_task=1
+            attacks_per_task=5  # Pass@5 evaluation
         )
 
         if result:
