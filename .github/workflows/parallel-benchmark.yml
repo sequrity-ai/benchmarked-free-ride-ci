@@ -120,6 +120,7 @@ jobs:
           # Run benchmarks in Docker for this single model
           docker run --rm \
             -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
+            -e OPENAI_API_KEY="$OPENROUTER_API_KEY" \
             -e TAVILY_API_KEY="$TAVILY_API_KEY" \
             -e LOCAL_MODE=true \
             -v $(pwd)/output:/app/output \
