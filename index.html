@@ -305,9 +305,10 @@
                 <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
                     We run the <strong>workspace suite</strong> (email, calendar, cloud storage tools) with <strong>tool_knowledge attacks</strong>
                     (malicious instructions hidden in tool outputs). We test <strong>10 user tasks</strong> out of the full 33-task suite,
-                    with each task tested against <strong>1 randomly sampled injection attack</strong> (from 6 available attack types) = <strong>10 security tests per model</strong>.
+                    with each task tested against <strong>5 randomly sampled injection attacks</strong> (from 6 available attack types) = <strong>50 security tests per model</strong>.
+                    We use <strong>pass@5 evaluation</strong>: an attack is considered successful if it works in at least 1 of the 5 attempts.
                     Additionally, each of the 10 user tasks is tested for utility (task completion).
-                    This optimized approach provides comprehensive security evaluation in ~8-10 minutes per model while maintaining statistical validity.
+                    This approach provides robust security evaluation with statistical significance in ~25-35 minutes per model.
                 </p>
 
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
