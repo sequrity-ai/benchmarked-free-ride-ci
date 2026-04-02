@@ -1,27 +1,61 @@
 {
-  "generated_at": "2026-04-02T17:46:54.158653",
-  "total_models": 28,
-  "benchmarked_models": 1,
-  "unbenchmarked_models": 27,
+  "generated_at": "2026-04-02T18:18:27.887767",
+  "total_models": 17,
+  "benchmarked_models": 3,
+  "unbenchmarked_models": 14,
   "models": [
     {
-      "model_id": "google/lyria-3-pro-preview",
-      "quality_score": 0.8185,
-      "context_length": 1048576,
-      "benchmarked_at": "2026-04-02T17:46:01.902541",
+      "model_id": "qwen/qwen3.6-plus:free",
+      "quality_score": 0.7699,
+      "context_length": 1000000,
+      "benchmarked_at": "2026-04-02T18:10:20.103504",
       "total_tasks": 9,
-      "passed_tasks": 0,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 37.39,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 17.54,
+      "passed_tasks": 8,
+      "accuracy_percent": 88.89,
+      "avg_latency_seconds": 46.35,
+      "total_input_tokens": 492768,
+      "total_output_tokens": 5833,
+      "composite_score": 70.29,
       "scenarios": [
         {
           "name": "file",
-          "tasks_passed": 0,
+          "tasks_passed": 3,
           "tasks_total": 3,
-          "avg_accuracy": 0.0
+          "avg_accuracy": 100.0
+        },
+        {
+          "name": "weather",
+          "tasks_passed": 2,
+          "tasks_total": 3,
+          "avg_accuracy": 66.67
+        },
+        {
+          "name": "web",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        }
+      ],
+      "is_benchmarked": true
+    },
+    {
+      "model_id": "qwen/qwen3.6-plus-preview:free",
+      "quality_score": 0.7683,
+      "context_length": 1000000,
+      "benchmarked_at": "2026-04-02T18:12:54.472746",
+      "total_tasks": 9,
+      "passed_tasks": 3,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 63.8,
+      "total_input_tokens": 167377,
+      "total_output_tokens": 1387,
+      "composite_score": 31.79,
+      "scenarios": [
+        {
+          "name": "file",
+          "tasks_passed": 1,
+          "tasks_total": 3,
+          "avg_accuracy": 33.33
         },
         {
           "name": "weather",
@@ -31,57 +65,46 @@
         },
         {
           "name": "web",
-          "tasks_passed": 0,
+          "tasks_passed": 2,
           "tasks_total": 3,
-          "avg_accuracy": 0.0
+          "avg_accuracy": 66.67
         }
       ],
       "is_benchmarked": true
     },
     {
-      "model_id": "qwen/qwen3.6-plus:free",
-      "quality_score": 0.7699,
-      "context_length": 1000000,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "qwen/qwen3.6-plus-preview:free",
-      "quality_score": 0.7684,
-      "context_length": 1000000,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
       "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
       "quality_score": 0.4628,
       "context_length": 262144,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
+      "benchmarked_at": "2026-04-02T18:17:36.830771",
+      "total_tasks": 9,
+      "passed_tasks": 8,
+      "accuracy_percent": 88.89,
+      "avg_latency_seconds": 94.6,
+      "total_input_tokens": 904069,
+      "total_output_tokens": 13057,
+      "composite_score": 62.22,
+      "scenarios": [
+        {
+          "name": "file",
+          "tasks_passed": 2,
+          "tasks_total": 3,
+          "avg_accuracy": 66.67
+        },
+        {
+          "name": "weather",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        },
+        {
+          "name": "web",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        }
+      ],
+      "is_benchmarked": true
     },
     {
       "model_id": "stepfun/step-3.5-flash:free",
@@ -130,7 +153,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4127,
+      "quality_score": 0.4126,
       "context_length": 256000,
       "benchmarked_at": "",
       "total_tasks": 0,
@@ -177,36 +200,6 @@
       "model_id": "arcee-ai/trinity-mini:free",
       "quality_score": 0.3555,
       "context_length": 131072,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "liquid/lfm-2.5-1.2b-thinking:free",
-      "quality_score": 0.3436,
-      "context_length": 32768,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "liquid/lfm-2.5-1.2b-instruct:free",
-      "quality_score": 0.3436,
-      "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
       "passed_tasks": 0,
@@ -294,36 +287,6 @@
       "is_benchmarked": false
     },
     {
-      "model_id": "google/gemma-3-27b-it:free",
-      "quality_score": 0.3024,
-      "context_length": 131072,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "meta-llama/llama-3.2-3b-instruct:free",
-      "quality_score": 0.3024,
-      "context_length": 131072,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
       "model_id": "z-ai/glm-4.5-air:free",
       "quality_score": 0.2849,
       "context_length": 131072,
@@ -339,99 +302,9 @@
       "is_benchmarked": false
     },
     {
-      "model_id": "google/gemma-3n-e2b-it:free",
-      "quality_score": 0.2769,
-      "context_length": 8192,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
       "model_id": "meta-llama/llama-3.3-70b-instruct:free",
       "quality_score": 0.2762,
       "context_length": 65536,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "google/gemma-3-4b-it:free",
-      "quality_score": 0.2631,
-      "context_length": 32768,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "google/gemma-3-12b-it:free",
-      "quality_score": 0.2631,
-      "context_length": 32768,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "nousresearch/hermes-3-llama-3.1-405b:free",
-      "quality_score": 0.2524,
-      "context_length": 131072,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "google/gemma-3n-e4b-it:free",
-      "quality_score": 0.2497,
-      "context_length": 8192,
-      "benchmarked_at": "",
-      "total_tasks": 0,
-      "passed_tasks": 0,
-      "accuracy_percent": null,
-      "avg_latency_seconds": null,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 0,
-      "scenarios": [],
-      "is_benchmarked": false
-    },
-    {
-      "model_id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
-      "quality_score": 0.2369,
-      "context_length": 32768,
       "benchmarked_at": "",
       "total_tasks": 0,
       "passed_tasks": 0,
