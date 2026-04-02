@@ -26,7 +26,6 @@ jobs:
 
     permissions:
       contents: write  # Required for pushing to gh-pages
-      packages: write  # Required for pushing to GitHub Container Registry
 
     steps:
       - name: Checkout repository
@@ -41,6 +40,7 @@ jobs:
       - name: Run benchmarks in Docker
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: |
           MAX_MODELS="${{ github.event.inputs.max_models || '20' }}"
@@ -50,16 +50,12 @@ jobs:
           # Run entire benchmark pipeline in Docker
           docker run --rm \
             -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
-            -e OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+            -e DAYTONA_API_KEY="$DAYTONA_API_KEY" \
             -e TAVILY_API_KEY="$TAVILY_API_KEY" \
-            -e LOCAL_MODE=true \
             -v $(pwd)/output:/app/output \
             -v $(pwd)/docs:/app/docs \
             benchmarked-free-ride:latest \
             bash -c "
-              echo 'Step 0: Configuring skills...'
-              bash scripts/configure_skills.sh
-
               echo 'Step 1: Discovering models...'
               python3 src/discover_models.py
 
@@ -73,11 +69,10 @@ jobs:
                 --sandbox-path ./openclawbench \
                 --output-dir output/benchmarks \
                 --scenarios '$SCENARIOS' \
-                --single-turn \
                 --difficulty '$DIFFICULTY' \
-                --max-models $MAX_MODELS \
-                --run-safety \
-                --agentdojo-dir ./agentdojo
+                --provider openrouter \
+                --backend daytona \
+                --max-models $MAX_MODELS
 
               echo 'Step 3: Generating reports...'
               python3 src/generate_report.py \

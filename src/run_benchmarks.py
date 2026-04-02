@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
 Run OpenClaw benchmarks against discovered models.
-Supports both utility benchmarks (openclaw-sandbox) and safety benchmarks (AgentDojo).
+Supports both utility benchmarks (openclawbench) and safety benchmarks (AgentDojo).
+
+Uses openclawbench's run.py with --backend=daytona to run evaluations in
+cloud sandboxes — no local openclaw installation required.
 """
 
 import os
@@ -26,13 +29,17 @@ class BenchmarkRunner:
         sandbox_path: Path,
         output_dir: Path,
         agentdojo_dir: Optional[Path] = None,
-        run_safety: bool = False
+        run_safety: bool = False,
+        provider: str = "openrouter",
+        backend: str = "daytona",
     ):
         self.sandbox_path = sandbox_path
         self.output_dir = output_dir
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.agentdojo_dir = agentdojo_dir
         self.run_safety = run_safety
+        self.provider = provider
+        self.backend = backend
 
         # Create separate directories for utility and safety results
         self.utility_dir = output_dir / "utility"
@@ -41,67 +48,80 @@ class BenchmarkRunner:
         if run_safety:
             self.safety_dir.mkdir(parents=True, exist_ok=True)
 
-    def configure_openclaw_model(self, model_id: str) -> bool:
-        """Configure OpenClaw to use the specified model."""
-        try:
-            # Use openclaw models set command
-            # Only add openrouter/ prefix if not already present
-            if model_id.startswith("openrouter/"):
-                full_model_id = model_id
-            else:
-                full_model_id = f"openrouter/{model_id}"
+    def _run_openclawbench(
+        self,
+        model_id: str,
+        scenario: str,
+        difficulty: str,
+        output_file: Path,
+    ) -> bool:
+        """
+        Run a single openclawbench scenario via run.py --backend daytona.
 
+        Returns True if the benchmark completed (even if some tasks failed).
+        """
+        cmd = [
+            "uv", "run", "python", "run.py",
+            "--backend", self.backend,
+            "--provider", self.provider,
+            "--model", model_id,
+            "--scenario", scenario,
+            "--difficulty", difficulty,
+            "--output", str(output_file.resolve()),
+        ]
+
+        # Forward relevant env vars (uv run inherits env automatically)
+        env = os.environ.copy()
+
+        print(f"Running command: {' '.join(cmd)}")
+
+        try:
             result = subprocess.run(
-                ["openclaw", "models", "set", full_model_id],
+                cmd,
+                cwd=self.sandbox_path,
+                env=env,
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=3600,  # 1 hour timeout per scenario
             )
 
-            if result.returncode != 0:
-                print(f"Warning: Failed to set model via CLI: {result.stderr}")
-                return False
+            print(result.stdout)
+            if result.stderr:
+                print("STDERR:", result.stderr)
 
-            print(f"Configured OpenClaw to use model: {full_model_id}")
-            return True
+            # openclawbench exits non-zero if any task fails, but that's OK —
+            # it still writes the results file. Only treat missing output as failure.
+            if output_file.exists():
+                return True
 
+            print(f"Output file not found after running scenario {scenario}")
+            return False
+
+        except subprocess.TimeoutExpired:
+            print(f"Scenario {scenario} timed out after 1 hour")
+            return False
         except Exception as e:
-            print(f"Error configuring model {model_id}: {e}")
+            print(f"Error running scenario {scenario}: {e}")
             return False
 
     def run_utility_benchmark(
         self,
         model_id: str,
         scenarios: Optional[List[str]] = None,
-        single_turn: bool = True,
-        difficulty: str = "all"
+        difficulty: str = "all",
     ) -> Optional[Dict[str, Any]]:
         """
-        Run the utility benchmark (openclaw-sandbox) for a specific model.
+        Run the utility benchmark for a specific model using openclawbench + Daytona.
 
-        Args:
-            model_id: The OpenRouter model ID
-            scenarios: List of scenarios to run (runs each individually and merges results)
-            single_turn: Use single-turn mode (faster, no OpenAI API needed)
-            difficulty: Task difficulty filter (easy/medium/hard/all)
-
-        Returns:
-            Benchmark results as dict, or None if failed
+        Runs each scenario separately via run.py and merges results.
         """
         print(f"\n{'='*60}")
         print(f"Running benchmarks for model: {model_id}")
         print(f"{'='*60}\n")
 
-        # Configure OpenClaw to use this model
-        if not self.configure_openclaw_model(model_id):
-            print(f"Skipping benchmarks for {model_id} due to configuration error")
-            return None
-
-        # Default scenarios if none specified
         if not scenarios:
             scenarios = ["file", "weather", "web"]
 
-        # Prepare output filename
         safe_model_name = model_id.replace("/", "_").replace(":", "_")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -112,79 +132,45 @@ class BenchmarkRunner:
             print(f"\n--- Running scenario: {scenario} ---\n")
 
             output_file = self.utility_dir / f"utility_{safe_model_name}_{scenario}_{timestamp}.json"
-            output_file_abs = output_file.resolve()
-            output_file_abs.parent.mkdir(parents=True, exist_ok=True)
 
-            # Build command for single scenario
-            cmd = [
-                "python3",
-                "cli.py",
-                "--local",
-                "benchmark-suite",
-                "--scenario", scenario,
-                "--difficulty", difficulty,
-                "-o", str(output_file_abs)
-            ]
+            success = self._run_openclawbench(
+                model_id=model_id,
+                scenario=scenario,
+                difficulty=difficulty,
+                output_file=output_file,
+            )
 
-            if single_turn:
-                cmd.append("--single-turn")
-
-            # Set environment variables
-            env = os.environ.copy()
-            env["LOCAL_MODE"] = "true"
-            env["AGENT_ID"] = "main"
-
-            print(f"Running command: {' '.join(cmd)}\n")
+            if not success:
+                print(f"Scenario {scenario} failed to produce output")
+                continue
 
             try:
-                # Run benchmark
-                result = subprocess.run(
-                    cmd,
-                    cwd=self.sandbox_path,
-                    env=env,
-                    capture_output=True,
-                    text=True,
-                    timeout=3600  # 1 hour timeout
-                )
+                with open(output_file, "r") as f:
+                    scenario_result = json.load(f)
 
-                print(result.stdout)
+                # The new openclawbench output has task_results at top level.
+                # Wrap it as a scenario entry compatible with generate_report.py.
+                all_scenario_results.append({
+                    "scenario_name": scenario_result.get("scenario_name", scenario),
+                    "task_results": scenario_result.get("task_results", []),
+                    "average_accuracy": scenario_result.get("average_accuracy", 0),
+                    "average_latency": scenario_result.get("average_latency", 0),
+                    "total_tokens": scenario_result.get("total_tokens", 0),
+                    "total_duration": scenario_result.get("total_duration", 0),
+                })
 
-                if result.stderr:
-                    print("STDERR:", result.stderr)
-
-                if result.returncode != 0:
-                    print(f"Scenario {scenario} failed with return code {result.returncode}")
-                    continue
-
-                # Load scenario results
-                if output_file.exists():
-                    with open(output_file, "r") as f:
-                        scenario_result = json.load(f)
-
-                    # Extract the scenarios list from the result
-                    if "scenarios" in scenario_result:
-                        all_scenario_results.extend(scenario_result["scenarios"])
-
-                    print(f"Scenario {scenario} completed successfully!")
-                else:
-                    print(f"Output file not found for scenario {scenario}: {output_file}")
-
-            except subprocess.TimeoutExpired:
-                print(f"Scenario {scenario} timed out after 1 hour")
-                continue
+                print(f"Scenario {scenario} completed successfully!")
             except Exception as e:
-                print(f"Error running scenario {scenario}: {e}")
+                print(f"Error loading results for scenario {scenario}: {e}")
                 continue
 
-        # Merge all results into a single output
         if not all_scenario_results:
             print("No scenarios completed successfully")
             return None
 
-        # Create merged output file
+        # Create merged output file (same format generate_report.py expects)
         merged_output = self.utility_dir / f"utility_{safe_model_name}_{timestamp}.json"
 
-        # Calculate merged summary
         total_tasks = sum(len(s.get("task_results", [])) for s in all_scenario_results)
         tasks_passed = sum(
             sum(1 for t in s.get("task_results", []) if t.get("success", False))
@@ -192,24 +178,17 @@ class BenchmarkRunner:
         )
 
         merged_result = {
-            "config": {
-                "async_mode": False,
-                "local_mode": True,
-                "bot_model": None,
-                "mode": "single_turn"
-            },
             "scenarios": all_scenario_results,
             "summary": {
                 "total_scenarios": len(all_scenario_results),
                 "total_tasks": total_tasks,
                 "tasks_passed": tasks_passed,
-                "overall_accuracy": (tasks_passed / total_tasks * 100) if total_tasks > 0 else 0
+                "overall_accuracy": (tasks_passed / total_tasks * 100) if total_tasks > 0 else 0,
             },
             "model_id": model_id,
-            "benchmarked_at": datetime.now().isoformat()
+            "benchmarked_at": datetime.now().isoformat(),
         }
 
-        # Save merged result
         with open(merged_output, "w") as f:
             json.dump(merged_result, f, indent=2)
 
@@ -217,15 +196,7 @@ class BenchmarkRunner:
         return merged_result
 
     def run_safety_benchmark_for_model(self, model_id: str) -> Optional[Dict[str, Any]]:
-        """
-        Run the safety benchmark (AgentDojo) for a specific model.
-
-        Args:
-            model_id: The OpenRouter model ID
-
-        Returns:
-            Safety benchmark results as dict, or None if failed or not supported
-        """
+        """Run the safety benchmark (AgentDojo) for a specific model."""
         if not self.run_safety:
             return None
 
@@ -245,11 +216,10 @@ class BenchmarkRunner:
             defense=None,
             suite="workspace",
             max_user_tasks=10,
-            attacks_per_task=5  # Pass@5 evaluation
+            attacks_per_task=5,  # Pass@5 evaluation
         )
 
         if result:
-            # Save result to file
             safe_model_name = model_id.replace("/", "_").replace(":", "_")
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_file = self.safety_dir / f"safety_{safe_model_name}_{timestamp}.json"
@@ -266,24 +236,10 @@ class BenchmarkRunner:
         self,
         discovered_models_file: Path,
         scenarios: Optional[List[str]] = None,
-        single_turn: bool = True,
         difficulty: str = "all",
-        max_models: Optional[int] = None
+        max_models: Optional[int] = None,
     ) -> List[Dict[str, Any]]:
-        """
-        Run benchmarks for all discovered models.
-
-        Args:
-            discovered_models_file: Path to discovered_models.json
-            scenarios: List of scenarios to run
-            single_turn: Use single-turn mode
-            difficulty: Task difficulty filter
-            max_models: Maximum number of models to benchmark (None = all)
-
-        Returns:
-            List of benchmark results
-        """
-        # Load discovered models
+        """Run benchmarks for all discovered models."""
         with open(discovered_models_file, "r") as f:
             data = json.load(f)
             models = data.get("models", [])
@@ -299,26 +255,21 @@ class BenchmarkRunner:
             model_id = model["id"]
             print(f"\n[{i}/{len(models)}] Benchmarking: {model_id}")
 
-            # Run utility benchmark
             utility_result = self.run_utility_benchmark(
                 model_id=model_id,
                 scenarios=scenarios,
-                single_turn=single_turn,
-                difficulty=difficulty
+                difficulty=difficulty,
             )
 
-            # Run safety benchmark (if enabled)
             safety_result = None
             if self.run_safety:
                 safety_result = self.run_safety_benchmark_for_model(model_id)
 
             if utility_result:
-                # Add model metadata from discovery
                 utility_result["quality_score"] = model.get("quality_score", 0)
                 utility_result["context_length"] = model.get("context_length", 0)
                 utility_result["benchmark_type"] = "utility"
 
-                # Add safety results if available
                 if safety_result:
                     utility_result["safety_benchmark"] = safety_result
 
@@ -335,63 +286,69 @@ def main():
         "--discovered-models",
         type=Path,
         default=Path("output/discovered_models.json"),
-        help="Path to discovered models JSON file"
+        help="Path to discovered models JSON file",
     )
     parser.add_argument(
         "--sandbox-path",
         type=Path,
         default=Path("/app/openclawbench"),
-        help="Path to openclawbench directory"
+        help="Path to openclawbench directory",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("output/benchmarks"),
-        help="Output directory for benchmark results"
+        help="Output directory for benchmark results",
     )
     parser.add_argument(
         "--scenarios",
         type=str,
         default="file,weather,web",
-        help="Comma-separated list of scenarios (default: file,weather,web)"
-    )
-    parser.add_argument(
-        "--single-turn",
-        action="store_true",
-        default=True,
-        help="Use single-turn mode (no AI agent)"
+        help="Comma-separated list of scenarios (default: file,weather,web)",
     )
     parser.add_argument(
         "--difficulty",
         type=str,
         default="easy",
         choices=["easy", "medium", "hard", "all"],
-        help="Task difficulty filter (default: easy)"
+        help="Task difficulty filter (default: easy)",
     )
     parser.add_argument(
         "--max-models",
         type=int,
         default=None,
-        help="Maximum number of models to benchmark"
+        help="Maximum number of models to benchmark",
+    )
+    parser.add_argument(
+        "--provider",
+        type=str,
+        default="openrouter",
+        help="LLM provider for Daytona backend (default: openrouter)",
+    )
+    parser.add_argument(
+        "--backend",
+        type=str,
+        default="daytona",
+        choices=["local", "daytona"],
+        help="Workspace backend (default: daytona)",
     )
     parser.add_argument(
         "--run-safety",
         action="store_true",
         default=False,
-        help="Run safety benchmarks (AgentDojo) in addition to utility benchmarks"
+        help="Run safety benchmarks (AgentDojo) in addition to utility benchmarks",
     )
     parser.add_argument(
         "--agentdojo-dir",
         type=Path,
         default=None,
-        help="Path to AgentDojo repository (required if --run-safety is enabled)"
+        help="Path to AgentDojo repository (required if --run-safety is enabled)",
     )
 
     args = parser.parse_args()
 
     # Validate safety benchmark configuration
     if args.run_safety and not args.agentdojo_dir:
-        # Default to sibling directory
         args.agentdojo_dir = Path(__file__).parent.parent / "agentdojo"
         if not args.agentdojo_dir.exists():
             print(f"Error: --run-safety requires --agentdojo-dir or agentdojo submodule")
@@ -408,24 +365,22 @@ def main():
         print("Run discover_models.py first!")
         sys.exit(1)
 
-    # Create runner
     runner = BenchmarkRunner(
         sandbox_path=args.sandbox_path,
         output_dir=args.output_dir,
         agentdojo_dir=args.agentdojo_dir,
-        run_safety=args.run_safety
+        run_safety=args.run_safety,
+        provider=args.provider,
+        backend=args.backend,
     )
 
-    # Parse scenarios
     scenarios = [s.strip() for s in args.scenarios.split(",") if s.strip()]
 
-    # Run benchmarks
     results = runner.run_all_discovered_models(
         discovered_models_file=args.discovered_models,
         scenarios=scenarios,
-        single_turn=args.single_turn,
         difficulty=args.difficulty,
-        max_models=args.max_models
+        max_models=args.max_models,
     )
 
     print(f"\n{'='*60}")
