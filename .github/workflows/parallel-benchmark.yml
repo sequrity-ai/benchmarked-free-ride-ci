@@ -9,11 +9,11 @@ on:
       max_models:
         description: 'Maximum number of models to test'
         required: false
-        default: '15'  # Can benchmark many more models with parallelization
+        default: '15'
       max_parallel:
         description: 'Maximum parallel jobs to run'
         required: false
-        default: '5'  # Balance between speed and resource usage
+        default: '5'
       scenarios:
         description: 'Scenarios to run (comma-separated: file, weather, web)'
         required: false
@@ -24,10 +24,10 @@ on:
         default: 'easy'
 
 jobs:
-  # Step 1: Discover models and prepare matrix
+  # Step 1: Discover models, build image, and prepare matrix
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       total_models: ${{ steps.set-matrix.outputs.total_models }}
@@ -38,9 +38,21 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Build Docker image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and cache Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: benchmarked-free-ride:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save Docker image to tarball
         run: |
-          docker build -t benchmarked-free-ride:latest .
+          docker save benchmarked-free-ride:latest | gzip > /tmp/docker-image.tar.gz
 
       - name: Discover models
         env:
@@ -57,7 +69,6 @@ jobs:
         run: |
           MAX_MODELS="${{ github.event.inputs.max_models || '15' }}"
 
-          # Read model IDs from matrix file and limit to max_models
           MODELS=$(cat output/matrix_models.json | jq -c ".[:${MAX_MODELS}]")
           TOTAL=$(echo "$MODELS" | jq 'length')
 
@@ -77,14 +88,21 @@ jobs:
             output/matrix_models.json
           retention-days: 30
 
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/docker-image.tar.gz
+          retention-days: 1
+
   # Step 2: Benchmark models in parallel
   benchmark:
     needs: discover
     runs-on: ubuntu-latest
-    timeout-minutes: 90  # Per-model timeout with pass@5 (each model ~45 min)
+    timeout-minutes: 90
 
     strategy:
-      fail-fast: false  # Continue even if some models fail
+      fail-fast: false
       max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '5') }}
       matrix:
         model_id: ${{ fromJson(needs.discover.outputs.matrix) }}
@@ -93,72 +111,63 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
         with:
-          submodules: 'recursive'
+          name: docker-image
+          path: /tmp
 
-      - name: Build Docker image
+      - name: Load Docker image
         run: |
-          docker build -t benchmarked-free-ride:latest .
+          docker load < /tmp/docker-image.tar.gz
 
       - name: Benchmark model ${{ matrix.model_id }}
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: |
           SCENARIOS="${{ github.event.inputs.scenarios || 'file,weather,web' }}"
           DIFFICULTY="${{ github.event.inputs.difficulty || 'easy' }}"
 
-          # Create safe filename
-          SAFE_MODEL_NAME=$(echo "${{ matrix.model_id }}" | sed 's/[\/:]/_/g')
-
           echo "Benchmarking model: ${{ matrix.model_id }}"
           echo "  Scenarios: $SCENARIOS"
           echo "  Difficulty: $DIFFICULTY"
 
-          # Run benchmarks in Docker for this single model
+          # Write temporary model list via a script to avoid heredoc YAML issues
+          mkdir -p output
+          python3 -c "
+          import json, datetime
+          data = {
+              'discovered_at': datetime.datetime.utcnow().isoformat() + 'Z',
+              'total_models': 1,
+              'models': [{'id': '${{ matrix.model_id }}'}]
+          }
+          with open('output/temp_model_list.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          "
+
           docker run --rm \
             -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
-            -e OPENAI_API_KEY="$OPENROUTER_API_KEY" \
+            -e DAYTONA_API_KEY="$DAYTONA_API_KEY" \
             -e TAVILY_API_KEY="$TAVILY_API_KEY" \
-            -e LOCAL_MODE=true \
             -v $(pwd)/output:/app/output \
             benchmarked-free-ride:latest \
-            bash -c "
-              echo 'Configuring skills...'
-              bash scripts/configure_skills.sh
+            python3 src/run_benchmarks.py \
+              --discovered-models output/temp_model_list.json \
+              --sandbox-path ./openclawbench \
+              --output-dir output/benchmarks \
+              --scenarios "$SCENARIOS" \
+              --difficulty "$DIFFICULTY" \
+              --provider openrouter \
+              --backend daytona \
+              --max-models 1
 
-              echo 'Creating temporary model list...'
-              mkdir -p output
-              cat > output/temp_model_list.json <<EOF
-{
-  \"discovered_at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
-  \"total_models\": 1,
-  \"models\": [{
-    \"id\": \"${{ matrix.model_id }}\"
-  }]
-}
-EOF
-
-              echo 'Running utility benchmarks...'
-              python3 src/run_benchmarks.py \
-                --discovered-models output/temp_model_list.json \
-                --sandbox-path ./openclawbench \
-                --output-dir output/benchmarks \
-                --scenarios '$SCENARIOS' \
-                --single-turn \
-                --difficulty '$DIFFICULTY' \
-                --max-models 1 \
-                --run-safety \
-                --agentdojo-dir ./agentdojo
-            "
-
-      - name: Upload benchmark results for ${{ matrix.model_id }}
+      - name: Upload benchmark results
         uses: actions/upload-artifact@v4
-        if: always()  # Upload even if benchmark failed
+        if: always()
         with:
-          name: benchmark-results-${{ strategy.job-index }}
+          name: benchmark-${{ strategy.job-index }}
           path: |
             output/benchmarks/utility/*.json
             output/benchmarks/safety/*.json
@@ -169,21 +178,21 @@ EOF
     needs: [discover, benchmark]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: always()  # Run even if some benchmarks failed
+    if: always()
 
     permissions:
-      contents: write  # Required for pushing to gh-pages
+      contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
-
-      - name: Download all benchmark artifacts
+      - name: Download Docker image
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker image
+        run: |
+          docker load < /tmp/docker-image.tar.gz
 
       - name: Download discovery artifacts
         uses: actions/download-artifact@v4
@@ -191,13 +200,18 @@ EOF
           name: discovery-results
           path: output
 
+      - name: Download benchmark artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-*
+          path: artifacts
+
       - name: Aggregate benchmark results
         run: |
           echo "Aggregating results from all benchmark jobs..."
           mkdir -p output/benchmarks/utility
           mkdir -p output/benchmarks/safety
 
-          # Copy all benchmark results to output directory
           find artifacts -name "*.json" -type f | while read file; do
             if [[ "$file" == *"/utility/"* ]]; then
               cp "$file" output/benchmarks/utility/
@@ -212,9 +226,10 @@ EOF
           echo "Safety results:"
           ls -lh output/benchmarks/safety/ || echo "No safety results"
 
-      - name: Build Docker image for reporting
-        run: |
-          docker build -t benchmarked-free-ride:latest .
+      - name: Checkout repository for docs
+        uses: actions/checkout@v4
+        with:
+          path: repo
 
       - name: Generate HTML report
         run: |
@@ -249,11 +264,11 @@ EOF
 
           echo "## Parallel Benchmark Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🎯 **Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
-          echo "⚡ **Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
+          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📊 **View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
+          echo "**View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📥 **API Endpoints:**" >> $GITHUB_STEP_SUMMARY
+          echo "**API Endpoints:**" >> $GITHUB_STEP_SUMMARY
           echo "- [All Models](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/models.json)" >> $GITHUB_STEP_SUMMARY
           echo "- [Leaderboard](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/leaderboard.json)" >> $GITHUB_STEP_SUMMARY
