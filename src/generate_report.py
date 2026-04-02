@@ -635,6 +635,7 @@ class ReportGenerator:
     <div class="container">
         <header>
             <h1>🏆 Benchmarked Free Ride</h1>
+            <p class="subtitle">Last updated: GENERATED_TIMESTAMP</p>
         </header>
 
         <nav class="nav-tabs">
@@ -941,6 +942,10 @@ class ReportGenerator:
 </body>
 </html>
 """
+
+        # Inject timestamp
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
+        html_content = html_content.replace("GENERATED_TIMESTAMP", timestamp)
 
         output_file = self.output_dir / "index.html"
         with open(output_file, "w") as f:
