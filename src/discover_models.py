@@ -85,25 +85,29 @@ def score_model(model: Dict[str, Any]) -> float:
 def filter_benchmark_compatible(models: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Filter models that are suitable for benchmarking.
-    Exclude models that are:
-    - Image/vision only models
-    - Audio/speech models
-    - Embedding models
-    - Models with very small context (<4k tokens)
+    Requires:
+    - Text in output modalities (not audio-only, image-only, etc.)
+    - Tool calling support (needed for openclaw agent tasks)
+    - Minimum 4k context
     """
     compatible = []
 
     for model in models:
-        model_id = model.get("id", "")
         context_length = model.get("context_length", 0)
-
-        # Skip non-text models
-        skip_keywords = ["vision", "image", "audio", "speech", "whisper", "embedding", "clip"]
-        if any(keyword in model_id.lower() for keyword in skip_keywords):
-            continue
 
         # Require minimum 4k context
         if context_length < 4096:
+            continue
+
+        # Require text output modality
+        architecture = model.get("architecture", {})
+        output_modalities = architecture.get("output_modalities", [])
+        if "text" not in output_modalities:
+            continue
+
+        # Require tool calling support
+        supported_params = model.get("supported_parameters", [])
+        if "tools" not in supported_params:
             continue
 
         compatible.append(model)
