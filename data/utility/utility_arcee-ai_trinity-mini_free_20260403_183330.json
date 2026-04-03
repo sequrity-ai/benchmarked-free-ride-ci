@@ -1,0 +1,138 @@
+{
+  "scenarios": [
+    {
+      "scenario_name": "file",
+      "task_results": [
+        {
+          "task_name": "file-consolidation",
+          "scenario": "file",
+          "prompt": "# File Consolidation\n\nFind all profile.txt files in /workspace/users/ directories. Each profile.txt contains Email, Role, and Action Items lines. Read each profile and create a CSV file named 'users_summary.csv' in /workspace with columns: name, email, role, action_count. The name should be the directory name (e.g., 'Alice Johnson'). Sort the rows by action_count in descending order (highest first).",
+          "success": false,
+          "reward": 0.0,
+          "latency": 231.54022002220154,
+          "accuracy_score": 0.0,
+          "response_text": null,
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 29336,
+          "output_tokens": 43608,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "file-modification",
+          "scenario": "file",
+          "prompt": "# File Modification\n\nRead /workspace/notes.txt to count how many action items each person has. Count ONLY action items explicitly assigned to each person by their name (e.g., 'Alice:', 'Bob:', 'Carol:'). Do NOT count action items assigned to 'Everyone' or group names. Then update each profile.txt file in /workspace/users/ directories to set the 'Action Items: X' line where X is the correct count of action items for that person. The profile.txt files already exist with Email, Role, and an Action Items line that may need correcting. If a user has no action items explicitly assigned to them by name, use 0.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 28.282362937927246,
+          "accuracy_score": 0.0,
+          "response_text": "\u26a0\ufe0f API rate limit reached. Please try again later.",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "file-organization",
+          "scenario": "file",
+          "prompt": "# File Organization\n\nRead /workspace/sales_data.csv. Create a directory called 'by_region/' under /workspace. For each unique region in the data, create a sub-directory named after the region (e.g., 'by_region/North/', 'by_region/South/'). In each region directory, create a file called 'sales.csv' containing ONLY the rows for that region, with the same CSV header (product,quantity,price,region).",
+          "success": false,
+          "reward": 0.0,
+          "latency": 88.6305079460144,
+          "accuracy_score": 0.0,
+          "response_text": null,
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 14241,
+          "output_tokens": 36110,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        }
+      ],
+      "average_accuracy": 0.0,
+      "average_latency": 116.15103030204773,
+      "total_tokens": 123295,
+      "total_duration": 363.2028691768646
+    },
+    {
+      "scenario_name": "web",
+      "task_results": [
+        {
+          "task_name": "mars-moon-count",
+          "scenario": "web",
+          "prompt": "How many natural moons does Mars have? Report only the number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 93.82093095779419,
+          "accuracy_score": 0.0,
+          "response_text": null,
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 14523,
+          "output_tokens": 690,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "npm-react-version",
+          "scenario": "web",
+          "prompt": "What is the latest version of the 'react' package on npm? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 85.71448302268982,
+          "accuracy_score": 0.0,
+          "response_text": null,
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 14169,
+          "output_tokens": 34251,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "pypi-requests-version",
+          "scenario": "web",
+          "prompt": "What is the latest stable version of the Python 'requests' package on PyPI? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 15.117437839508057,
+          "accuracy_score": 0.0,
+          "response_text": "2.28.0",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 14172,
+          "output_tokens": 2653,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        }
+      ],
+      "average_accuracy": 0.0,
+      "average_latency": 64.88428393999736,
+      "total_tokens": 80458,
+      "total_duration": 209.57306790351868
+    }
+  ],
+  "summary": {
+    "total_scenarios": 2,
+    "total_tasks": 6,
+    "tasks_passed": 0,
+    "overall_accuracy": 0.0
+  },
+  "model_id": "arcee-ai/trinity-mini:free",
+  "benchmarked_at": "2026-04-03T19:43:05.984399"
+}
