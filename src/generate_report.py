@@ -877,9 +877,10 @@ class ReportGenerator:
                 }
 
                 const html = `<table>
-                    <tr><th>Rank</th><th>Model</th><th>Score</th><th>Accuracy</th><th>Latency</th></tr>
+                    <tr><th>Rank</th><th>Model</th><th>Score</th><th>Accuracy</th><th>Latency</th><th>Last Tested</th></tr>
                     ${data.leaderboard.map(m => {
                         const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        const testedAt = m.benchmarked_at ? new Date(m.benchmarked_at).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) : '—';
                         return `
                         <tr>
                             <td class="rank">${m.rank}</td>
@@ -887,6 +888,7 @@ class ReportGenerator:
                             <td class="score">${m.composite_score.toFixed(1)}</td>
                             <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
                             <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
+                            <td>${testedAt}</td>
                         </tr>
                         `;
                     }).join('')}
@@ -915,16 +917,19 @@ class ReportGenerator:
                         <th>Model</th>
                         <th>Attack Success Rate ↓</th>
                         <th>Utility Score ↑</th>
+                        <th>Last Tested</th>
                     </tr>
                     ${data.leaderboard.map(m => {
                         const attackSuccessRate = (100 - m.security_score).toFixed(1);
                         const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        const testedAt = m.benchmarked_at ? new Date(m.benchmarked_at).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) : '—';
                         return `
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${attackSuccessRate}%</td>
                             <td>${m.utility_score.toFixed(1)}%</td>
+                            <td>${testedAt}</td>
                         </tr>
                         `;
                     }).join('')}
@@ -971,6 +976,7 @@ class ReportGenerator:
                     "total_injection_tasks": safety_data.get("total_injection_tasks", 0),
                     "passed_injection_tasks": safety_data.get("passed_injection_tasks", 0),
                     "agentdojo_model": safety_data.get("agentdojo_model", ""),
+                    "benchmarked_at": r.get("benchmarked_at", ""),
                 })
 
         # Sort by security score (higher is better)
@@ -1053,6 +1059,7 @@ class ReportGenerator:
                             "context_length": m["context_length"],
                             "quality_score": m.get("quality_score", 0),
                             "is_benchmarked": m["is_benchmarked"],
+                            "benchmarked_at": m.get("benchmarked_at", ""),
                         }
                         for i, m in enumerate(all_models)
                     ],
