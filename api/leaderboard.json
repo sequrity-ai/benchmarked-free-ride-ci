@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-03T19:44:19.863785",
+  "generated_at": "2026-04-03T22:45:31.887753",
   "total_models": 16,
   "benchmarked_count": 15,
   "leaderboard": [
@@ -10,11 +10,21 @@
       "accuracy_percent": 88.89,
       "avg_latency_seconds": 49.4,
       "context_length": 1000000,
-      "quality_score": 0.7693,
+      "quality_score": 0.7692,
       "is_benchmarked": true
     },
     {
       "rank": 2,
+      "model_id": "z-ai/glm-4.5-air:free",
+      "composite_score": 57.37,
+      "accuracy_percent": 77.78,
+      "avg_latency_seconds": 97.46,
+      "context_length": 131072,
+      "quality_score": 0.2843,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 3,
       "model_id": "arcee-ai/trinity-large-preview:free",
       "composite_score": 54.68,
       "accuracy_percent": 66.67,
@@ -24,33 +34,23 @@
       "is_benchmarked": true
     },
     {
-      "rank": 3,
+      "rank": 4,
+      "model_id": "minimax/minimax-m2.5:free",
+      "composite_score": 52.47,
+      "accuracy_percent": 66.67,
+      "avg_latency_seconds": 58.5,
+      "context_length": 196608,
+      "quality_score": 0.4211,
+      "is_benchmarked": true
+    },
+    {
+      "rank": 5,
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
       "composite_score": 46.67,
       "accuracy_percent": 66.67,
       "avg_latency_seconds": 92.41,
       "context_length": 256000,
-      "quality_score": 0.4121,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 4,
-      "model_id": "z-ai/glm-4.5-air:free",
-      "composite_score": 46.67,
-      "accuracy_percent": 66.67,
-      "avg_latency_seconds": 118.99,
-      "context_length": 131072,
-      "quality_score": 0.2844,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 5,
-      "model_id": "minimax/minimax-m2.5:free",
-      "composite_score": 29.34,
-      "accuracy_percent": 0.0,
-      "avg_latency_seconds": 1.97,
-      "context_length": 196608,
-      "quality_score": 0.4212,
+      "quality_score": 0.412,
       "is_benchmarked": true
     },
     {
@@ -70,7 +70,7 @@
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 2.01,
       "context_length": 131072,
-      "quality_score": 0.355,
+      "quality_score": 0.3549,
       "is_benchmarked": true
     },
     {
@@ -80,7 +80,7 @@
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 2.02,
       "context_length": 262000,
-      "quality_score": 0.3352,
+      "quality_score": 0.3351,
       "is_benchmarked": true
     },
     {
@@ -90,7 +90,7 @@
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 2.04,
       "context_length": 262144,
-      "quality_score": 0.3631,
+      "quality_score": 0.363,
       "is_benchmarked": true
     },
     {
@@ -110,7 +110,7 @@
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 2.22,
       "context_length": 262144,
-      "quality_score": 0.4622,
+      "quality_score": 0.4621,
       "is_benchmarked": true
     },
     {
@@ -136,11 +136,11 @@
     {
       "rank": 14,
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "composite_score": 15.56,
-      "accuracy_percent": 22.22,
-      "avg_latency_seconds": 116.9,
+      "composite_score": 7.78,
+      "accuracy_percent": 11.11,
+      "avg_latency_seconds": 80.71,
       "context_length": 128000,
-      "quality_score": 0.3352,
+      "quality_score": 0.3351,
       "is_benchmarked": true
     },
     {
@@ -150,7 +150,7 @@
       "accuracy_percent": 11.11,
       "avg_latency_seconds": 114.83,
       "context_length": 128000,
-      "quality_score": 0.3062,
+      "quality_score": 0.3061,
       "is_benchmarked": true
     },
     {
