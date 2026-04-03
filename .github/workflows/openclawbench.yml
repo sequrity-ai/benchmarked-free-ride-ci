@@ -236,9 +236,10 @@ jobs:
 
       - name: Persist raw results for other workflows
         run: |
-          mkdir -p docs/data/utility docs/data/safety
-          cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
-          cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+          sudo mkdir -p docs/data/utility docs/data/safety
+          sudo cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
+          sudo cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+          sudo chown -R $(id -u):$(id -g) docs/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
