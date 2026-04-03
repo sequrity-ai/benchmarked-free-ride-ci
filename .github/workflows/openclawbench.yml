@@ -1,9 +1,8 @@
-name: Parallel Model Benchmarks
+name: OpenClawBench Benchmarks
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: '0 2 */2 * *'  # Every 2 days at 2 AM UTC (odd days: 1,3,5...)
   workflow_dispatch:
     inputs:
       max_models:
@@ -24,7 +23,6 @@ on:
         default: 'easy'
 
 jobs:
-  # Step 1: Discover models, build image, and prepare matrix
   discover:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -50,9 +48,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Save Docker image to tarball
-        run: |
-          docker save benchmarked-free-ride:latest | gzip > /tmp/docker-image.tar.gz
+      - name: Save Docker image
+        run: docker save benchmarked-free-ride:latest | gzip > /tmp/docker-image.tar.gz
 
       - name: Discover models
         env:
@@ -68,13 +65,10 @@ jobs:
         id: set-matrix
         run: |
           MAX_MODELS="${{ github.event.inputs.max_models || '15' }}"
-
           MODELS=$(cat output/matrix_models.json | jq -c ".[:${MAX_MODELS}]")
           TOTAL=$(echo "$MODELS" | jq 'length')
-
           echo "matrix=${MODELS}" >> $GITHUB_OUTPUT
           echo "total_models=${TOTAL}" >> $GITHUB_OUTPUT
-
           echo "Will benchmark ${TOTAL} models:"
           echo "$MODELS" | jq -r '.[]'
 
@@ -88,14 +82,13 @@ jobs:
             output/matrix_models.json
           retention-days: 30
 
-      - name: Upload Docker image artifact
+      - name: Upload Docker image
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
           path: /tmp/docker-image.tar.gz
           retention-days: 1
 
-  # Step 2: Benchmark models in parallel
   benchmark:
     needs: discover
     runs-on: ubuntu-latest
@@ -118,8 +111,7 @@ jobs:
           path: /tmp
 
       - name: Load Docker image
-        run: |
-          docker load < /tmp/docker-image.tar.gz
+        run: docker load < /tmp/docker-image.tar.gz
 
       - name: Benchmark model ${{ matrix.model_id }}
         env:
@@ -134,7 +126,6 @@ jobs:
           echo "  Scenarios: $SCENARIOS"
           echo "  Difficulty: $DIFFICULTY"
 
-          # Write temporary model list via a script to avoid heredoc YAML issues
           mkdir -p output
           python3 -c "
           import json, datetime
@@ -161,21 +152,16 @@ jobs:
               --difficulty "$DIFFICULTY" \
               --provider openrouter \
               --backend daytona \
-              --max-models 1 \
-              --run-safety \
-              --agentdojo-dir ./agentdojo
+              --max-models 1
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: benchmark-${{ strategy.job-index }}
-          path: |
-            output/benchmarks/utility/*.json
-            output/benchmarks/safety/*.json
+          name: openclaw-${{ strategy.job-index }}
+          path: output/benchmarks/utility/*.json
           retention-days: 30
 
-  # Step 3: Aggregate results and generate report
   report:
     needs: [discover, benchmark]
     runs-on: ubuntu-latest
@@ -193,8 +179,7 @@ jobs:
           path: /tmp
 
       - name: Load Docker image
-        run: |
-          docker load < /tmp/docker-image.tar.gz
+        run: docker load < /tmp/docker-image.tar.gz
 
       - name: Download discovery artifacts
         uses: actions/download-artifact@v4
@@ -202,38 +187,44 @@ jobs:
           name: discovery-results
           path: output
 
-      - name: Download benchmark artifacts
+      - name: Download new benchmark artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: benchmark-*
+          pattern: openclaw-*
           path: artifacts
 
-      - name: Aggregate benchmark results
+      - name: Fetch existing results from gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: Merge results
         run: |
-          echo "Aggregating results from all benchmark jobs..."
           mkdir -p output/benchmarks/utility
           mkdir -p output/benchmarks/safety
 
+          # Pull existing results from gh-pages
+          if [ -d gh-pages/data/utility ]; then
+            cp gh-pages/data/utility/*.json output/benchmarks/utility/ 2>/dev/null || true
+          fi
+          if [ -d gh-pages/data/safety ]; then
+            cp gh-pages/data/safety/*.json output/benchmarks/safety/ 2>/dev/null || true
+          fi
+
+          echo "Existing utility results: $(ls output/benchmarks/utility/ 2>/dev/null | wc -l) files"
+          echo "Existing safety results: $(ls output/benchmarks/safety/ 2>/dev/null | wc -l) files"
+
+          # Overlay new utility results (overwrites same-model files)
           find artifacts -name "*.json" -type f | while read file; do
-            if [[ "$file" == *"/utility/"* ]]; then
-              cp "$file" output/benchmarks/utility/
-            elif [[ "$file" == *"/safety/"* ]]; then
-              cp "$file" output/benchmarks/safety/
-            fi
+            cp "$file" output/benchmarks/utility/
           done
 
-          echo "Utility results:"
-          ls -lh output/benchmarks/utility/ || echo "No utility results"
+          echo "After merge - utility: $(ls output/benchmarks/utility/ | wc -l) files"
+          echo "After merge - safety: $(ls output/benchmarks/safety/ | wc -l) files"
 
-          echo "Safety results:"
-          ls -lh output/benchmarks/safety/ || echo "No safety results"
-
-      - name: Checkout repository for docs
-        uses: actions/checkout@v4
-        with:
-          path: repo
-
-      - name: Generate HTML report
+      - name: Generate report
         run: |
           docker run --rm \
             -v $(pwd)/output:/app/output \
@@ -243,14 +234,11 @@ jobs:
               --benchmarks-dir output/benchmarks \
               --output-dir docs
 
-      - name: Upload report artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: benchmark-report-${{ github.run_number }}
-          path: |
-            output/
-            docs/
-          retention-days: 30
+      - name: Persist raw results for other workflows
+        run: |
+          mkdir -p docs/data/utility docs/data/safety
+          cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
+          cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -258,19 +246,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
           publish_branch: gh-pages
-          commit_message: 'Update parallel benchmark results - ${{ github.run_number }}'
+          commit_message: 'Update OpenClawBench results - ${{ github.run_number }}'
 
       - name: Create summary
         run: |
           TOTAL_MODELS="${{ needs.discover.outputs.total_models }}"
-
-          echo "## Parallel Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo "## OpenClawBench Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
           echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**API Endpoints:**" >> $GITHUB_STEP_SUMMARY
-          echo "- [All Models](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/models.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- [Leaderboard](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/api/leaderboard.json)" >> $GITHUB_STEP_SUMMARY

@@ -9,6 +9,7 @@ import logging
 import random
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -370,6 +371,14 @@ def main():
     )
     parser.add_argument("--defense", default=None, help="Defense mechanism (optional)")
     parser.add_argument("--suite", default="workspace", help="Suite to run (default: workspace)")
+    parser.add_argument(
+        "--max-user-tasks", type=int, default=10,
+        help="Maximum number of user tasks to test (default: 10)",
+    )
+    parser.add_argument(
+        "--attacks-per-task", type=int, default=5,
+        help="Number of injection attacks per task (default: 5)",
+    )
 
     args = parser.parse_args()
 
@@ -382,10 +391,14 @@ def main():
         attack=args.attack,
         defense=args.defense,
         suite=args.suite,
+        max_user_tasks=args.max_user_tasks,
+        attacks_per_task=args.attacks_per_task,
     )
 
     if result:
-        output_file = args.output_dir / f"safety_{args.model.replace('/', '_')}.json"
+        safe_model_name = args.model.replace("/", "_").replace(":", "_")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = args.output_dir / f"safety_{safe_model_name}_{timestamp}.json"
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, "w") as f:
             json.dump(result.to_dict(), f, indent=2)
