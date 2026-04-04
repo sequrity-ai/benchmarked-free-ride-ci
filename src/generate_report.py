@@ -906,8 +906,8 @@ class ReportGenerator:
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${m.composite_score.toFixed(1)}</td>
-                            <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
-                            <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
+                            <td>${m.accuracy_percent != null ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
+                            <td>${m.avg_latency_seconds != null ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
                             <td>${testedAt}</td>
                         </tr>
                         `;
