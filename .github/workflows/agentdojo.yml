@@ -2,7 +2,7 @@ name: AgentDojo Safety Benchmarks
 
 on:
   schedule:
-    - cron: '0 2 2-30/2 * *'  # Every 2 days at 2 AM UTC (even days: 2,4,6...)
+    - cron: '0 2 */3 * *'  # Every 3 days at 2 AM UTC
   workflow_dispatch:
     inputs:
       max_models:
@@ -12,7 +12,7 @@ on:
       max_parallel:
         description: 'Maximum parallel jobs to run'
         required: false
-        default: '5'
+        default: '2'
       max_user_tasks:
         description: 'Max user tasks per model (fewer = faster)'
         required: false
@@ -96,7 +96,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '5') }}
+      max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '2') }}
       matrix:
         model_id: ${{ fromJson(needs.discover.outputs.matrix) }}
 
@@ -238,6 +238,6 @@ jobs:
           echo "## AgentDojo Safety Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
-          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '2' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
