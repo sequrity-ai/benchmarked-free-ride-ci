@@ -236,9 +236,29 @@ class ReportGenerator:
         print(f"Loaded {len(results)} safety benchmark results")
         return results
 
+    def _keep_latest_per_model(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Keep only the most recent result per model_id (by benchmarked_at)."""
+        latest = {}
+        for result in results:
+            model_id = result.get("model_id")
+            if not model_id:
+                continue
+            existing = latest.get(model_id)
+            if existing is None:
+                latest[model_id] = result
+            else:
+                # Compare benchmarked_at timestamps; newer wins
+                new_ts = result.get("benchmarked_at", "")
+                old_ts = existing.get("benchmarked_at", "")
+                if new_ts > old_ts:
+                    latest[model_id] = result
+        return list(latest.values())
+
     def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
         """Load all benchmark results (utility + safety)."""
-        utility_results = self.load_utility_benchmark_results()
+        utility_results = self._keep_latest_per_model(
+            self.load_utility_benchmark_results()
+        )
         safety_results = self.load_safety_benchmark_results()
 
         # Merge utility and safety results by model_id
