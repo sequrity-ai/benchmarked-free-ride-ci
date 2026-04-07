@@ -37,9 +37,9 @@ RUN uv sync
 WORKDIR /app/agentdojo
 RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 
-# Install Cracker dependencies
+# Install Cracker dependencies (uses uv workspace for openclaw-telegram-client)
 WORKDIR /app/cracker
-RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
+RUN uv sync
 
 WORKDIR /app
 

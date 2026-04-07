@@ -100,9 +100,13 @@ def run_cracker_benchmark(
     if scenario:
         logger.info(f"  Scenario: {scenario}")
 
+    # Use cracker's own venv Python if available (installed via uv sync)
+    cracker_venv_python = cracker_dir / ".venv" / "bin" / "python"
+    python_executable = str(cracker_venv_python) if cracker_venv_python.exists() else sys.executable
+
     # Build command using the 'benchmark' subcommand which runs all scenarios
     cmd = [
-        sys.executable, "-m", "cracker.cli",
+        python_executable, "-m", "cracker.cli",
         "benchmark",
         "--backend", backend,
         "--model", model_id,
