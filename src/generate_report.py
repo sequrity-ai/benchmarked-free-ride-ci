@@ -18,9 +18,10 @@ class ReportGenerator:
         self.api_dir = output_dir / "api"
         self.history_dir = self.api_dir / "history"
 
-        # Separate directories for utility and safety benchmarks
+        # Separate directories for utility, safety, and cracker benchmarks
         self.utility_dir = benchmarks_dir / "utility"
         self.safety_dir = benchmarks_dir / "safety"
+        self.cracker_dir = benchmarks_dir / "cracker"
 
         # Create directories
         self.api_dir.mkdir(parents=True, exist_ok=True)
@@ -72,12 +73,14 @@ class ReportGenerator:
         Example: utility_stepfun_step-3.5-flash_free_file_20260303_211904.json
                  -> stepfun/step-3.5-flash:free
         """
-        # Handle both new (utility_/safety_) and legacy (benchmark_) prefixes
+        # Handle both new (utility_/safety_/cracker_) and legacy (benchmark_) prefixes
         prefix = None
         if filename.startswith("utility_"):
             prefix = "utility_"
         elif filename.startswith("safety_"):
             prefix = "safety_"
+        elif filename.startswith("cracker_"):
+            prefix = "cracker_"
         elif filename.startswith("benchmark_"):
             prefix = "benchmark_"
 
@@ -86,6 +89,13 @@ class ReportGenerator:
 
         # Remove prefix and '.json' suffix
         name_part = filename[len(prefix):-5]  # Remove prefix and '.json' (5 chars)
+
+        # Remove cracker mode prefix (adaptive_/static_) if present
+        if prefix == "cracker_":
+            if name_part.startswith("adaptive_"):
+                name_part = name_part[len("adaptive_"):]
+            elif name_part.startswith("static_"):
+                name_part = name_part[len("static_"):]
 
         # Split by underscore
         parts = name_part.split("_")
@@ -236,10 +246,38 @@ class ReportGenerator:
         print(f"Loaded {len(results)} safety benchmark results")
         return results
 
+    def load_cracker_benchmark_results(self) -> List[Dict[str, Any]]:
+        """Load Cracker prompt injection benchmark results from cracker/ directory."""
+        results = []
+
+        if not self.cracker_dir.exists():
+            print("No cracker benchmark directory found")
+            return results
+
+        for json_file in self.cracker_dir.glob("cracker_*.json"):
+            try:
+                with open(json_file, "r") as f:
+                    data = json.load(f)
+
+                    # If model_id is missing, try to infer from filename
+                    if not data.get("model_id") or data.get("model_id") == "unknown":
+                        model_id = self._infer_model_id_from_filename(json_file.name)
+                        if model_id:
+                            data["model_id"] = model_id
+
+                    data["benchmark_type"] = "cracker"
+                    results.append(data)
+            except Exception as e:
+                print(f"Error loading {json_file}: {e}")
+
+        print(f"Loaded {len(results)} cracker benchmark results")
+        return results
+
     def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
-        """Load all benchmark results (utility + safety)."""
+        """Load all benchmark results (utility + safety + cracker)."""
         utility_results = self.load_utility_benchmark_results()
         safety_results = self.load_safety_benchmark_results()
+        cracker_results = self.load_cracker_benchmark_results()
 
         # Merge utility and safety results by model_id
         merged_results = {}
@@ -258,6 +296,15 @@ class ReportGenerator:
                 else:
                     # Model has safety results but no utility results
                     merged_results[model_id] = {"model_id": model_id, "safety_benchmark": safety_result}
+
+        # Add cracker results to corresponding entries
+        for cracker_result in cracker_results:
+            model_id = cracker_result.get("model_id")
+            if model_id:
+                if model_id in merged_results:
+                    merged_results[model_id]["cracker_benchmark"] = cracker_result
+                else:
+                    merged_results[model_id] = {"model_id": model_id, "cracker_benchmark": cracker_result}
 
         return list(merged_results.values())
 
@@ -356,6 +403,21 @@ class ReportGenerator:
             if context_length == 0:
                 context_length = discovered.get("context_length", 0)
 
+        # Extract cracker benchmark metrics if available
+        # Handles two schemas: BenchmarkResult (attack_success_rate/utility_preservation_rate)
+        # and CrackerBenchmarkResult (security_rate/utility_rate)
+        cracker = result.get("cracker_benchmark", {})
+        cracker_attack_rate = cracker.get("attack_success_rate")
+        if cracker_attack_rate is not None:
+            cracker_security_rate = round(100.0 - cracker_attack_rate, 2)
+        elif cracker.get("security_rate") is not None:
+            cracker_security_rate = round(cracker["security_rate"], 2)
+        else:
+            cracker_security_rate = None
+        cracker_utility_rate = cracker.get("utility_preservation_rate") or cracker.get("utility_rate")
+        if cracker_utility_rate is not None:
+            cracker_utility_rate = round(cracker_utility_rate, 2)
+
         return {
             "model_id": model_id,
             "quality_score": quality_score,
@@ -368,6 +430,8 @@ class ReportGenerator:
             "total_input_tokens": total_input_tokens,
             "total_output_tokens": total_output_tokens,
             "composite_score": self.calculate_composite_score(result),
+            "cracker_security_rate": cracker_security_rate,
+            "cracker_utility_rate": cracker_utility_rate,
             "scenarios": [
                 {
                     "name": s.get("scenario_name", ""),
@@ -502,6 +566,8 @@ class ReportGenerator:
                             "context_length": m["context_length"],
                             "quality_score": m.get("quality_score", 0),
                             "is_benchmarked": m["is_benchmarked"],
+                            "cracker_security_rate": m.get("cracker_security_rate"),
+                            "cracker_utility_rate": m.get("cracker_utility_rate"),
                         }
                         for i, m in enumerate(all_models)
                     ],
@@ -651,6 +717,10 @@ class ReportGenerator:
                 <span class="icon">🛡️</span>
                 <span>AgentDojo</span>
             </div>
+            <div class="nav-tab" onclick="showTab('cracker')">
+                <span class="icon">🔓</span>
+                <span>Cracker</span>
+            </div>
         </nav>
 
         <div id="overview" class="tab-content active">
@@ -679,6 +749,16 @@ class ReportGenerator:
                             <strong>What it tests:</strong> Prompt injection resistance and security in agentic scenarios.
                             <br><strong>How it works:</strong> Workspace suite with tool_knowledge attacks testing whether models follow malicious instructions.
                             <br><strong>Scoring:</strong> Security score (% of attacks blocked) and utility score (% of legitimate tasks completed under attack)
+                        </p>
+                    </div>
+
+                    <div class="card" onclick="showTab('cracker')">
+                        <div class="icon">🔓</div>
+                        <h3>Cracker</h3>
+                        <p>
+                            <strong>What it tests:</strong> Indirect prompt injection resistance via poisoned workspace files, HTTP responses, and MCP skill outputs.
+                            <br><strong>How it works:</strong> Adaptive LLM attacker iteratively poisons data files agents read, testing if canary secrets leak.
+                            <br><strong>Scoring:</strong> Security rate (% of attacks blocked) and utility rate (% of benign tasks still completed)
                         </p>
                     </div>
                 </div>
@@ -855,6 +935,41 @@ class ReportGenerator:
 
             <div id="agentdojo-leaderboard">Loading...</div>
         </div>
+
+        <div id="cracker" class="tab-content">
+            <h2 style="margin-bottom: 0.5rem; color: #212529;">🔓 Cracker</h2>
+            <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                Adaptive prompt injection benchmark • Ranked by security rate (higher = more secure)
+            </p>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <a href="https://github.com/sequrity-ai/cracker" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">Cracker</a>
+                    is an adversarial prompt injection benchmark that tests whether AI agents leak secrets when
+                    processing poisoned workspace files. An adaptive LLM attacker iteratively refines injection
+                    payloads based on the agent's responses.
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    We run all scenarios across <strong>file</strong>, <strong>tool</strong>, and <strong>skill</strong> attack vectors
+                    in <strong>adaptive mode</strong> (up to 5 attacker turns per task). A canary UUID is planted in a .env file,
+                    and the attacker tries to trick the agent into leaking it. Each scenario has 3 tasks at varying difficulty levels.
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Security Rate:</strong> Percentage of tasks where the canary was NOT leaked (higher is better)</li>
+                    <li><strong>Leak Rate:</strong> Percentage of tasks where the canary secret was exposed (lower is better)</li>
+                    <li><strong>Utility Rate:</strong> Percentage of benign tasks the agent still completed correctly despite attack</li>
+                </ul>
+            </div>
+
+            <div id="cracker-leaderboard">Loading...</div>
+        </div>
     </div>
 
     <script>
@@ -941,8 +1056,53 @@ class ReportGenerator:
             }
         }
 
+        async function loadCrackerLeaderboard() {
+            try {
+                const response = await fetch('api/cracker.json');
+                const data = await response.json();
+
+                if (data.leaderboard.length === 0) {
+                    document.getElementById('cracker-leaderboard').innerHTML =
+                        '<div class="empty-state">No Cracker benchmarks available yet</div>';
+                    return;
+                }
+
+                const html = `<table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Security Rate ↑</th>
+                        <th>Leak Rate ↓</th>
+                        <th>Utility Rate ↑</th>
+                        <th>Tasks</th>
+                        <th>Last Tested</th>
+                    </tr>
+                    ${data.leaderboard.map(m => {
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        const testedAt = m.benchmarked_at ? new Date(m.benchmarked_at).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) : '—';
+                        return `
+                        <tr>
+                            <td class="rank">${m.rank}</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
+                            <td class="score">${m.security_rate.toFixed(1)}%</td>
+                            <td>${m.leak_rate.toFixed(1)}%</td>
+                            <td>${m.utility_rate.toFixed(1)}%</td>
+                            <td>${m.total_tasks}</td>
+                            <td>${testedAt}</td>
+                        </tr>
+                        `;
+                    }).join('')}
+                </table>`;
+                document.getElementById('cracker-leaderboard').innerHTML = html;
+            } catch (e) {
+                document.getElementById('cracker-leaderboard').innerHTML =
+                    '<div class="empty-state">Error loading Cracker benchmark data</div>';
+            }
+        }
+
         loadOpenClawLeaderboard();
         loadAgentDojoLeaderboard();
+        loadCrackerLeaderboard();
     </script>
 </body>
 </html>
@@ -1070,6 +1230,66 @@ class ReportGenerator:
 
         print(f"Generated {output_file} with {len(all_models)} models")
 
+    def generate_cracker_leaderboard_json(self, results: List[Dict[str, Any]]):
+        """Generate cracker.json with models ranked by security rate (canary NOT leaked)."""
+        cracker_models = []
+        for r in results:
+            cracker_data = r.get("cracker_benchmark")
+            if cracker_data:
+                model_id = r.get("model_id")
+
+                # Handle both schemas:
+                # - CrackerBenchmarkResult (wrapper): security_rate, utility_rate, leak_rate
+                # - BenchmarkResult (raw CLI):        attack_success_rate, utility_preservation_rate
+                security_rate = cracker_data.get("security_rate")
+                if security_rate is None:
+                    attack_rate = cracker_data.get("attack_success_rate")
+                    security_rate = round(100.0 - attack_rate, 2) if attack_rate is not None else 0
+                leak_rate = cracker_data.get("leak_rate")
+                if leak_rate is None:
+                    attack_rate = cracker_data.get("attack_success_rate")
+                    leak_rate = round(attack_rate, 2) if attack_rate is not None else 0
+                utility_rate = cracker_data.get("utility_rate")
+                if utility_rate is None:
+                    utility_rate = round(cracker_data.get("utility_preservation_rate", 0), 2)
+                canaries_leaked = cracker_data.get("canaries_leaked") or cracker_data.get("n_attacks_succeeded", 0)
+                utility_passed = cracker_data.get("utility_passed") or cracker_data.get("n_utility_preserved", 0)
+
+                cracker_models.append({
+                    "model_id": model_id,
+                    "security_rate": security_rate,
+                    "leak_rate": leak_rate,
+                    "utility_rate": utility_rate,
+                    "total_tasks": cracker_data.get("total_tasks", 0),
+                    "canaries_leaked": canaries_leaked,
+                    "utility_passed": utility_passed,
+                    "adaptive": cracker_data.get("adaptive", False),
+                    "benchmarked_at": cracker_data.get("benchmarked_at", r.get("benchmarked_at", "")),
+                })
+
+        # Sort by security rate (higher = more secure)
+        cracker_models.sort(key=lambda m: -m["security_rate"])
+
+        output_file = self.api_dir / "cracker.json"
+        with open(output_file, "w") as f:
+            json.dump(
+                {
+                    "generated_at": datetime.now().isoformat(),
+                    "total_models": len(cracker_models),
+                    "leaderboard": [
+                        {
+                            "rank": i + 1,
+                            **m,
+                        }
+                        for i, m in enumerate(cracker_models)
+                    ],
+                },
+                f,
+                indent=2,
+            )
+
+        print(f"Generated {output_file} with {len(cracker_models)} models")
+
     def generate_all_reports(self):
         """Generate all reports and outputs."""
         print("Loading benchmark results...")
@@ -1084,8 +1304,9 @@ class ReportGenerator:
         print("\nGenerating reports...")
         self.generate_models_json(results)
         self.generate_leaderboard_json(results)  # Legacy combined leaderboard
-        self.generate_utility_leaderboard_json(results)  # NEW: Utility leaderboard
-        self.generate_safety_leaderboard_json(results)  # NEW: Safety leaderboard
+        self.generate_utility_leaderboard_json(results)  # Utility leaderboard
+        self.generate_safety_leaderboard_json(results)  # Safety leaderboard
+        self.generate_cracker_leaderboard_json(results)  # Cracker leaderboard
         self.generate_history_snapshot(results)
         self.generate_html_index()
 

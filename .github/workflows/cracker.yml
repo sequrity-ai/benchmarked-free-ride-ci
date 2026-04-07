@@ -1,0 +1,273 @@
+name: Cracker Prompt Injection Benchmarks
+
+on:
+  schedule:
+    - cron: '0 14 */2 * *'  # Every 2 days at 2 PM UTC
+  workflow_dispatch:
+    inputs:
+      max_models:
+        description: 'Maximum number of models to test'
+        required: false
+        default: '15'
+      max_parallel:
+        description: 'Maximum parallel jobs to run'
+        required: false
+        default: '5'
+      adaptive:
+        description: 'Use adaptive attacker mode'
+        required: false
+        default: 'true'
+      vector:
+        description: 'Attack vector filter (file/tool/skill, empty for all)'
+        required: false
+        default: ''
+      max_turns:
+        description: 'Max attacker turns for adaptive mode'
+        required: false
+        default: '5'
+      malicious_task:
+        description: 'Malicious task ID (e.g. exfil-single)'
+        required: false
+        default: 'exfil-single'
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      total_models: ${{ steps.set-matrix.outputs.total_models }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and cache Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: benchmarked-free-ride:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save Docker image
+        run: docker save benchmarked-free-ride:latest | gzip > /tmp/docker-image.tar.gz
+
+      - name: Discover models
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          docker run --rm \
+            -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
+            -v $(pwd)/output:/app/output \
+            benchmarked-free-ride:latest \
+            python3 src/discover_models.py
+
+      - name: Prepare matrix
+        id: set-matrix
+        run: |
+          MAX_MODELS="${{ github.event.inputs.max_models || '15' }}"
+          MODELS=$(cat output/matrix_models.json | jq -c ".[:${MAX_MODELS}]")
+          TOTAL=$(echo "$MODELS" | jq 'length')
+          echo "matrix=${MODELS}" >> $GITHUB_OUTPUT
+          echo "total_models=${TOTAL}" >> $GITHUB_OUTPUT
+          echo "Will benchmark ${TOTAL} models:"
+          echo "$MODELS" | jq -r '.[]'
+
+      - name: Upload discovery artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: discovery-results
+          path: |
+            output/discovered_models.json
+            output/discovered_models.txt
+            output/matrix_models.json
+          retention-days: 30
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/docker-image.tar.gz
+          retention-days: 1
+
+  cracker-benchmark:
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '5') }}
+      matrix:
+        model_id: ${{ fromJson(needs.discover.outputs.matrix) }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker image
+        run: docker load < /tmp/docker-image.tar.gz
+
+      - name: Cracker benchmark ${{ matrix.model_id }}
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
+        run: |
+          ADAPTIVE="${{ github.event.inputs.adaptive || 'true' }}"
+          VECTOR="${{ github.event.inputs.vector || '' }}"
+          MAX_TURNS="${{ github.event.inputs.max_turns || '5' }}"
+
+          echo "Running Cracker benchmark for: ${{ matrix.model_id }}"
+          echo "  Adaptive: $ADAPTIVE"
+          echo "  Vector: ${VECTOR:-all}"
+          echo "  Max turns: $MAX_TURNS"
+
+          mkdir -p output/benchmarks/cracker
+
+          MALICIOUS_TASK="${{ github.event.inputs.malicious_task || 'exfil-single' }}"
+
+          EXTRA_ARGS=""
+          if [ "$ADAPTIVE" = "false" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --no-adaptive"
+          fi
+          if [ -n "$VECTOR" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --vector $VECTOR"
+          fi
+
+          docker run --rm \
+            -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
+            -e DAYTONA_API_KEY="$DAYTONA_API_KEY" \
+            -v $(pwd)/output:/app/output \
+            benchmarked-free-ride:latest \
+            python3 src/run_cracker_benchmark.py \
+              --model "${{ matrix.model_id }}" \
+              --cracker-dir ./cracker \
+              --output-dir output/benchmarks/cracker \
+              --backend daytona \
+              --max-turns "$MAX_TURNS" \
+              --malicious-task "$MALICIOUS_TASK" \
+              $EXTRA_ARGS
+
+      - name: Upload cracker results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cracker-${{ strategy.job-index }}
+          path: output/benchmarks/cracker/*.json
+          retention-days: 30
+
+  report:
+    needs: [discover, cracker-benchmark]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: always()
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp
+
+      - name: Load Docker image
+        run: docker load < /tmp/docker-image.tar.gz
+
+      - name: Download discovery artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: discovery-results
+          path: output
+
+      - name: Download new cracker artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cracker-*
+          path: artifacts
+
+      - name: Fetch existing results from gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: Merge results
+        run: |
+          mkdir -p output/benchmarks/utility
+          mkdir -p output/benchmarks/safety
+          mkdir -p output/benchmarks/cracker
+
+          # Pull existing results from gh-pages
+          if [ -d gh-pages/data/utility ]; then
+            cp gh-pages/data/utility/*.json output/benchmarks/utility/ 2>/dev/null || true
+          fi
+          if [ -d gh-pages/data/safety ]; then
+            cp gh-pages/data/safety/*.json output/benchmarks/safety/ 2>/dev/null || true
+          fi
+          if [ -d gh-pages/data/cracker ]; then
+            cp gh-pages/data/cracker/*.json output/benchmarks/cracker/ 2>/dev/null || true
+          fi
+
+          echo "Existing utility results: $(ls output/benchmarks/utility/ 2>/dev/null | wc -l) files"
+          echo "Existing safety results: $(ls output/benchmarks/safety/ 2>/dev/null | wc -l) files"
+          echo "Existing cracker results: $(ls output/benchmarks/cracker/ 2>/dev/null | wc -l) files"
+
+          # Overlay new cracker results
+          find artifacts -name "*.json" -type f | while read file; do
+            cp "$file" output/benchmarks/cracker/
+          done
+
+          echo "After merge - utility: $(ls output/benchmarks/utility/ | wc -l) files"
+          echo "After merge - safety: $(ls output/benchmarks/safety/ | wc -l) files"
+          echo "After merge - cracker: $(ls output/benchmarks/cracker/ | wc -l) files"
+
+      - name: Generate report
+        run: |
+          docker run --rm \
+            -v $(pwd)/output:/app/output \
+            -v $(pwd)/docs:/app/docs \
+            benchmarked-free-ride:latest \
+            python3 src/generate_report.py \
+              --benchmarks-dir output/benchmarks \
+              --output-dir docs
+
+      - name: Persist raw results for other workflows
+        run: |
+          mkdir -p docs/data/utility docs/data/safety docs/data/cracker
+          cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
+          cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+          cp output/benchmarks/cracker/*.json docs/data/cracker/ 2>/dev/null || true
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          commit_message: 'Update Cracker results - ${{ github.run_number }}'
+
+      - name: Create summary
+        run: |
+          TOTAL_MODELS="${{ needs.discover.outputs.total_models }}"
+          echo "## Cracker Prompt Injection Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
+          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY
