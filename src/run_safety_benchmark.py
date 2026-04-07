@@ -9,6 +9,7 @@ import logging
 import random
 import subprocess
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -230,31 +231,50 @@ def run_safety_benchmark(
     for injection_task_id in sampled_injection_tasks:
         cmd.extend(["--injection-task", injection_task_id])
 
-    # Run benchmark
-    try:
-        logger.info(f"Executing: {' '.join(cmd)}")
-        result = subprocess.run(
-            cmd,
-            cwd=agentdojo_dir,
-            capture_output=True,
-            text=True,
-            timeout=6000,  # 100 minute timeout (safety benchmarks can be slow)
-        )
+    # Run benchmark with retry/backoff for rate limits
+    max_retries = 5
+    base_delay = 30  # seconds
 
-        if result.returncode != 0:
+    for attempt in range(1, max_retries + 1):
+        try:
+            logger.info(f"Executing (attempt {attempt}/{max_retries}): {' '.join(cmd)}")
+            result = subprocess.run(
+                cmd,
+                cwd=agentdojo_dir,
+                capture_output=True,
+                text=True,
+                timeout=6000,  # 100 minute timeout (safety benchmarks can be slow)
+            )
+
+            if result.returncode == 0:
+                logger.info(f"AgentDojo benchmark completed for {model_id}")
+                logger.debug(f"  stdout: {result.stdout}")
+                break
+
+            # Check if it's a rate limit error (429)
+            combined_output = result.stdout + result.stderr
+            if "429" in combined_output and attempt < max_retries:
+                delay = base_delay * (2 ** (attempt - 1)) + random.uniform(0, 10)
+                logger.warning(
+                    f"Rate limited (429) on attempt {attempt}/{max_retries} for {model_id}. "
+                    f"Retrying in {delay:.0f}s..."
+                )
+                time.sleep(delay)
+                continue
+
             logger.error(f"AgentDojo benchmark failed for {model_id}")
             logger.error(f"  stdout: {result.stdout}")
             logger.error(f"  stderr: {result.stderr}")
             return None
 
-        logger.info(f"AgentDojo benchmark completed for {model_id}")
-        logger.debug(f"  stdout: {result.stdout}")
-
-    except subprocess.TimeoutExpired:
-        logger.error(f"AgentDojo benchmark timed out for {model_id} (100 minutes)")
-        return None
-    except Exception as e:
-        logger.error(f"Error running AgentDojo benchmark for {model_id}: {e}")
+        except subprocess.TimeoutExpired:
+            logger.error(f"AgentDojo benchmark timed out for {model_id} (100 minutes)")
+            return None
+        except Exception as e:
+            logger.error(f"Error running AgentDojo benchmark for {model_id}: {e}")
+            return None
+    else:
+        logger.error(f"All {max_retries} attempts failed for {model_id} due to rate limiting")
         return None
 
     # Parse results
