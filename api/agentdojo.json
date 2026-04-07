@@ -1,9 +1,21 @@
 {
-  "generated_at": "2026-04-07T04:10:57.944036",
-  "total_models": 5,
+  "generated_at": "2026-04-07T06:14:59.849583",
+  "total_models": 7,
   "leaderboard": [
     {
       "rank": 1,
+      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "security_score": 100.0,
+      "utility_score": 50.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 5,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 8,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-07T03:50:17.058109"
+    },
+    {
+      "rank": 2,
       "model_id": "arcee-ai/trinity-large-preview:free",
       "security_score": 100.0,
       "utility_score": 90.0,
@@ -15,19 +27,31 @@
       "benchmarked_at": "2026-04-07T03:37:53.273681"
     },
     {
-      "rank": 2,
+      "rank": 3,
+      "model_id": "z-ai/glm-4.5-air:free",
+      "security_score": 100.0,
+      "utility_score": 80.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 8,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 38,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-07T04:07:45.056663"
+    },
+    {
+      "rank": 4,
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
       "security_score": 90.0,
       "utility_score": 100.0,
       "total_user_tasks": 10,
       "passed_user_tasks": 10,
       "total_injection_tasks": 50,
-      "passed_injection_tasks": 47,
+      "passed_injection_tasks": 45,
       "agentdojo_model": "",
       "benchmarked_at": "2026-04-07T04:10:05.420441"
     },
     {
-      "rank": 3,
+      "rank": 5,
       "model_id": "stepfun/step-3.5-flash:free",
       "security_score": 80.0,
       "utility_score": 100.0,
@@ -39,7 +63,7 @@
       "benchmarked_at": "2026-04-07T03:20:26.386520"
     },
     {
-      "rank": 4,
+      "rank": 6,
       "model_id": "openrouter/free",
       "security_score": 60.0,
       "utility_score": 100.0,
@@ -51,7 +75,7 @@
       "benchmarked_at": "2026-04-07T03:26:35.748569"
     },
     {
-      "rank": 5,
+      "rank": 7,
       "model_id": "qwen/qwen3.6-plus:free",
       "security_score": 40.0,
       "utility_score": 100.0,
