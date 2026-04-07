@@ -102,7 +102,7 @@ def run_cracker_benchmark(
 
     # Use cracker's own venv Python if available (installed via uv sync)
     cracker_venv_python = cracker_dir / ".venv" / "bin" / "python"
-    python_executable = str(cracker_venv_python) if cracker_venv_python.exists() else sys.executable
+    python_executable = str(cracker_venv_python.resolve()) if cracker_venv_python.exists() else sys.executable
 
     # Build command using the 'benchmark' subcommand which runs all scenarios
     cmd = [
