@@ -2,7 +2,7 @@ name: AgentDojo Safety Benchmarks
 
 on:
   schedule:
-    - cron: '0 2 2-30/2 * *'  # Every 2 days at 2 AM UTC (even days: 2,4,6...)
+    - cron: '0 2 */3 * *'  # Every 3 days at 2 AM UTC
   workflow_dispatch:
     inputs:
       max_models:
@@ -12,7 +12,7 @@ on:
       max_parallel:
         description: 'Maximum parallel jobs to run'
         required: false
-        default: '5'
+        default: '2'
       max_user_tasks:
         description: 'Max user tasks per model (fewer = faster)'
         required: false
@@ -96,7 +96,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '5') }}
+      max-parallel: ${{ fromJson(github.event.inputs.max_parallel || '2') }}
       matrix:
         model_id: ${{ fromJson(needs.discover.outputs.matrix) }}
 
@@ -113,9 +113,33 @@ jobs:
       - name: Load Docker image
         run: docker load < /tmp/docker-image.tar.gz
 
-      - name: Safety benchmark ${{ matrix.model_id }}
+      - name: Select API key
+        id: select-key
         env:
+          OPENROUTER_API_KEYS: ${{ secrets.OPENROUTER_API_KEYS }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          # Support multiple comma-separated keys (OPENROUTER_API_KEYS)
+          # with fallback to single key (OPENROUTER_API_KEY)
+          if [ -n "$OPENROUTER_API_KEYS" ]; then
+            IFS=',' read -ra KEYS <<< "$OPENROUTER_API_KEYS"
+          elif [ -n "$OPENROUTER_API_KEY" ]; then
+            KEYS=("$OPENROUTER_API_KEY")
+          else
+            echo "::error::No OpenRouter API key configured"
+            exit 1
+          fi
+
+          NUM_KEYS=${#KEYS[@]}
+          JOB_INDEX=${{ strategy.job-index }}
+          KEY_INDEX=$((JOB_INDEX % NUM_KEYS))
+          SELECTED_KEY="${KEYS[$KEY_INDEX]}"
+
+          echo "::add-mask::${SELECTED_KEY}"
+          echo "api_key=${SELECTED_KEY}" >> $GITHUB_OUTPUT
+          echo "Using API key $((KEY_INDEX + 1)) of ${NUM_KEYS} (job index: ${JOB_INDEX})"
+
+      - name: Safety benchmark ${{ matrix.model_id }}
         run: |
           MAX_USER_TASKS="${{ github.event.inputs.max_user_tasks || '10' }}"
           ATTACKS_PER_TASK="${{ github.event.inputs.attacks_per_task || '5' }}"
@@ -127,7 +151,7 @@ jobs:
           mkdir -p output/benchmarks/safety
 
           docker run --rm \
-            -e OPENROUTER_API_KEY="$OPENROUTER_API_KEY" \
+            -e OPENROUTER_API_KEY="${{ steps.select-key.outputs.api_key }}" \
             -v $(pwd)/output:/app/output \
             benchmarked-free-ride:latest \
             python3 src/run_safety_benchmark.py \
@@ -219,9 +243,10 @@ jobs:
 
       - name: Persist raw results for other workflows
         run: |
-          mkdir -p docs/data/utility docs/data/safety
-          cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
-          cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+          sudo mkdir -p docs/data/utility docs/data/safety
+          sudo cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
+          sudo cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+          sudo chown -R $(id -u):$(id -g) docs/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -237,6 +262,6 @@ jobs:
           echo "## AgentDojo Safety Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Models benchmarked:** ${TOTAL_MODELS}" >> $GITHUB_STEP_SUMMARY
-          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '5' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Parallel jobs:** ${{ github.event.inputs.max_parallel || '2' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**View Leaderboard:** [GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }})" >> $GITHUB_STEP_SUMMARY

@@ -29,6 +29,10 @@ on:
         description: 'Malicious task ID (e.g. exfil-single)'
         required: false
         default: 'exfil-single'
+      scenarios:
+        description: 'Comma-separated scenarios to run (default: all). Use "file" for a fast debug run.'
+        required: false
+        default: ''
 
 jobs:
   discover:
@@ -138,6 +142,7 @@ jobs:
           mkdir -p output/benchmarks/cracker
 
           MALICIOUS_TASK="${{ github.event.inputs.malicious_task || 'exfil-single' }}"
+          SCENARIOS="${{ github.event.inputs.scenarios || '' }}"
 
           EXTRA_ARGS=""
           if [ "$ADAPTIVE" = "false" ]; then
@@ -145,6 +150,9 @@ jobs:
           fi
           if [ -n "$VECTOR" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --vector $VECTOR"
+          fi
+          if [ -n "$SCENARIOS" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --scenarios $SCENARIOS"
           fi
 
           docker run --rm \

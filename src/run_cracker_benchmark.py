@@ -75,6 +75,7 @@ def run_cracker_benchmark(
     attacker_model: Optional[str] = None,
     max_turns: int = 5,
     malicious_task_id: str = "exfil-single",
+    scenarios: Optional[str] = None,
 ) -> Optional[CrackerBenchmarkResult]:
     """Run Cracker benchmark for a single model.
 
@@ -114,6 +115,9 @@ def run_cracker_benchmark(
 
     if max_turns:
         cmd.extend(["--max-turns", str(max_turns)])
+
+    if scenarios:
+        cmd.extend(["--scenarios", scenarios])
 
     # Output file
     safe_model_name = model_id.replace("/", "_").replace(":", "_")
@@ -216,6 +220,7 @@ def main():
     parser.add_argument("--attacker-model", help="Attacker model for adaptive mode")
     parser.add_argument("--max-turns", type=int, default=5, help="Max attacker turns (default: 5)")
     parser.add_argument("--malicious-task", default="exfil-single", help="Malicious task ID (default: exfil-single)")
+    parser.add_argument("--scenarios", default=None, help="Comma-separated scenario names to run (default: all). Use 'file' for a fast debug run.")
 
     args = parser.parse_args()
 
@@ -234,6 +239,7 @@ def main():
         attacker_model=args.attacker_model,
         max_turns=args.max_turns,
         malicious_task_id=args.malicious_task,
+        scenarios=args.scenarios,
     )
 
     if result:

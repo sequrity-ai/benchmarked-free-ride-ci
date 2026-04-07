@@ -246,6 +246,24 @@ class ReportGenerator:
         print(f"Loaded {len(results)} safety benchmark results")
         return results
 
+    def _keep_latest_per_model(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Keep only the most recent result per model_id (by benchmarked_at)."""
+        latest = {}
+        for result in results:
+            model_id = result.get("model_id")
+            if not model_id:
+                continue
+            existing = latest.get(model_id)
+            if existing is None:
+                latest[model_id] = result
+            else:
+                # Compare benchmarked_at timestamps; newer wins
+                new_ts = result.get("benchmarked_at", "")
+                old_ts = existing.get("benchmarked_at", "")
+                if new_ts > old_ts:
+                    latest[model_id] = result
+        return list(latest.values())
+
     def load_cracker_benchmark_results(self) -> List[Dict[str, Any]]:
         """Load Cracker prompt injection benchmark results from cracker/ directory."""
         results = []
@@ -275,7 +293,9 @@ class ReportGenerator:
 
     def load_all_benchmark_results(self) -> List[Dict[str, Any]]:
         """Load all benchmark results (utility + safety + cracker)."""
-        utility_results = self.load_utility_benchmark_results()
+        utility_results = self._keep_latest_per_model(
+            self.load_utility_benchmark_results()
+        )
         safety_results = self.load_safety_benchmark_results()
         cracker_results = self.load_cracker_benchmark_results()
 
@@ -1001,8 +1021,8 @@ class ReportGenerator:
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
                             <td class="score">${m.composite_score.toFixed(1)}</td>
-                            <td>${m.accuracy_percent ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
-                            <td>${m.avg_latency_seconds ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
+                            <td>${m.accuracy_percent != null ? m.accuracy_percent.toFixed(1) + '%' : '—'}</td>
+                            <td>${m.avg_latency_seconds != null ? m.avg_latency_seconds.toFixed(1) + 's' : '—'}</td>
                             <td>${testedAt}</td>
                         </tr>
                         `;
