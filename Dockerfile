@@ -27,6 +27,7 @@ RUN python3 -m pip install --no-cache-dir --break-system-packages --upgrade pip 
 COPY src/ ./src/
 COPY openclawbench/ ./openclawbench/
 COPY agentdojo/ ./agentdojo/
+COPY cracker/ ./cracker/
 
 # Install openclawbench dependencies (for imports by run_benchmarks.py)
 WORKDIR /app/openclawbench
@@ -34,6 +35,10 @@ RUN uv sync
 
 # Install AgentDojo dependencies
 WORKDIR /app/agentdojo
+RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
+
+# Install Cracker dependencies
+WORKDIR /app/cracker
 RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 
 WORKDIR /app
