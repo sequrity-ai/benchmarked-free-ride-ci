@@ -1,10 +1,10 @@
 {
-  "date": "2026-04-07",
+  "date": "2026-04-08",
   "total_models": 15,
   "models": [
     {
       "model_id": "minimax/minimax-m2.5:free",
-      "quality_score": 0.4191,
+      "quality_score": 0.4186,
       "context_length": 196608,
       "benchmarked_at": "2026-04-07T03:21:41.520788",
       "total_tasks": 9,
@@ -14,6 +14,8 @@
       "total_input_tokens": 127069,
       "total_output_tokens": 6763,
       "composite_score": 56.93,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -37,7 +39,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.3331,
+      "quality_score": 0.3326,
       "context_length": 128000,
       "benchmarked_at": "2026-04-07T03:50:17.058109",
       "total_tasks": 9,
@@ -47,6 +49,8 @@
       "total_input_tokens": 178228,
       "total_output_tokens": 27071,
       "composite_score": 7.78,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -70,7 +74,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.3042,
+      "quality_score": 0.3036,
       "context_length": 128000,
       "benchmarked_at": "2026-04-07T04:10:05.420441",
       "total_tasks": 9,
@@ -80,6 +84,8 @@
       "total_input_tokens": 742643,
       "total_output_tokens": 70550,
       "composite_score": 15.56,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -103,7 +109,7 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.4142,
+      "quality_score": 0.4137,
       "context_length": 200000,
       "benchmarked_at": "2026-04-07T03:26:35.748569",
       "total_tasks": 9,
@@ -113,6 +119,8 @@
       "total_input_tokens": 407921,
       "total_output_tokens": 19951,
       "composite_score": 15.56,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -136,7 +144,7 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3383,
+      "quality_score": 0.3378,
       "context_length": 131072,
       "benchmarked_at": "2026-04-07T03:37:09.514266",
       "total_tasks": 9,
@@ -146,6 +154,8 @@
       "total_input_tokens": 63552,
       "total_output_tokens": 2889,
       "composite_score": 22.53,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -169,7 +179,7 @@
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3383,
+      "quality_score": 0.3378,
       "context_length": 131072,
       "benchmarked_at": "2026-04-07T03:43:16.464609",
       "total_tasks": 9,
@@ -179,6 +189,8 @@
       "total_input_tokens": 28230,
       "total_output_tokens": 1153,
       "composite_score": 24.49,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -202,8 +214,8 @@
     },
     {
       "model_id": "qwen/qwen3.6-plus:free",
-      "quality_score": 0.7673,
-      "context_length": 1000000,
+      "quality_score": 0,
+      "context_length": 0,
       "benchmarked_at": "2026-04-07T03:18:51.211612",
       "total_tasks": 9,
       "passed_tasks": 6,
@@ -212,6 +224,8 @@
       "total_input_tokens": 449266,
       "total_output_tokens": 5280,
       "composite_score": 50.8,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -235,7 +249,7 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.361,
+      "quality_score": 0.3605,
       "context_length": 262144,
       "benchmarked_at": "2026-04-07T03:33:23.694914",
       "total_tasks": 9,
@@ -245,6 +259,8 @@
       "total_input_tokens": 75806,
       "total_output_tokens": 207,
       "composite_score": 17.55,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -268,7 +284,7 @@
     },
     {
       "model_id": "stepfun/step-3.5-flash:free",
-      "quality_score": 0.4354,
+      "quality_score": 0.4349,
       "context_length": 256000,
       "benchmarked_at": "2026-04-07T03:20:26.386520",
       "total_tasks": 9,
@@ -278,6 +294,8 @@
       "total_input_tokens": 229726,
       "total_output_tokens": 33802,
       "composite_score": 62.22,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -301,7 +319,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-mini:free",
-      "quality_score": 0.3529,
+      "quality_score": 0.3524,
       "context_length": 131072,
       "benchmarked_at": "2026-04-07T03:38:42.029542",
       "total_tasks": 9,
@@ -311,6 +329,8 @@
       "total_input_tokens": 393411,
       "total_output_tokens": 100419,
       "composite_score": 0.0,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -334,7 +354,7 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.3843,
+      "quality_score": 0.3838,
       "context_length": 131000,
       "benchmarked_at": "2026-04-07T03:37:53.273681",
       "total_tasks": 9,
@@ -344,6 +364,8 @@
       "total_input_tokens": 405926,
       "total_output_tokens": 1651,
       "composite_score": 39.28,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -367,7 +389,7 @@
     },
     {
       "model_id": "z-ai/glm-4.5-air:free",
-      "quality_score": 0.2823,
+      "quality_score": 0.2818,
       "context_length": 131072,
       "benchmarked_at": "2026-04-07T04:07:45.056663",
       "total_tasks": 9,
@@ -377,6 +399,8 @@
       "total_input_tokens": 290602,
       "total_output_tokens": 11530,
       "composite_score": 38.89,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -400,7 +424,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.4101,
+      "quality_score": 0.4095,
       "context_length": 256000,
       "benchmarked_at": "2026-04-07T03:32:48.855548",
       "total_tasks": 9,
@@ -410,6 +434,8 @@
       "total_input_tokens": 861459,
       "total_output_tokens": 84634,
       "composite_score": 54.44,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -433,7 +459,7 @@
     },
     {
       "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.3332,
+      "quality_score": 0.3326,
       "context_length": 262000,
       "benchmarked_at": "2026-04-07T03:44:07.377706",
       "total_tasks": 9,
@@ -443,6 +469,8 @@
       "total_input_tokens": 18509,
       "total_output_tokens": 108,
       "composite_score": 9.88,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",
@@ -466,7 +494,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
-      "quality_score": 0.4602,
+      "quality_score": 0.4596,
       "context_length": 262144,
       "benchmarked_at": "2026-04-07T03:24:04.550470",
       "total_tasks": 9,
@@ -476,6 +504,8 @@
       "total_input_tokens": 1016875,
       "total_output_tokens": 14490,
       "composite_score": 54.44,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null,
       "scenarios": [
         {
           "name": "file",

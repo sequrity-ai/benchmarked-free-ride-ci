@@ -103,7 +103,7 @@
     <div class="container">
         <header>
             <h1>🏆 Benchmarked Free Ride</h1>
-            <p class="subtitle">Last updated: 2026-04-07 12:06 UTC</p>
+            <p class="subtitle">Last updated: 2026-04-08 10:49 UTC</p>
         </header>
 
         <nav class="nav-tabs">
@@ -118,6 +118,10 @@
             <div class="nav-tab" onclick="showTab('agentdojo')">
                 <span class="icon">🛡️</span>
                 <span>AgentDojo</span>
+            </div>
+            <div class="nav-tab" onclick="showTab('cracker')">
+                <span class="icon">🔓</span>
+                <span>Cracker</span>
             </div>
         </nav>
 
@@ -147,6 +151,16 @@
                             <strong>What it tests:</strong> Prompt injection resistance and security in agentic scenarios.
                             <br><strong>How it works:</strong> Workspace suite with tool_knowledge attacks testing whether models follow malicious instructions.
                             <br><strong>Scoring:</strong> Security score (% of attacks blocked) and utility score (% of legitimate tasks completed under attack)
+                        </p>
+                    </div>
+
+                    <div class="card" onclick="showTab('cracker')">
+                        <div class="icon">🔓</div>
+                        <h3>Cracker</h3>
+                        <p>
+                            <strong>What it tests:</strong> Indirect prompt injection resistance via poisoned workspace files, HTTP responses, and MCP skill outputs.
+                            <br><strong>How it works:</strong> Adaptive LLM attacker iteratively poisons data files agents read, testing if canary secrets leak.
+                            <br><strong>Scoring:</strong> Security rate (% of attacks blocked) and utility rate (% of benign tasks still completed)
                         </p>
                     </div>
                 </div>
@@ -323,6 +337,41 @@
 
             <div id="agentdojo-leaderboard">Loading...</div>
         </div>
+
+        <div id="cracker" class="tab-content">
+            <h2 style="margin-bottom: 0.5rem; color: #212529;">🔓 Cracker</h2>
+            <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                Adaptive prompt injection benchmark • Ranked by security rate (higher = more secure)
+            </p>
+
+            <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #2196F3; text-align: left;">
+                <h3 style="margin-top: 0; color: #1565C0; font-size: 1.1rem;">📊 Benchmark Configuration</h3>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">Description</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    <a href="https://github.com/sequrity-ai/cracker" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: 600;">Cracker</a>
+                    is an adversarial prompt injection benchmark that tests whether AI agents leak secrets when
+                    processing poisoned workspace files. An adaptive LLM attacker iteratively refines injection
+                    payloads based on the agent's responses.
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">How We Run It</h4>
+                <p style="color: #424242; margin: 0.5rem 0; line-height: 1.7;">
+                    We run all scenarios across <strong>file</strong>, <strong>tool</strong>, and <strong>skill</strong> attack vectors
+                    in <strong>adaptive mode</strong> (up to 5 attacker turns per task). A canary UUID is planted in a .env file,
+                    and the attacker tries to trick the agent into leaking it. Each scenario has 3 tasks at varying difficulty levels.
+                </p>
+
+                <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
+                <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
+                    <li><strong>Security Rate:</strong> Percentage of tasks where the canary was NOT leaked (higher is better)</li>
+                    <li><strong>Leak Rate:</strong> Percentage of tasks where the canary secret was exposed (lower is better)</li>
+                    <li><strong>Utility Rate:</strong> Percentage of benign tasks the agent still completed correctly despite attack</li>
+                </ul>
+            </div>
+
+            <div id="cracker-leaderboard">Loading...</div>
+        </div>
     </div>
 
     <script>
@@ -409,8 +458,53 @@
             }
         }
 
+        async function loadCrackerLeaderboard() {
+            try {
+                const response = await fetch('api/cracker.json');
+                const data = await response.json();
+
+                if (data.leaderboard.length === 0) {
+                    document.getElementById('cracker-leaderboard').innerHTML =
+                        '<div class="empty-state">No Cracker benchmarks available yet</div>';
+                    return;
+                }
+
+                const html = `<table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Security Rate ↑</th>
+                        <th>Leak Rate ↓</th>
+                        <th>Utility Rate ↑</th>
+                        <th>Tasks</th>
+                        <th>Last Tested</th>
+                    </tr>
+                    ${data.leaderboard.map(m => {
+                        const openrouterUrl = `https://openrouter.ai/models/${m.model_id}`;
+                        const testedAt = m.benchmarked_at ? new Date(m.benchmarked_at).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}) : '—';
+                        return `
+                        <tr>
+                            <td class="rank">${m.rank}</td>
+                            <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
+                            <td class="score">${m.security_rate.toFixed(1)}%</td>
+                            <td>${m.leak_rate.toFixed(1)}%</td>
+                            <td>${m.utility_rate.toFixed(1)}%</td>
+                            <td>${m.total_tasks}</td>
+                            <td>${testedAt}</td>
+                        </tr>
+                        `;
+                    }).join('')}
+                </table>`;
+                document.getElementById('cracker-leaderboard').innerHTML = html;
+            } catch (e) {
+                document.getElementById('cracker-leaderboard').innerHTML =
+                    '<div class="empty-state">Error loading Cracker benchmark data</div>';
+            }
+        }
+
         loadOpenClawLeaderboard();
         loadAgentDojoLeaderboard();
+        loadCrackerLeaderboard();
     </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-07T12:06:47.048025",
-  "total_models": 16,
+  "generated_at": "2026-04-08T10:49:03.612391",
+  "total_models": 17,
   "benchmarked_count": 15,
   "leaderboard": [
     {
@@ -10,8 +10,10 @@
       "accuracy_percent": 88.89,
       "avg_latency_seconds": 75.62,
       "context_length": 256000,
-      "quality_score": 0.4354,
-      "is_benchmarked": true
+      "quality_score": 0.4349,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
       "rank": 2,
@@ -20,8 +22,10 @@
       "accuracy_percent": 77.78,
       "avg_latency_seconds": 83.35,
       "context_length": 196608,
-      "quality_score": 0.4191,
-      "is_benchmarked": true
+      "quality_score": 0.4186,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
       "rank": 3,
@@ -30,8 +34,10 @@
       "accuracy_percent": 77.78,
       "avg_latency_seconds": 99.56,
       "context_length": 262144,
-      "quality_score": 0.4602,
-      "is_benchmarked": true
+      "quality_score": 0.4596,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
       "rank": 4,
@@ -40,128 +46,166 @@
       "accuracy_percent": 77.78,
       "avg_latency_seconds": 82.86,
       "context_length": 256000,
-      "quality_score": 0.4101,
-      "is_benchmarked": true
+      "quality_score": 0.4095,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
       "rank": 5,
-      "model_id": "qwen/qwen3.6-plus:free",
-      "composite_score": 50.8,
-      "accuracy_percent": 66.67,
-      "avg_latency_seconds": 64.78,
-      "context_length": 1000000,
-      "quality_score": 0.7673,
-      "is_benchmarked": true
-    },
-    {
-      "rank": 6,
       "model_id": "arcee-ai/trinity-large-preview:free",
       "composite_score": 39.28,
       "accuracy_percent": 44.44,
       "avg_latency_seconds": 106.51,
       "context_length": 131000,
-      "quality_score": 0.3843,
-      "is_benchmarked": true
+      "quality_score": 0.3838,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 7,
+      "rank": 6,
       "model_id": "z-ai/glm-4.5-air:free",
       "composite_score": 38.89,
       "accuracy_percent": 55.56,
       "avg_latency_seconds": 176.57,
       "context_length": 131072,
-      "quality_score": 0.2823,
-      "is_benchmarked": true
+      "quality_score": 0.2818,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 8,
+      "rank": 7,
       "model_id": "openai/gpt-oss-20b:free",
       "composite_score": 24.49,
       "accuracy_percent": 22.22,
       "avg_latency_seconds": 59.35,
       "context_length": 131072,
-      "quality_score": 0.3383,
-      "is_benchmarked": true
+      "quality_score": 0.3378,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 9,
+      "rank": 8,
       "model_id": "openai/gpt-oss-120b:free",
       "composite_score": 22.53,
       "accuracy_percent": 22.22,
       "avg_latency_seconds": 59.44,
       "context_length": 131072,
-      "quality_score": 0.3383,
-      "is_benchmarked": true
+      "quality_score": 0.3378,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 10,
+      "rank": 9,
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
       "composite_score": 17.55,
       "accuracy_percent": 11.11,
       "avg_latency_seconds": 66.4,
       "context_length": 262144,
-      "quality_score": 0.361,
-      "is_benchmarked": true
+      "quality_score": 0.3605,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 11,
+      "rank": 10,
       "model_id": "openrouter/free",
       "composite_score": 15.56,
       "accuracy_percent": 22.22,
       "avg_latency_seconds": 113.32,
       "context_length": 200000,
-      "quality_score": 0.4142,
-      "is_benchmarked": true
+      "quality_score": 0.4137,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 12,
+      "rank": 11,
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
       "composite_score": 15.56,
       "accuracy_percent": 22.22,
       "avg_latency_seconds": 202.68,
       "context_length": 128000,
-      "quality_score": 0.3042,
-      "is_benchmarked": true
+      "quality_score": 0.3036,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 13,
+      "rank": 12,
       "model_id": "qwen/qwen3-coder:free",
       "composite_score": 9.88,
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 61.61,
       "context_length": 262000,
-      "quality_score": 0.3332,
-      "is_benchmarked": true
+      "quality_score": 0.3326,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 14,
+      "rank": 13,
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
       "composite_score": 7.78,
       "accuracy_percent": 11.11,
       "avg_latency_seconds": 77.48,
       "context_length": 128000,
-      "quality_score": 0.3331,
-      "is_benchmarked": true
+      "quality_score": 0.3326,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
-      "rank": 15,
+      "rank": 14,
       "model_id": "arcee-ai/trinity-mini:free",
       "composite_score": 0.0,
       "accuracy_percent": 0.0,
       "avg_latency_seconds": 87.36,
       "context_length": 131072,
-      "quality_score": 0.3529,
-      "is_benchmarked": true
+      "quality_score": 0.3524,
+      "is_benchmarked": true,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
+    },
+    {
+      "rank": 15,
+      "model_id": "google/gemma-4-26b-a4b-it:free",
+      "composite_score": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
+      "context_length": 262144,
+      "quality_score": 0.5222,
+      "is_benchmarked": false,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     },
     {
       "rank": 16,
+      "model_id": "google/gemma-4-31b-it:free",
+      "composite_score": 0,
+      "accuracy_percent": null,
+      "avg_latency_seconds": null,
+      "context_length": 262144,
+      "quality_score": 0.5217,
+      "is_benchmarked": false,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
+    },
+    {
+      "rank": 17,
       "model_id": "meta-llama/llama-3.3-70b-instruct:free",
       "composite_score": 0,
       "accuracy_percent": null,
       "avg_latency_seconds": null,
       "context_length": 65536,
       "quality_score": 0.2762,
-      "is_benchmarked": false
+      "is_benchmarked": false,
+      "cracker_security_rate": null,
+      "cracker_utility_rate": null
     }
   ]
 }
