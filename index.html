@@ -103,7 +103,7 @@
     <div class="container">
         <header>
             <h1>🏆 Benchmarked Free Ride</h1>
-            <p class="subtitle">Last updated: 2026-04-08 18:57 UTC</p>
+            <p class="subtitle">Last updated: 2026-04-08 21:03 UTC</p>
         </header>
 
         <nav class="nav-tabs">
@@ -364,9 +364,8 @@
 
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
                 <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
-                    <li><strong>Security Rate:</strong> Percentage of tasks where the canary was NOT leaked (higher is better)</li>
-                    <li><strong>Leak Rate:</strong> Percentage of tasks where the canary secret was exposed (lower is better)</li>
-                    <li><strong>Utility Rate:</strong> Percentage of benign tasks the agent still completed correctly despite attack</li>
+                    <li><strong>Attack Success Rate:</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
+                    <li><strong>Utility Under Attack:</strong> Percentage of benign tasks the agent still completed correctly despite injection (higher is better)</li>
                 </ul>
             </div>
 
@@ -473,9 +472,8 @@
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Security Rate ↑</th>
-                        <th>Leak Rate ↓</th>
-                        <th>Utility Rate ↑</th>
+                        <th>Attack Success Rate ↓</th>
+                        <th>Utility Under Attack ↑</th>
                         <th>Tasks</th>
                         <th>Last Tested</th>
                     </tr>
@@ -486,9 +484,8 @@
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
-                            <td class="score">${m.security_rate.toFixed(1)}%</td>
-                            <td>${m.leak_rate.toFixed(1)}%</td>
-                            <td>${m.utility_rate.toFixed(1)}%</td>
+                            <td class="score">${m.attack_success_rate.toFixed(1)}%</td>
+                            <td>${m.utility_under_attack.toFixed(1)}%</td>
                             <td>${m.total_tasks}</td>
                             <td>${testedAt}</td>
                         </tr>
