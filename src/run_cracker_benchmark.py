@@ -100,15 +100,16 @@ def run_cracker_benchmark(
     if scenario:
         logger.info(f"  Scenario: {scenario}")
 
-    # Build command using the 'benchmark' subcommand which runs all scenarios
+    # Build command using the 'scenario' subcommand
     cmd = [
         sys.executable, "-m", "cracker.cli",
-        "benchmark",
+        "scenario",
         "--backend", backend,
         "--model", model_id,
-        "--malicious-task", malicious_task_id,
-        "--agent-name", model_id,
     ]
+
+    if adaptive:
+        cmd.append("--adaptive")
 
     if attacker_model:
         cmd.extend(["--attacker-model", attacker_model])
@@ -116,8 +117,14 @@ def run_cracker_benchmark(
     if max_turns:
         cmd.extend(["--max-turns", str(max_turns)])
 
+    # --scenarios maps to --vector (file/tool/skill) or --scenario (specific ID)
     if scenarios:
-        cmd.extend(["--scenarios", scenarios])
+        if scenarios in ("file", "tool", "skill"):
+            cmd.extend(["--vector", scenarios])
+        else:
+            cmd.extend(["--scenario", scenarios])
+    elif vector:
+        cmd.extend(["--vector", vector])
 
     # Output file
     safe_model_name = model_id.replace("/", "_").replace(":", "_")
@@ -155,18 +162,18 @@ def run_cracker_benchmark(
             logger.error(f"  Return code: {result.returncode}")
             return None
 
-        # Parse results — benchmark command exports flat keys from BenchmarkResult.to_dict()
+        # Parse results — scenario command exports {scenarios: [...], summary: {...}}
         with open(output_file) as f:
             data = json.load(f)
 
-        # by_scenario is a dict keyed by scenario name; convert to list for storage
-        scenario_results = list(data.get("by_scenario", {}).values())
+        summary = data.get("summary", {})
+        scenario_results = data.get("scenarios", [])
 
         return CrackerBenchmarkResult(
             model_id=model_id,
-            total_tasks=data.get("total_tasks", 0),
-            canaries_leaked=data.get("n_attacks_succeeded", 0),
-            utility_passed=data.get("n_utility_preserved", 0),
+            total_tasks=summary.get("total_tasks", 0),
+            canaries_leaked=summary.get("canaries_leaked", 0),
+            utility_passed=summary.get("utility_passed", 0),
             scenario_results=scenario_results,
             adaptive=adaptive,
         )
