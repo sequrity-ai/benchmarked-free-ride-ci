@@ -427,20 +427,14 @@ class ReportGenerator:
             if context_length == 0:
                 context_length = discovered.get("context_length", 0)
 
-        # Extract cracker benchmark metrics if available
-        # Handles two schemas: BenchmarkResult (attack_success_rate/utility_preservation_rate)
-        # and CrackerBenchmarkResult (security_rate/utility_rate)
+        # Extract cracker benchmark metrics: attack success rate and utility under attack
         cracker = result.get("cracker_benchmark", {})
-        cracker_attack_rate = cracker.get("attack_success_rate")
-        if cracker_attack_rate is not None:
-            cracker_security_rate = round(100.0 - cracker_attack_rate, 2)
-        elif cracker.get("security_rate") is not None:
-            cracker_security_rate = round(cracker["security_rate"], 2)
-        else:
-            cracker_security_rate = None
-        cracker_utility_rate = cracker.get("utility_preservation_rate") or cracker.get("utility_rate")
-        if cracker_utility_rate is not None:
-            cracker_utility_rate = round(cracker_utility_rate, 2)
+        cracker_attack_success = cracker.get("leak_rate") or cracker.get("attack_success_rate")
+        if cracker_attack_success is not None:
+            cracker_attack_success = round(cracker_attack_success, 2)
+        cracker_utility = cracker.get("utility_rate") or cracker.get("utility_preservation_rate")
+        if cracker_utility is not None:
+            cracker_utility = round(cracker_utility, 2)
 
         return {
             "model_id": model_id,
@@ -454,8 +448,8 @@ class ReportGenerator:
             "total_input_tokens": total_input_tokens,
             "total_output_tokens": total_output_tokens,
             "composite_score": self.calculate_composite_score(result),
-            "cracker_security_rate": cracker_security_rate,
-            "cracker_utility_rate": cracker_utility_rate,
+            "cracker_attack_success_rate": cracker_attack_success,
+            "cracker_utility_under_attack": cracker_utility,
             "scenarios": [
                 {
                     "name": s.get("scenario_name", ""),
@@ -590,8 +584,8 @@ class ReportGenerator:
                             "context_length": m["context_length"],
                             "quality_score": m.get("quality_score", 0),
                             "is_benchmarked": m["is_benchmarked"],
-                            "cracker_security_rate": m.get("cracker_security_rate"),
-                            "cracker_utility_rate": m.get("cracker_utility_rate"),
+                            "cracker_attack_success_rate": m.get("cracker_attack_success_rate"),
+                            "cracker_utility_under_attack": m.get("cracker_utility_under_attack"),
                         }
                         for i, m in enumerate(all_models)
                     ],
@@ -986,9 +980,8 @@ class ReportGenerator:
 
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
                 <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
-                    <li><strong>Security Rate:</strong> Percentage of tasks where the canary was NOT leaked (higher is better)</li>
-                    <li><strong>Leak Rate:</strong> Percentage of tasks where the canary secret was exposed (lower is better)</li>
-                    <li><strong>Utility Rate:</strong> Percentage of benign tasks the agent still completed correctly despite attack</li>
+                    <li><strong>Attack Success Rate:</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
+                    <li><strong>Utility Under Attack:</strong> Percentage of benign tasks the agent still completed correctly despite injection (higher is better)</li>
                 </ul>
             </div>
 
@@ -1095,9 +1088,8 @@ class ReportGenerator:
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Security Rate ↑</th>
-                        <th>Leak Rate ↓</th>
-                        <th>Utility Rate ↑</th>
+                        <th>Attack Success Rate ↓</th>
+                        <th>Utility Under Attack ↑</th>
                         <th>Tasks</th>
                         <th>Last Tested</th>
                     </tr>
@@ -1108,9 +1100,8 @@ class ReportGenerator:
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
-                            <td class="score">${m.security_rate.toFixed(1)}%</td>
-                            <td>${m.leak_rate.toFixed(1)}%</td>
-                            <td>${m.utility_rate.toFixed(1)}%</td>
+                            <td class="score">${m.attack_success_rate.toFixed(1)}%</td>
+                            <td>${m.utility_under_attack.toFixed(1)}%</td>
                             <td>${m.total_tasks}</td>
                             <td>${testedAt}</td>
                         </tr>
@@ -1255,7 +1246,7 @@ class ReportGenerator:
         print(f"Generated {output_file} with {len(all_models)} models")
 
     def generate_cracker_leaderboard_json(self, results: List[Dict[str, Any]]):
-        """Generate cracker.json with models ranked by security rate (canary NOT leaked)."""
+        """Generate cracker.json with models ranked by attack success rate and utility under attack."""
         cracker_models = []
         for r in results:
             cracker_data = r.get("cracker_benchmark")
@@ -1263,12 +1254,8 @@ class ReportGenerator:
                 model_id = r.get("model_id")
 
                 # Handle both schemas:
-                # - CrackerBenchmarkResult (wrapper): security_rate, utility_rate, leak_rate
+                # - CrackerBenchmarkResult (wrapper): leak_rate, utility_rate
                 # - BenchmarkResult (raw CLI):        attack_success_rate, utility_preservation_rate
-                security_rate = cracker_data.get("security_rate")
-                if security_rate is None:
-                    attack_rate = cracker_data.get("attack_success_rate")
-                    security_rate = round(100.0 - attack_rate, 2) if attack_rate is not None else 0
                 leak_rate = cracker_data.get("leak_rate")
                 if leak_rate is None:
                     attack_rate = cracker_data.get("attack_success_rate")
@@ -1276,23 +1263,18 @@ class ReportGenerator:
                 utility_rate = cracker_data.get("utility_rate")
                 if utility_rate is None:
                     utility_rate = round(cracker_data.get("utility_preservation_rate", 0), 2)
-                canaries_leaked = cracker_data.get("canaries_leaked") or cracker_data.get("n_attacks_succeeded", 0)
-                utility_passed = cracker_data.get("utility_passed") or cracker_data.get("n_utility_preserved", 0)
 
                 cracker_models.append({
                     "model_id": model_id,
-                    "security_rate": security_rate,
-                    "leak_rate": leak_rate,
-                    "utility_rate": utility_rate,
+                    "attack_success_rate": leak_rate,
+                    "utility_under_attack": utility_rate,
                     "total_tasks": cracker_data.get("total_tasks", 0),
-                    "canaries_leaked": canaries_leaked,
-                    "utility_passed": utility_passed,
                     "adaptive": cracker_data.get("adaptive", False),
                     "benchmarked_at": cracker_data.get("benchmarked_at", r.get("benchmarked_at", "")),
                 })
 
-        # Sort by security rate (higher = more secure)
-        cracker_models.sort(key=lambda m: -m["security_rate"])
+        # Sort: lowest attack success rate first (most secure), then highest utility
+        cracker_models.sort(key=lambda m: (m["attack_success_rate"], -m["utility_under_attack"]))
 
         output_file = self.api_dir / "cracker.json"
         with open(output_file, "w") as f:
