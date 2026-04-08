@@ -277,6 +277,10 @@ class ReportGenerator:
                 with open(json_file, "r") as f:
                     data = json.load(f)
 
+                    # Skip raw CLI output files (they have 'summary' dict, not top-level metrics)
+                    if "summary" in data and "model_id" not in data:
+                        continue
+
                     # If model_id is missing, try to infer from filename
                     if not data.get("model_id") or data.get("model_id") == "unknown":
                         model_id = self._infer_model_id_from_filename(json_file.name)
