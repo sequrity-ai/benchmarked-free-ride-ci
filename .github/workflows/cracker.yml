@@ -257,10 +257,16 @@ jobs:
 
       - name: Persist raw results for other workflows
         run: |
-          mkdir -p docs/data/utility docs/data/safety docs/data/cracker
-          cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
-          cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
-          cp output/benchmarks/cracker/*.json docs/data/cracker/ 2>/dev/null || true
+          docker run --rm \
+            -v $(pwd)/output:/app/output \
+            -v $(pwd)/docs:/app/docs \
+            benchmarked-free-ride:latest \
+            bash -c "
+              mkdir -p docs/data/utility docs/data/safety docs/data/cracker
+              cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
+              cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
+              cp output/benchmarks/cracker/*.json docs/data/cracker/ 2>/dev/null || true
+            "
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

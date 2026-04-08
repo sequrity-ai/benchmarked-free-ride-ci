@@ -37,9 +37,13 @@ RUN uv sync
 WORKDIR /app/agentdojo
 RUN python3 -m pip install --no-cache-dir --break-system-packages -e .
 
-# Install Cracker and its workspace member into system Python via uv
+# Install Cracker: symlink openclawbench workspace member, then install
+# Remove workspace source ref so uv pip install doesn't choke on missing member
 WORKDIR /app/cracker
-RUN uv pip install --system -e ./openclawbench && \
+RUN rm -rf ./openclawbench && ln -s /app/openclawbench ./openclawbench && \
+    sed -i '/\[tool\.uv\.sources\]/,/^$/d' pyproject.toml && \
+    sed -i '/openclaw-telegram-client/d' pyproject.toml && \
+    uv pip install --system -e ./openclawbench && \
     uv pip install --system -e .
 
 WORKDIR /app
