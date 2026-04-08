@@ -213,8 +213,8 @@ def main():
     parser.add_argument(
         "--adaptive",
         action="store_true",
-        default=True,
-        help="Use adaptive attacker mode (default: True)",
+        default=False,
+        help="Use adaptive attacker mode (default: False)",
     )
     parser.add_argument(
         "--no-adaptive",
