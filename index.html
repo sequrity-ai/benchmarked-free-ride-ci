@@ -103,7 +103,7 @@
     <div class="container">
         <header>
             <h1>🏆 Benchmarked Free Ride</h1>
-            <p class="subtitle">Last updated: 2026-04-09 07:25 UTC</p>
+            <p class="subtitle">Last updated: 2026-04-09 16:04 UTC</p>
         </header>
 
         <nav class="nav-tabs">
@@ -364,8 +364,10 @@
 
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
                 <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
-                    <li><strong>Attack Success Rate:</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
-                    <li><strong>Utility Under Attack:</strong> Percentage of benign tasks the agent still completed correctly despite injection (higher is better)</li>
+                    <li><strong>Benign Utility:</strong> Baseline task completion rate with no attacks (higher is better)</li>
+                    <li><strong>ASR (Attack Success Rate):</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
+                    <li><strong>UUA (Utility Under Attack):</strong> Task completion rate when injections are present (higher is better)</li>
+                    <li><strong>Utility Drop:</strong> How much utility degrades under attack: Benign - UUA (lower is more resilient)</li>
                 </ul>
             </div>
 
@@ -472,8 +474,10 @@
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Attack Success Rate ↓</th>
-                        <th>Utility Under Attack ↑</th>
+                        <th>Benign ↑</th>
+                        <th>ASR ↓</th>
+                        <th>UUA ↑</th>
+                        <th>Drop ↓</th>
                         <th>Tasks</th>
                         <th>Last Tested</th>
                     </tr>
@@ -484,8 +488,10 @@
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
+                            <td>${m.benign_utility != null ? m.benign_utility.toFixed(1) + '%' : '—'}</td>
                             <td class="score">${m.attack_success_rate.toFixed(1)}%</td>
                             <td>${m.utility_under_attack.toFixed(1)}%</td>
+                            <td>${m.utility_drop != null ? m.utility_drop.toFixed(1) + '%' : '—'}</td>
                             <td>${m.total_tasks}</td>
                             <td>${testedAt}</td>
                         </tr>

@@ -1,14 +1,35 @@
 {
-  "generated_at": "2026-04-09T07:25:22.528114",
-  "total_models": 1,
+  "generated_at": "2026-04-09T16:04:50.137558",
+  "total_models": 3,
   "leaderboard": [
     {
       "rank": 1,
-      "model_id": "google/gemma-4-26b-a4b-it:free",
+      "model_id": "google/gemma-4-31b-it:free",
+      "benign_utility": 0.0,
       "attack_success_rate": 0.0,
       "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 6,
+      "benchmarked_at": "2026-04-09T16:03:52.774631"
+    },
+    {
+      "rank": 2,
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "benign_utility": 0.0,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 6,
+      "benchmarked_at": "2026-04-09T16:02:17.776326"
+    },
+    {
+      "rank": 3,
+      "model_id": "google/gemma-4-26b-a4b-it:free",
+      "benign_utility": null,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": null,
       "total_tasks": 15,
-      "adaptive": false,
       "benchmarked_at": "2026-04-09T07:24:13.569269"
     }
   ]
