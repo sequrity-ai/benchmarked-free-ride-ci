@@ -13,24 +13,12 @@ on:
         description: 'Maximum parallel jobs to run'
         required: false
         default: '5'
-      adaptive:
-        description: 'Use adaptive attacker mode'
-        required: false
-        default: 'false'
       vector:
         description: 'Attack vector filter (file/tool/skill, empty for all)'
         required: false
         default: ''
-      max_turns:
-        description: 'Max attacker turns for adaptive mode'
-        required: false
-        default: '5'
-      malicious_task:
-        description: 'Malicious task ID (e.g. exfil-single)'
-        required: false
-        default: 'exfil-single'
-      scenarios:
-        description: 'Comma-separated scenarios to run (default: all). Use "file" for a fast debug run.'
+      category:
+        description: 'Scenario category filter (file-processing/data-analysis/summarization/web-api/code-review, empty for all)'
         required: false
         default: ''
 
@@ -130,29 +118,21 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DAYTONA_API_KEY: ${{ secrets.DAYTONA_API_KEY }}
         run: |
-          ADAPTIVE="${{ github.event.inputs.adaptive || 'true' }}"
           VECTOR="${{ github.event.inputs.vector || '' }}"
-          MAX_TURNS="${{ github.event.inputs.max_turns || '5' }}"
+          CATEGORY="${{ github.event.inputs.category || '' }}"
 
-          echo "Running Cracker benchmark for: ${{ matrix.model_id }}"
-          echo "  Adaptive: $ADAPTIVE"
+          echo "Running Cracker v2 benchmark for: ${{ matrix.model_id }}"
           echo "  Vector: ${VECTOR:-all}"
-          echo "  Max turns: $MAX_TURNS"
+          echo "  Category: ${CATEGORY:-all}"
 
           mkdir -p output/benchmarks/cracker
 
-          MALICIOUS_TASK="${{ github.event.inputs.malicious_task || 'exfil-single' }}"
-          SCENARIOS="${{ github.event.inputs.scenarios || '' }}"
-
           EXTRA_ARGS=""
-          if [ "$ADAPTIVE" = "false" ]; then
-            EXTRA_ARGS="$EXTRA_ARGS --no-adaptive"
-          fi
           if [ -n "$VECTOR" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --vector $VECTOR"
           fi
-          if [ -n "$SCENARIOS" ]; then
-            EXTRA_ARGS="$EXTRA_ARGS --scenarios $SCENARIOS"
+          if [ -n "$CATEGORY" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --category $CATEGORY"
           fi
 
           docker run --rm \
@@ -165,8 +145,6 @@ jobs:
               --cracker-dir ./cracker \
               --output-dir output/benchmarks/cracker \
               --backend daytona \
-              --max-turns "$MAX_TURNS" \
-              --malicious-task "$MALICIOUS_TASK" \
               $EXTRA_ARGS
 
       - name: Upload cracker results

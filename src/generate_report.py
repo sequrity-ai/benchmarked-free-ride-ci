@@ -427,14 +427,17 @@ class ReportGenerator:
             if context_length == 0:
                 context_length = discovered.get("context_length", 0)
 
-        # Extract cracker benchmark metrics: attack success rate and utility under attack
+        # Extract cracker benchmark metrics: benign, ASR, UUA
         cracker = result.get("cracker_benchmark", {})
-        cracker_attack_success = cracker.get("leak_rate") or cracker.get("attack_success_rate")
-        if cracker_attack_success is not None:
-            cracker_attack_success = round(cracker_attack_success, 2)
-        cracker_utility = cracker.get("utility_rate") or cracker.get("utility_preservation_rate")
-        if cracker_utility is not None:
-            cracker_utility = round(cracker_utility, 2)
+        cracker_benign = cracker.get("benign_utility")
+        if cracker_benign is not None:
+            cracker_benign = round(cracker_benign, 2)
+        cracker_asr = cracker.get("attack_success_rate") or cracker.get("leak_rate")
+        if cracker_asr is not None:
+            cracker_asr = round(cracker_asr, 2)
+        cracker_uua = cracker.get("utility_under_attack") or cracker.get("utility_rate")
+        if cracker_uua is not None:
+            cracker_uua = round(cracker_uua, 2)
 
         return {
             "model_id": model_id,
@@ -448,8 +451,9 @@ class ReportGenerator:
             "total_input_tokens": total_input_tokens,
             "total_output_tokens": total_output_tokens,
             "composite_score": self.calculate_composite_score(result),
-            "cracker_attack_success_rate": cracker_attack_success,
-            "cracker_utility_under_attack": cracker_utility,
+            "cracker_benign_utility": cracker_benign,
+            "cracker_attack_success_rate": cracker_asr,
+            "cracker_utility_under_attack": cracker_uua,
             "scenarios": [
                 {
                     "name": s.get("scenario_name", ""),
@@ -584,6 +588,7 @@ class ReportGenerator:
                             "context_length": m["context_length"],
                             "quality_score": m.get("quality_score", 0),
                             "is_benchmarked": m["is_benchmarked"],
+                            "cracker_benign_utility": m.get("cracker_benign_utility"),
                             "cracker_attack_success_rate": m.get("cracker_attack_success_rate"),
                             "cracker_utility_under_attack": m.get("cracker_utility_under_attack"),
                         }
@@ -980,8 +985,10 @@ class ReportGenerator:
 
                 <h4 style="color: #1976D2; margin: 1rem 0 0.5rem 0; font-size: 1rem;">What Are the Metrics</h4>
                 <ul style="color: #424242; margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.7;">
-                    <li><strong>Attack Success Rate:</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
-                    <li><strong>Utility Under Attack:</strong> Percentage of benign tasks the agent still completed correctly despite injection (higher is better)</li>
+                    <li><strong>Benign Utility:</strong> Baseline task completion rate with no attacks (higher is better)</li>
+                    <li><strong>ASR (Attack Success Rate):</strong> Percentage of tasks where the canary secret was leaked (lower is more secure)</li>
+                    <li><strong>UUA (Utility Under Attack):</strong> Task completion rate when injections are present (higher is better)</li>
+                    <li><strong>Utility Drop:</strong> How much utility degrades under attack: Benign - UUA (lower is more resilient)</li>
                 </ul>
             </div>
 
@@ -1088,8 +1095,10 @@ class ReportGenerator:
                     <tr>
                         <th>Rank</th>
                         <th>Model</th>
-                        <th>Attack Success Rate ↓</th>
-                        <th>Utility Under Attack ↑</th>
+                        <th>Benign ↑</th>
+                        <th>ASR ↓</th>
+                        <th>UUA ↑</th>
+                        <th>Drop ↓</th>
                         <th>Tasks</th>
                         <th>Last Tested</th>
                     </tr>
@@ -1100,8 +1109,10 @@ class ReportGenerator:
                         <tr>
                             <td class="rank">${m.rank}</td>
                             <td class="model-id"><a href="${openrouterUrl}" target="_blank" style="color: #1976D2; text-decoration: none;">${m.model_id}</a></td>
+                            <td>${m.benign_utility != null ? m.benign_utility.toFixed(1) + '%' : '—'}</td>
                             <td class="score">${m.attack_success_rate.toFixed(1)}%</td>
                             <td>${m.utility_under_attack.toFixed(1)}%</td>
+                            <td>${m.utility_drop != null ? m.utility_drop.toFixed(1) + '%' : '—'}</td>
                             <td>${m.total_tasks}</td>
                             <td>${testedAt}</td>
                         </tr>
@@ -1253,28 +1264,28 @@ class ReportGenerator:
             if cracker_data:
                 model_id = r.get("model_id")
 
-                # Handle both schemas:
-                # - CrackerBenchmarkResult (wrapper): leak_rate, utility_rate
-                # - BenchmarkResult (raw CLI):        attack_success_rate, utility_preservation_rate
-                leak_rate = cracker_data.get("leak_rate")
-                if leak_rate is None:
-                    attack_rate = cracker_data.get("attack_success_rate")
-                    leak_rate = round(attack_rate, 2) if attack_rate is not None else 0
-                utility_rate = cracker_data.get("utility_rate")
-                if utility_rate is None:
-                    utility_rate = round(cracker_data.get("utility_preservation_rate", 0), 2)
+                # V2 format: benign_utility, attack_success_rate, utility_under_attack
+                # V1 compat: leak_rate, utility_rate
+                benign = cracker_data.get("benign_utility")
+                asr = cracker_data.get("attack_success_rate")
+                if asr is None:
+                    asr = cracker_data.get("leak_rate", 0)
+                uua = cracker_data.get("utility_under_attack")
+                if uua is None:
+                    uua = cracker_data.get("utility_rate", 0)
 
                 cracker_models.append({
                     "model_id": model_id,
-                    "attack_success_rate": leak_rate,
-                    "utility_under_attack": utility_rate,
+                    "benign_utility": round(benign, 2) if benign is not None else None,
+                    "attack_success_rate": round(asr, 2) if asr is not None else 0,
+                    "utility_under_attack": round(uua, 2) if uua is not None else 0,
+                    "utility_drop": round(cracker_data.get("utility_drop", 0), 2) if benign is not None else None,
                     "total_tasks": cracker_data.get("total_tasks", 0),
-                    "adaptive": cracker_data.get("adaptive", False),
                     "benchmarked_at": cracker_data.get("benchmarked_at", r.get("benchmarked_at", "")),
                 })
 
-        # Sort: lowest attack success rate first (most secure), then highest utility
-        cracker_models.sort(key=lambda m: (m["attack_success_rate"], -m["utility_under_attack"]))
+        # Sort: lowest ASR first (most secure), then highest utility under attack
+        cracker_models.sort(key=lambda m: (m["attack_success_rate"], -(m["utility_under_attack"] or 0)))
 
         output_file = self.api_dir / "cracker.json"
         with open(output_file, "w") as f:
