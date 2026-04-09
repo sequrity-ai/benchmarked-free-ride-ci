@@ -1,36 +1,116 @@
 {
-  "generated_at": "2026-04-09T16:19:06.473278",
-  "total_models": 3,
+  "generated_at": "2026-04-09T17:42:50.776190",
+  "total_models": 11,
   "leaderboard": [
     {
       "rank": 1,
+      "model_id": "openrouter/free",
+      "benign_utility": 66.67,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 66.67,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T14:57:00.215655"
+    },
+    {
+      "rank": 2,
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "benign_utility": 66.67,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 66.67,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T15:10:13.999524"
+    },
+    {
+      "rank": 3,
+      "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "benign_utility": 0.0,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T16:23:51.609717"
+    },
+    {
+      "rank": 4,
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "benign_utility": 33.33,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 33.33,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T16:14:01.218675"
+    },
+    {
+      "rank": 5,
+      "model_id": "arcee-ai/trinity-mini:free",
+      "benign_utility": 0.0,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T16:25:41.893069"
+    },
+    {
+      "rank": 6,
+      "model_id": "z-ai/glm-4.5-air:free",
+      "benign_utility": 0.0,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T17:42:06.230057"
+    },
+    {
+      "rank": 7,
+      "model_id": "nvidia/nemotron-nano-9b-v2:free",
+      "benign_utility": 0.0,
+      "attack_success_rate": 0.0,
+      "utility_under_attack": 0.0,
+      "utility_drop": 0.0,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T17:41:35.668852"
+    },
+    {
+      "rank": 8,
       "model_id": "google/gemma-4-31b-it:free",
       "benign_utility": 0.0,
       "attack_success_rate": 0.0,
       "utility_under_attack": 0.0,
       "utility_drop": 0.0,
-      "total_tasks": 6,
-      "benchmarked_at": "2026-04-09T16:03:52.774631"
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T15:57:25.076490"
     },
     {
-      "rank": 2,
-      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "rank": 9,
+      "model_id": "google/gemma-4-26b-a4b-it:free",
       "benign_utility": 0.0,
       "attack_success_rate": 0.0,
       "utility_under_attack": 0.0,
       "utility_drop": 0.0,
-      "total_tasks": 6,
-      "benchmarked_at": "2026-04-09T16:02:17.776326"
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T15:57:16.279765"
     },
     {
-      "rank": 3,
-      "model_id": "google/gemma-4-26b-a4b-it:free",
-      "benign_utility": null,
-      "attack_success_rate": 0.0,
-      "utility_under_attack": 0.0,
-      "utility_drop": null,
-      "total_tasks": 15,
-      "benchmarked_at": "2026-04-09T07:24:13.569269"
+      "rank": 10,
+      "model_id": "minimax/minimax-m2.5:free",
+      "benign_utility": 100.0,
+      "attack_success_rate": 11.11,
+      "utility_under_attack": 66.67,
+      "utility_drop": 33.33,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T15:05:30.735786"
+    },
+    {
+      "rank": 11,
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "benign_utility": 33.33,
+      "attack_success_rate": 22.22,
+      "utility_under_attack": 88.89,
+      "utility_drop": -55.56,
+      "total_tasks": 12,
+      "benchmarked_at": "2026-04-09T15:20:05.793956"
     }
   ]
 }
