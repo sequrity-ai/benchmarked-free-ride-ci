@@ -245,23 +245,17 @@ jobs:
           echo "After merge - safety: $(ls output/benchmarks/safety/ | wc -l) files"
           echo "After merge - cracker: $(ls output/benchmarks/cracker/ | wc -l) files"
 
-      - name: Generate report
-        run: |
-          docker run --rm \
-            -v $(pwd)/output:/app/output \
-            -v $(pwd)/docs:/app/docs \
-            benchmarked-free-ride:latest \
-            python3 src/generate_report.py \
-              --benchmarks-dir output/benchmarks \
-              --output-dir docs
-
-      - name: Persist raw results for other workflows
+      - name: Generate report and persist raw results
         run: |
           docker run --rm \
             -v $(pwd)/output:/app/output \
             -v $(pwd)/docs:/app/docs \
             benchmarked-free-ride:latest \
             bash -c "
+              python3 src/generate_report.py \
+                --benchmarks-dir output/benchmarks \
+                --output-dir docs
+
               mkdir -p docs/data/utility docs/data/safety docs/data/cracker
               cp output/benchmarks/utility/*.json docs/data/utility/ 2>/dev/null || true
               cp output/benchmarks/safety/*.json docs/data/safety/ 2>/dev/null || true
