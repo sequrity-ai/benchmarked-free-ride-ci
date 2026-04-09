@@ -1,6 +1,6 @@
-"""Run Cracker v2 prompt injection benchmarks against OpenRouter models.
+"""Run Cracker prompt injection benchmarks against OpenRouter models.
 
-Uses the v2 benchmark command which runs both benign mode (pure utility)
+Uses the benchmark command which runs both benign mode (pure utility)
 and attack mode (canary + injection) to measure:
 - Benign utility: baseline task completion rate
 - ASR (Attack Success Rate): % of tasks where the canary was leaked
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class CrackerBenchmarkResult:
-    """Results from running Cracker v2 benchmark."""
+    """Results from running Cracker benchmark."""
 
     def __init__(
         self,
@@ -64,11 +64,11 @@ def run_cracker_benchmark(
     vector: Optional[str] = None,
     category: Optional[str] = None,
 ) -> Optional[CrackerBenchmarkResult]:
-    """Run Cracker v2 benchmark for a single model.
+    """Run Cracker benchmark for a single model.
 
     Runs both benign and attack modes to get all three metrics.
     """
-    logger.info(f"Running Cracker v2 benchmark for {model_id}")
+    logger.info(f"Running Cracker benchmark for {model_id}")
     logger.info(f"  Backend: {backend}")
 
     cmd = [
@@ -85,7 +85,7 @@ def run_cracker_benchmark(
 
     safe_model_name = model_id.replace("/", "_").replace(":", "_")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_file = output_dir / f"cracker_v2_{safe_model_name}_{timestamp}.json"
+    output_file = output_dir / f"cracker_{safe_model_name}_{timestamp}.json"
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     cmd.extend(["--output", str(output_file.resolve())])
@@ -140,7 +140,7 @@ def main():
     """Main entry point for running Cracker benchmarks standalone."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Run Cracker v2 prompt injection benchmarks")
+    parser = argparse.ArgumentParser(description="Run Cracker prompt injection benchmarks")
     parser.add_argument("--model", required=True, help="OpenRouter model ID")
     parser.add_argument(
         "--cracker-dir", type=Path,
