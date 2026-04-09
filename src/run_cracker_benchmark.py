@@ -119,11 +119,17 @@ def run_cracker_benchmark(
 
         summary = data.get("summary", {})
 
+        # Handle pass@k dict format: {"pass@1": 66.7} → extract pass@1 value
+        def _extract(val):
+            if isinstance(val, dict):
+                return val.get("pass@1", 0)
+            return val or 0
+
         return CrackerBenchmarkResult(
             model_id=model_id,
-            benign_utility=summary.get("benign_utility", 0),
-            attack_success_rate=summary.get("attack_success_rate", 0),
-            utility_under_attack=summary.get("utility_under_attack", 0),
+            benign_utility=_extract(summary.get("benign_utility", 0)),
+            attack_success_rate=_extract(summary.get("attack_success_rate", 0)),
+            utility_under_attack=_extract(summary.get("utility_under_attack", 0)),
             total_tasks=summary.get("total_tasks", 0),
             results=data.get("results", []),
         )
