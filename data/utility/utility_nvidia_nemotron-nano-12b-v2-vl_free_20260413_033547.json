@@ -1,0 +1,138 @@
+{
+  "scenarios": [
+    {
+      "scenario_name": "weather",
+      "task_results": [
+        {
+          "task_name": "specific-date-dubai",
+          "scenario": "weather",
+          "prompt": "What were the high and low temperatures in Dubai, UAE on February 20, 2026? Report both values in Celsius.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 114.37574982643127,
+          "accuracy_score": 0.0,
+          "response_text": "TOOLCALL>[{\"name\": \"weather\", \"arguments\": {\"freshness\": \"day\", \"location\": \"Dubai, UAE\", \"date_after\": \"2026-02-20\", \"date_before\": \"2026-02-20\", \"country\": \"UAE\", \"language\": \"en\", \"license\": \"open_meteo\"}}>",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 15051,
+          "output_tokens": 2066,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "today-high-reykjavik",
+          "scenario": "weather",
+          "prompt": "What is today's forecasted high temperature in Reykjavik, Iceland? Report only the temperature value in Celsius.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 30.68587899208069,
+          "accuracy_score": 0.0,
+          "response_text": "TOOLCALL>[{\"name\": \"weather\", \"arguments\": {\"country\": \"IS\", \"location\": \"ReykjavCALL>",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 14678,
+          "output_tokens": 2501,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "tomorrow-rain-singapore",
+          "scenario": "weather",
+          "prompt": "Will it rain in Singapore tomorrow? Answer yes or no, and state the expected precipitation amount in mm.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 39.46943187713623,
+          "accuracy_score": 0.0,
+          "response_text": "I cannot check weather forecasts in Singapore or provide precipitation measurements without access to a weather API service. The `web_search` tool requires a Brave Search API key (configured via `BRAVE_API_KEY` or `openclaw configure --section web`) to function. Would you like me to help with this setup first?",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 44330,
+          "output_tokens": 4092,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        }
+      ],
+      "average_accuracy": 0.0,
+      "average_latency": 61.510353565216064,
+      "total_tokens": 82718,
+      "total_duration": 199.4532597064972
+    },
+    {
+      "scenario_name": "web",
+      "task_results": [
+        {
+          "task_name": "mars-moon-count",
+          "scenario": "web",
+          "prompt": "How many natural moons does Mars have? Report only the number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 98.48377323150635,
+          "accuracy_score": 0.0,
+          "response_text": null,
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 15034,
+          "output_tokens": 576,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "npm-react-version",
+          "scenario": "web",
+          "prompt": "What is the latest version of the 'react' package on npm? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 61.118778705596924,
+          "accuracy_score": 0.0,
+          "response_text": "0.12.0-rc1",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 50624,
+          "output_tokens": 6102,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "pypi-requests-version",
+          "scenario": "web",
+          "prompt": "What is the latest stable version of the Python 'requests' package on PyPI? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 83.49762463569641,
+          "accuracy_score": 0.0,
+          "response_text": "TOOLCALL>[{\"name\": \"web_fetch\", \"arguments\": {\"url\": \"https://pypi.org/project/requests/\", \"extractMode\": \"text\"}}>",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 61102,
+          "output_tokens": 8319,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        }
+      ],
+      "average_accuracy": 0.0,
+      "average_latency": 81.03339219093323,
+      "total_tokens": 141757,
+      "total_duration": 258.0202088356018
+    }
+  ],
+  "summary": {
+    "total_scenarios": 2,
+    "total_tasks": 6,
+    "tasks_passed": 0,
+    "overall_accuracy": 0.0
+  },
+  "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+  "benchmarked_at": "2026-04-13T04:43:26.678035"
+}
