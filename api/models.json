@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T04:19:51.820359",
+  "generated_at": "2026-04-19T05:52:53.791824",
   "total_models": 16,
   "benchmarked_models": 19,
   "unbenchmarked_models": -3,
@@ -154,7 +154,7 @@
     },
     {
       "model_id": "minimax/minimax-m2.5:free",
-      "quality_score": 0.4128,
+      "quality_score": 0.4127,
       "context_length": 196608,
       "benchmarked_at": "2026-04-19T04:16:18.677699",
       "total_tasks": 6,
@@ -406,43 +406,6 @@
       "is_benchmarked": true
     },
     {
-      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.3268,
-      "context_length": 128000,
-      "benchmarked_at": "2026-04-19T03:51:04.690884",
-      "total_tasks": 9,
-      "passed_tasks": 1,
-      "accuracy_percent": 11.11,
-      "avg_latency_seconds": 102.88,
-      "total_input_tokens": 222825,
-      "total_output_tokens": 46236,
-      "composite_score": 7.78,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
-      "scenarios": [
-        {
-          "name": "file",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "weather",
-          "tasks_passed": 0,
-          "tasks_total": 3,
-          "avg_accuracy": 0.0
-        },
-        {
-          "name": "web",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        }
-      ],
-      "is_benchmarked": true
-    },
-    {
       "model_id": "qwen/qwen3-coder:free",
       "quality_score": 0.3268,
       "context_length": 262000,
@@ -475,6 +438,43 @@
           "tasks_passed": 0,
           "tasks_total": 3,
           "avg_accuracy": 0.0
+        }
+      ],
+      "is_benchmarked": true
+    },
+    {
+      "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
+      "quality_score": 0.3267,
+      "context_length": 128000,
+      "benchmarked_at": "2026-04-19T03:51:04.690884",
+      "total_tasks": 9,
+      "passed_tasks": 1,
+      "accuracy_percent": 11.11,
+      "avg_latency_seconds": 102.88,
+      "total_input_tokens": 222825,
+      "total_output_tokens": 46236,
+      "composite_score": 7.78,
+      "cracker_benign_utility": null,
+      "cracker_attack_success_rate": null,
+      "cracker_utility_under_attack": null,
+      "scenarios": [
+        {
+          "name": "file",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "web",
+          "tasks_passed": 1,
+          "tasks_total": 3,
+          "avg_accuracy": 33.33
         }
       ],
       "is_benchmarked": true
