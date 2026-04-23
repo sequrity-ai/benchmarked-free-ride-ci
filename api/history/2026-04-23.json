@@ -1,19 +1,19 @@
 {
-  "date": "2026-04-22",
-  "total_models": 19,
+  "date": "2026-04-23",
+  "total_models": 20,
   "models": [
     {
       "model_id": "minimax/minimax-m2.5:free",
-      "quality_score": 0.4111,
+      "quality_score": 0.4106,
       "context_length": 196608,
-      "benchmarked_at": "2026-04-21T04:21:03.781881",
-      "total_tasks": 6,
+      "benchmarked_at": "2026-04-23T03:22:49.079809",
+      "total_tasks": 9,
       "passed_tasks": 3,
-      "accuracy_percent": 50.0,
-      "avg_latency_seconds": 112.38,
-      "total_input_tokens": 108141,
-      "total_output_tokens": 3706,
-      "composite_score": 38.82,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 71.91,
+      "total_input_tokens": 143217,
+      "total_output_tokens": 4398,
+      "composite_score": 28.45,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -25,6 +25,12 @@
           "avg_accuracy": 33.33
         },
         {
+          "name": "weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
           "name": "web",
           "tasks_passed": 2,
           "tasks_total": 3,
@@ -34,16 +40,76 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.3251,
+      "quality_score": 0.3246,
       "context_length": 128000,
-      "benchmarked_at": "2026-04-21T03:47:50.761837",
+      "benchmarked_at": "2026-04-23T03:45:44.077891",
       "total_tasks": 9,
-      "passed_tasks": 2,
-      "accuracy_percent": 22.22,
-      "avg_latency_seconds": 104.05,
-      "total_input_tokens": 148622,
-      "total_output_tokens": 32193,
-      "composite_score": 15.56,
+      "passed_tasks": 0,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 91.72,
+      "total_input_tokens": 118586,
+      "total_output_tokens": 16588,
+      "composite_score": 0.0,
+      "cracker_benign_utility": null,
+      "cracker_attack_success_rate": null,
+      "cracker_utility_under_attack": null,
+      "scenarios": [
+        {
+          "name": "file",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "web",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        }
+      ]
+    },
+    {
+      "model_id": "nvidia/nemotron-nano-9b-v2:free",
+      "quality_score": 0.2956,
+      "context_length": 128000,
+      "benchmarked_at": "2026-04-23T05:37:11.566437",
+      "total_tasks": 3,
+      "passed_tasks": 1,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 68.96,
+      "total_input_tokens": 105523,
+      "total_output_tokens": 6380,
+      "composite_score": 23.33,
+      "cracker_benign_utility": null,
+      "cracker_attack_success_rate": null,
+      "cracker_utility_under_attack": null,
+      "scenarios": [
+        {
+          "name": "web",
+          "tasks_passed": 1,
+          "tasks_total": 3,
+          "avg_accuracy": 33.33
+        }
+      ]
+    },
+    {
+      "model_id": "openrouter/free",
+      "quality_score": 0.4056,
+      "context_length": 200000,
+      "benchmarked_at": "2026-04-23T03:37:17.334907",
+      "total_tasks": 9,
+      "passed_tasks": 3,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 105.27,
+      "total_input_tokens": 445634,
+      "total_output_tokens": 40334,
+      "composite_score": 23.33,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -62,45 +128,9 @@
         },
         {
           "name": "web",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        }
-      ]
-    },
-    {
-      "model_id": "openrouter/free",
-      "quality_score": 0.4062,
-      "context_length": 200000,
-      "benchmarked_at": "2026-04-21T03:28:57.624242",
-      "total_tasks": 9,
-      "passed_tasks": 6,
-      "accuracy_percent": 66.67,
-      "avg_latency_seconds": 72.57,
-      "total_input_tokens": 477993,
-      "total_output_tokens": 14395,
-      "composite_score": 46.67,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
-      "scenarios": [
-        {
-          "name": "file",
           "tasks_passed": 2,
           "tasks_total": 3,
           "avg_accuracy": 66.67
-        },
-        {
-          "name": "weather",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "web",
-          "tasks_passed": 3,
-          "tasks_total": 3,
-          "avg_accuracy": 100.0
         }
       ]
     },
@@ -142,16 +172,16 @@
     },
     {
       "model_id": "google/gemma-4-26b-a4b-it:free",
-      "quality_score": 0.5147,
+      "quality_score": 0.5142,
       "context_length": 262144,
-      "benchmarked_at": "2026-04-21T03:18:31.851651",
+      "benchmarked_at": "2026-04-23T03:19:51.100041",
       "total_tasks": 9,
       "passed_tasks": 0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 57.98,
+      "avg_latency_seconds": 53.08,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 10.67,
+      "composite_score": 12.31,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -178,16 +208,16 @@
     },
     {
       "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.3251,
+      "quality_score": 0.3246,
       "context_length": 262000,
-      "benchmarked_at": "2026-04-21T03:43:04.210954",
+      "benchmarked_at": "2026-04-23T03:41:06.618492",
       "total_tasks": 9,
-      "passed_tasks": 1,
-      "accuracy_percent": 11.11,
-      "avg_latency_seconds": 57.61,
-      "total_input_tokens": 55135,
-      "total_output_tokens": 129,
-      "composite_score": 18.43,
+      "passed_tasks": 0,
+      "accuracy_percent": 0.0,
+      "avg_latency_seconds": 58.65,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 10.45,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -206,9 +236,9 @@
         },
         {
           "name": "web",
-          "tasks_passed": 1,
+          "tasks_passed": 0,
           "tasks_total": 3,
-          "avg_accuracy": 33.33
+          "avg_accuracy": 0.0
         }
       ]
     },
@@ -250,16 +280,16 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.353,
+      "quality_score": 0.3524,
       "context_length": 262144,
-      "benchmarked_at": "2026-04-21T03:32:52.648448",
+      "benchmarked_at": "2026-04-23T03:30:09.880665",
       "total_tasks": 9,
       "passed_tasks": 0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 58.18,
-      "total_input_tokens": 37438,
-      "total_output_tokens": 139,
-      "composite_score": 10.45,
+      "avg_latency_seconds": 54.87,
+      "total_input_tokens": 0,
+      "total_output_tokens": 0,
+      "composite_score": 11.71,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -286,16 +316,52 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.402,
+      "quality_score": 0.4015,
       "context_length": 256000,
-      "benchmarked_at": "2026-04-21T03:30:35.293474",
+      "benchmarked_at": "2026-04-23T03:30:45.204442",
+      "total_tasks": 9,
+      "passed_tasks": 3,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 61.62,
+      "total_input_tokens": 816052,
+      "total_output_tokens": 89446,
+      "composite_score": 23.33,
+      "cracker_benign_utility": null,
+      "cracker_attack_success_rate": null,
+      "cracker_utility_under_attack": null,
+      "scenarios": [
+        {
+          "name": "file",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "weather",
+          "tasks_passed": 0,
+          "tasks_total": 3,
+          "avg_accuracy": 0.0
+        },
+        {
+          "name": "web",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
+        }
+      ]
+    },
+    {
+      "model_id": "openai/gpt-oss-20b:free",
+      "quality_score": 0.3297,
+      "context_length": 131072,
+      "benchmarked_at": "2026-04-23T03:35:43.323963",
       "total_tasks": 9,
       "passed_tasks": 6,
       "accuracy_percent": 66.67,
-      "avg_latency_seconds": 64.99,
-      "total_input_tokens": 559332,
-      "total_output_tokens": 64231,
-      "composite_score": 46.67,
+      "avg_latency_seconds": 44.45,
+      "total_input_tokens": 94883,
+      "total_output_tokens": 6018,
+      "composite_score": 55.16,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -321,52 +387,16 @@
       ]
     },
     {
-      "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.3303,
-      "context_length": 131072,
-      "benchmarked_at": "2026-04-21T03:38:53.594954",
-      "total_tasks": 9,
-      "passed_tasks": 4,
-      "accuracy_percent": 44.44,
-      "avg_latency_seconds": 44.87,
-      "total_input_tokens": 40256,
-      "total_output_tokens": 2938,
-      "composite_score": 42.89,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
-      "scenarios": [
-        {
-          "name": "file",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "weather",
-          "tasks_passed": 1,
-          "tasks_total": 3,
-          "avg_accuracy": 33.33
-        },
-        {
-          "name": "web",
-          "tasks_passed": 2,
-          "tasks_total": 3,
-          "avg_accuracy": 66.67
-        }
-      ]
-    },
-    {
       "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
-      "quality_score": 0.4521,
+      "quality_score": 0.4516,
       "context_length": 262144,
-      "benchmarked_at": "2026-04-21T03:22:18.735254",
+      "benchmarked_at": "2026-04-23T03:27:10.506108",
       "total_tasks": 9,
       "passed_tasks": 4,
       "accuracy_percent": 44.44,
-      "avg_latency_seconds": 82.62,
-      "total_input_tokens": 438619,
-      "total_output_tokens": 13621,
+      "avg_latency_seconds": 98.58,
+      "total_input_tokens": 483973,
+      "total_output_tokens": 9175,
       "composite_score": 31.11,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
@@ -374,36 +404,36 @@
       "scenarios": [
         {
           "name": "file",
-          "tasks_passed": 2,
-          "tasks_total": 3,
-          "avg_accuracy": 66.67
-        },
-        {
-          "name": "weather",
           "tasks_passed": 0,
           "tasks_total": 3,
           "avg_accuracy": 0.0
         },
         {
-          "name": "web",
-          "tasks_passed": 2,
+          "name": "weather",
+          "tasks_passed": 1,
           "tasks_total": 3,
-          "avg_accuracy": 66.67
+          "avg_accuracy": 33.33
+        },
+        {
+          "name": "web",
+          "tasks_passed": 3,
+          "tasks_total": 3,
+          "avg_accuracy": 100.0
         }
       ]
     },
     {
       "model_id": "google/gemma-4-31b-it:free",
-      "quality_score": 0.5142,
+      "quality_score": 0.5137,
       "context_length": 262144,
-      "benchmarked_at": "2026-04-21T03:18:26.227069",
+      "benchmarked_at": "2026-04-23T03:19:53.867189",
       "total_tasks": 9,
       "passed_tasks": 0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 57.33,
-      "total_input_tokens": 0,
-      "total_output_tokens": 0,
-      "composite_score": 10.89,
+      "avg_latency_seconds": 51.7,
+      "total_input_tokens": 14672,
+      "total_output_tokens": 44,
+      "composite_score": 12.72,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
@@ -466,8 +496,8 @@
     },
     {
       "model_id": "arcee-ai/trinity-large-preview:free",
-      "quality_score": 0.3763,
-      "context_length": 131000,
+      "quality_score": 0,
+      "context_length": 0,
       "benchmarked_at": "2026-04-21T03:30:42.765344",
       "total_tasks": 9,
       "passed_tasks": 6,
@@ -502,25 +532,25 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.3303,
+      "quality_score": 0.3297,
       "context_length": 131072,
-      "benchmarked_at": "2026-04-21T03:37:21.389424",
+      "benchmarked_at": "2026-04-23T03:32:25.761739",
       "total_tasks": 9,
-      "passed_tasks": 5,
-      "accuracy_percent": 55.56,
-      "avg_latency_seconds": 45.5,
-      "total_input_tokens": 100318,
-      "total_output_tokens": 2654,
-      "composite_score": 50.77,
+      "passed_tasks": 7,
+      "accuracy_percent": 77.78,
+      "avg_latency_seconds": 50.83,
+      "total_input_tokens": 103961,
+      "total_output_tokens": 3958,
+      "composite_score": 63.1,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
         {
           "name": "file",
-          "tasks_passed": 1,
+          "tasks_passed": 3,
           "tasks_total": 3,
-          "avg_accuracy": 33.33
+          "avg_accuracy": 100.0
         },
         {
           "name": "weather",
@@ -574,25 +604,25 @@
     },
     {
       "model_id": "z-ai/glm-4.5-air:free",
-      "quality_score": 0.2743,
+      "quality_score": 0.2738,
       "context_length": 131072,
-      "benchmarked_at": "2026-04-17T04:15:02.797375",
+      "benchmarked_at": "2026-04-23T04:02:05.172659",
       "total_tasks": 9,
       "passed_tasks": 3,
       "accuracy_percent": 33.33,
-      "avg_latency_seconds": 134.14,
-      "total_input_tokens": 216868,
-      "total_output_tokens": 3920,
-      "composite_score": 28.98,
+      "avg_latency_seconds": 153.74,
+      "total_input_tokens": 86134,
+      "total_output_tokens": 2846,
+      "composite_score": 30.17,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
         {
           "name": "file",
-          "tasks_passed": 0,
+          "tasks_passed": 1,
           "tasks_total": 3,
-          "avg_accuracy": 0.0
+          "avg_accuracy": 33.33
         },
         {
           "name": "weather",
@@ -602,33 +632,33 @@
         },
         {
           "name": "web",
-          "tasks_passed": 3,
+          "tasks_passed": 2,
           "tasks_total": 3,
-          "avg_accuracy": 100.0
+          "avg_accuracy": 66.67
         }
       ]
     },
     {
-      "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.2961,
-      "context_length": 128000,
-      "benchmarked_at": "2026-04-21T04:02:18.121807",
+      "model_id": "inclusionai/ling-2.6-flash:free",
+      "quality_score": 0.4741,
+      "context_length": 262144,
+      "benchmarked_at": "2026-04-23T03:20:05.175352",
       "total_tasks": 9,
-      "passed_tasks": 2,
-      "accuracy_percent": 22.22,
-      "avg_latency_seconds": 151.91,
-      "total_input_tokens": 271226,
-      "total_output_tokens": 29779,
-      "composite_score": 15.56,
+      "passed_tasks": 3,
+      "accuracy_percent": 33.33,
+      "avg_latency_seconds": 54.12,
+      "total_input_tokens": 126194,
+      "total_output_tokens": 621,
+      "composite_score": 34.6,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
         {
           "name": "file",
-          "tasks_passed": 0,
+          "tasks_passed": 1,
           "tasks_total": 3,
-          "avg_accuracy": 0.0
+          "avg_accuracy": 33.33
         },
         {
           "name": "weather",
@@ -648,14 +678,14 @@
       "model_id": "meta-llama/llama-3.3-70b-instruct:free",
       "quality_score": 0.2762,
       "context_length": 65536,
-      "benchmarked_at": "2026-04-21T03:49:26.610903",
+      "benchmarked_at": "2026-04-23T03:45:49.613389",
       "total_tasks": 9,
       "passed_tasks": 0,
       "accuracy_percent": 0.0,
-      "avg_latency_seconds": 58.9,
+      "avg_latency_seconds": 55.33,
       "total_input_tokens": 0,
       "total_output_tokens": 0,
-      "composite_score": 10.37,
+      "composite_score": 11.56,
       "cracker_benign_utility": null,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
