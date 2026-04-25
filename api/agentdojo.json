@@ -1,9 +1,21 @@
 {
-  "generated_at": "2026-04-25T03:54:43.844444",
-  "total_models": 11,
+  "generated_at": "2026-04-25T06:13:32.383930",
+  "total_models": 14,
   "leaderboard": [
     {
       "rank": 1,
+      "model_id": "minimax/minimax-m2.5:free",
+      "security_score": 100.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 49,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-25T03:29:41.518652"
+    },
+    {
+      "rank": 2,
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
       "security_score": 100.0,
       "utility_score": 50.0,
@@ -15,7 +27,7 @@
       "benchmarked_at": "2026-04-25T03:44:39.117948"
     },
     {
-      "rank": 2,
+      "rank": 3,
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
       "security_score": 100.0,
       "utility_score": 100.0,
@@ -27,7 +39,7 @@
       "benchmarked_at": "2026-04-25T03:53:47.900644"
     },
     {
-      "rank": 3,
+      "rank": 4,
       "model_id": "openrouter/elephant-alpha",
       "security_score": 100.0,
       "utility_score": 100.0,
@@ -39,7 +51,7 @@
       "benchmarked_at": "2026-04-21T03:16:15.504239"
     },
     {
-      "rank": 4,
+      "rank": 5,
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
       "security_score": 100.0,
       "utility_score": 100.0,
@@ -51,7 +63,7 @@
       "benchmarked_at": "2026-04-25T03:29:38.850404"
     },
     {
-      "rank": 5,
+      "rank": 6,
       "model_id": "arcee-ai/trinity-large-preview:free",
       "security_score": 100.0,
       "utility_score": 90.0,
@@ -63,7 +75,7 @@
       "benchmarked_at": "2026-04-21T03:30:42.765344"
     },
     {
-      "rank": 6,
+      "rank": 7,
       "model_id": "z-ai/glm-4.5-air:free",
       "security_score": 100.0,
       "utility_score": 80.0,
@@ -75,7 +87,7 @@
       "benchmarked_at": "2026-04-23T04:02:05.172659"
     },
     {
-      "rank": 7,
+      "rank": 8,
       "model_id": "stepfun/step-3.5-flash:free",
       "security_score": 90.0,
       "utility_score": 100.0,
@@ -87,7 +99,19 @@
       "benchmarked_at": "2026-04-07T03:20:26.386520"
     },
     {
-      "rank": 8,
+      "rank": 9,
+      "model_id": "tencent/hy3-preview:free",
+      "security_score": 90.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 46,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-25T03:20:20.206766"
+    },
+    {
+      "rank": 10,
       "model_id": "qwen/qwen3.6-plus:free",
       "security_score": 40.0,
       "utility_score": 100.0,
@@ -99,7 +123,7 @@
       "benchmarked_at": "2026-04-07T03:18:51.211612"
     },
     {
-      "rank": 9,
+      "rank": 11,
       "model_id": "openrouter/free",
       "security_score": 30.0,
       "utility_score": 90.0,
@@ -111,7 +135,7 @@
       "benchmarked_at": "2026-04-25T03:29:32.314419"
     },
     {
-      "rank": 10,
+      "rank": 12,
       "model_id": "openai/gpt-oss-120b:free",
       "security_score": 10.0,
       "utility_score": 100.0,
@@ -123,14 +147,26 @@
       "benchmarked_at": "2026-04-25T03:38:57.368147"
     },
     {
-      "rank": 11,
-      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "rank": 13,
+      "model_id": "openai/gpt-oss-20b:free",
       "security_score": 0.0,
-      "utility_score": 60.0,
+      "utility_score": 70.0,
       "total_user_tasks": 10,
-      "passed_user_tasks": 6,
+      "passed_user_tasks": 7,
       "total_injection_tasks": 50,
       "passed_injection_tasks": 17,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-25T03:39:58.381730"
+    },
+    {
+      "rank": 14,
+      "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
+      "security_score": 0.0,
+      "utility_score": 40.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 4,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 9,
       "agentdojo_model": "",
       "benchmarked_at": "2026-04-25T03:29:42.097281"
     }
