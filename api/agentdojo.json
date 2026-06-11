@@ -1,9 +1,45 @@
 {
-  "generated_at": "2026-06-10T06:36:08.796086",
+  "generated_at": "2026-06-11T04:21:21.622343",
   "total_models": 20,
   "leaderboard": [
     {
       "rank": 1,
+      "model_id": "nvidia/nemotron-nano-9b-v2:free",
+      "security_score": 100.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 46,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-27T04:57:19.593304"
+    },
+    {
+      "rank": 2,
+      "model_id": "z-ai/glm-4.5-air:free",
+      "security_score": 100.0,
+      "utility_score": 80.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 8,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 39,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-23T04:02:05.172659"
+    },
+    {
+      "rank": 3,
+      "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "security_score": 100.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 49,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-06-11T03:33:42.568779"
+    },
+    {
+      "rank": 4,
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
       "security_score": 100.0,
       "utility_score": 20.0,
@@ -15,31 +51,7 @@
       "benchmarked_at": "2026-06-01T04:02:24.152998"
     },
     {
-      "rank": 2,
-      "model_id": "z-ai/glm-4.5-air:free",
-      "security_score": 100.0,
-      "utility_score": 80.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 8,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 38,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-04-23T04:02:05.172659"
-    },
-    {
-      "rank": 3,
-      "model_id": "arcee-ai/trinity-large-preview:free",
-      "security_score": 100.0,
-      "utility_score": 80.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 8,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 35,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-04-21T03:30:42.765344"
-    },
-    {
-      "rank": 4,
+      "rank": 5,
       "model_id": "inclusionai/ling-2.6-flash:free",
       "security_score": 100.0,
       "utility_score": 90.0,
@@ -51,18 +63,6 @@
       "benchmarked_at": "2026-04-27T03:20:29.662690"
     },
     {
-      "rank": 5,
-      "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
-      "security_score": 100.0,
-      "utility_score": 100.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 10,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 49,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T03:48:10.759365"
-    },
-    {
       "rank": 6,
       "model_id": "minimax/minimax-m2.5:free",
       "security_score": 90.0,
@@ -70,36 +70,12 @@
       "total_user_tasks": 10,
       "passed_user_tasks": 10,
       "total_injection_tasks": 50,
-      "passed_injection_tasks": 48,
+      "passed_injection_tasks": 50,
       "agentdojo_model": "",
       "benchmarked_at": "2026-05-29T03:42:33.221116"
     },
     {
       "rank": 7,
-      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "security_score": 90.0,
-      "utility_score": 100.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 10,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 44,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T04:02:41.560766"
-    },
-    {
-      "rank": 8,
-      "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "security_score": 90.0,
-      "utility_score": 100.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 10,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 47,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-04-27T04:57:19.593304"
-    },
-    {
-      "rank": 9,
       "model_id": "openrouter/elephant-alpha",
       "security_score": 90.0,
       "utility_score": 90.0,
@@ -111,31 +87,31 @@
       "benchmarked_at": "2026-04-21T03:16:15.504239"
     },
     {
+      "rank": 8,
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
+      "security_score": 90.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 44,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-06-11T03:49:51.320168"
+    },
+    {
+      "rank": 9,
+      "model_id": "arcee-ai/trinity-large-preview:free",
+      "security_score": 90.0,
+      "utility_score": 90.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 9,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 39,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-04-21T03:30:42.765344"
+    },
+    {
       "rank": 10,
-      "model_id": "openrouter/owl-alpha",
-      "security_score": 80.0,
-      "utility_score": 100.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 10,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 43,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T03:21:59.986327"
-    },
-    {
-      "rank": 11,
-      "model_id": "tencent/hy3-preview:free",
-      "security_score": 80.0,
-      "utility_score": 100.0,
-      "total_user_tasks": 10,
-      "passed_user_tasks": 10,
-      "total_injection_tasks": 50,
-      "passed_injection_tasks": 43,
-      "agentdojo_model": "",
-      "benchmarked_at": "2026-05-07T03:38:41.254404"
-    },
-    {
-      "rank": 12,
       "model_id": "stepfun/step-3.5-flash:free",
       "security_score": 80.0,
       "utility_score": 100.0,
@@ -147,19 +123,31 @@
       "benchmarked_at": "2026-04-07T03:20:26.386520"
     },
     {
-      "rank": 13,
-      "model_id": "openrouter/free",
-      "security_score": 50.0,
+      "rank": 11,
+      "model_id": "openrouter/owl-alpha",
+      "security_score": 70.0,
+      "utility_score": 90.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 9,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 43,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-06-11T03:23:14.127766"
+    },
+    {
+      "rank": 12,
+      "model_id": "tencent/hy3-preview:free",
+      "security_score": 60.0,
       "utility_score": 100.0,
       "total_user_tasks": 10,
       "passed_user_tasks": 10,
       "total_injection_tasks": 50,
-      "passed_injection_tasks": 37,
+      "passed_injection_tasks": 43,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T04:00:05.346299"
+      "benchmarked_at": "2026-05-07T03:38:41.254404"
     },
     {
-      "rank": 14,
+      "rank": 13,
       "model_id": "poolside/laguna-xs.2:free",
       "security_score": 40.0,
       "utility_score": 80.0,
@@ -168,10 +156,10 @@
       "total_injection_tasks": 50,
       "passed_injection_tasks": 33,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T03:39:18.253665"
+      "benchmarked_at": "2026-06-11T03:36:55.690191"
     },
     {
-      "rank": 15,
+      "rank": 14,
       "model_id": "qwen/qwen3.6-plus:free",
       "security_score": 40.0,
       "utility_score": 100.0,
@@ -183,7 +171,7 @@
       "benchmarked_at": "2026-04-07T03:18:51.211612"
     },
     {
-      "rank": 16,
+      "rank": 15,
       "model_id": "poolside/laguna-m.1:free",
       "security_score": 30.0,
       "utility_score": 100.0,
@@ -192,10 +180,10 @@
       "total_injection_tasks": 50,
       "passed_injection_tasks": 37,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T03:43:49.613415"
+      "benchmarked_at": "2026-06-11T03:42:45.293995"
     },
     {
-      "rank": 17,
+      "rank": 16,
       "model_id": "inclusionai/ling-2.6-1t:free",
       "security_score": 30.0,
       "utility_score": 100.0,
@@ -207,6 +195,18 @@
       "benchmarked_at": "2026-05-07T03:20:51.265028"
     },
     {
+      "rank": 17,
+      "model_id": "openai/gpt-oss-120b:free",
+      "security_score": 20.0,
+      "utility_score": 100.0,
+      "total_user_tasks": 10,
+      "passed_user_tasks": 10,
+      "total_injection_tasks": 50,
+      "passed_injection_tasks": 29,
+      "agentdojo_model": "",
+      "benchmarked_at": "2026-06-11T03:52:34.041992"
+    },
+    {
       "rank": 18,
       "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
       "security_score": 10.0,
@@ -216,31 +216,31 @@
       "total_injection_tasks": 50,
       "passed_injection_tasks": 19,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T03:29:27.208409"
+      "benchmarked_at": "2026-06-11T03:27:15.220923"
     },
     {
       "rank": 19,
-      "model_id": "openai/gpt-oss-120b:free",
+      "model_id": "openai/gpt-oss-20b:free",
       "security_score": 10.0,
-      "utility_score": 90.0,
+      "utility_score": 50.0,
       "total_user_tasks": 10,
-      "passed_user_tasks": 9,
+      "passed_user_tasks": 5,
       "total_injection_tasks": 50,
-      "passed_injection_tasks": 28,
+      "passed_injection_tasks": 12,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-09T04:06:20.114093"
+      "benchmarked_at": "2026-06-11T03:52:47.673459"
     },
     {
       "rank": 20,
-      "model_id": "openai/gpt-oss-20b:free",
+      "model_id": "openrouter/free",
       "security_score": 0.0,
       "utility_score": 80.0,
       "total_user_tasks": 10,
       "passed_user_tasks": 8,
       "total_injection_tasks": 50,
-      "passed_injection_tasks": 14,
+      "passed_injection_tasks": 20,
       "agentdojo_model": "",
-      "benchmarked_at": "2026-06-07T03:55:20.280526"
+      "benchmarked_at": "2026-06-11T03:44:31.661595"
     }
   ]
 }
