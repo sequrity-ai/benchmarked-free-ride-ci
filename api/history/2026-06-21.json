@@ -4,7 +4,7 @@
   "models": [
     {
       "model_id": "openrouter/owl-alpha",
-      "quality_score": 0.7407,
+      "quality_score": 0.7405,
       "context_length": 1048756,
       "benchmarked_at": "2026-06-21T03:22:48.705959",
       "total_tasks": 9,
@@ -40,7 +40,7 @@
     },
     {
       "model_id": "poolside/laguna-m.1:free",
-      "quality_score": 0.4455,
+      "quality_score": 0.4453,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T03:43:06.415266",
       "total_tasks": 9,
@@ -50,7 +50,7 @@
       "total_input_tokens": 349160,
       "total_output_tokens": 4317,
       "composite_score": 44.38,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -76,7 +76,7 @@
     },
     {
       "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
-      "quality_score": 0.3201,
+      "quality_score": 0.3199,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T06:04:10.692417",
       "total_tasks": 3,
@@ -100,7 +100,7 @@
     },
     {
       "model_id": "openrouter/free",
-      "quality_score": 0.3733,
+      "quality_score": 0.373,
       "context_length": 200000,
       "benchmarked_at": "2026-06-21T03:58:00.377970",
       "total_tasks": 9,
@@ -110,9 +110,9 @@
       "total_input_tokens": 705624,
       "total_output_tokens": 37451,
       "composite_score": 23.33,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
+      "cracker_benign_utility": 13.89,
+      "cracker_attack_success_rate": 0.93,
+      "cracker_utility_under_attack": 14.81,
       "scenarios": [
         {
           "name": "file",
@@ -136,7 +136,7 @@
     },
     {
       "model_id": "openai/gpt-oss-120b:free",
-      "quality_score": 0.2974,
+      "quality_score": 0.2971,
       "context_length": 131072,
       "benchmarked_at": "2026-06-17T04:03:32.027299",
       "total_tasks": 9,
@@ -172,7 +172,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-      "quality_score": 0.4431,
+      "quality_score": 0.4428,
       "context_length": 256000,
       "benchmarked_at": "2026-06-21T03:50:38.886773",
       "total_tasks": 9,
@@ -182,7 +182,7 @@
       "total_input_tokens": 649090,
       "total_output_tokens": 81293,
       "composite_score": 39.9,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -208,7 +208,7 @@
     },
     {
       "model_id": "qwen/qwen3-coder:free",
-      "quality_score": 0.5875,
+      "quality_score": 0.5872,
       "context_length": 1048576,
       "benchmarked_at": "2026-06-21T03:49:42.952300",
       "total_tasks": 9,
@@ -244,7 +244,7 @@
     },
     {
       "model_id": "poolside/laguna-xs.2:free",
-      "quality_score": 0.4455,
+      "quality_score": 0.4453,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T03:40:15.749748",
       "total_tasks": 9,
@@ -254,7 +254,7 @@
       "total_input_tokens": 376037,
       "total_output_tokens": 8768,
       "composite_score": 34.37,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -316,7 +316,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-9b-v2:free",
-      "quality_score": 0.2633,
+      "quality_score": 0.263,
       "context_length": 128000,
       "benchmarked_at": "2026-04-27T04:57:19.593304",
       "total_tasks": 6,
@@ -382,7 +382,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-nano-30b-a3b:free",
-      "quality_score": 0.3692,
+      "quality_score": 0.3689,
       "context_length": 256000,
       "benchmarked_at": "2026-06-21T03:56:46.868715",
       "total_tasks": 9,
@@ -392,7 +392,7 @@
       "total_input_tokens": 274077,
       "total_output_tokens": 67096,
       "composite_score": 47.37,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -454,7 +454,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-super-120b-a12b:free",
-      "quality_score": 0.7144,
+      "quality_score": 0.7141,
       "context_length": 1000000,
       "benchmarked_at": "2026-06-21T03:29:37.620748",
       "total_tasks": 9,
@@ -464,9 +464,9 @@
       "total_input_tokens": 1053984,
       "total_output_tokens": 15724,
       "composite_score": 38.89,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
+      "cracker_benign_utility": 13.89,
+      "cracker_attack_success_rate": 4.63,
+      "cracker_utility_under_attack": 14.81,
       "scenarios": [
         {
           "name": "file",
@@ -490,7 +490,7 @@
     },
     {
       "model_id": "google/gemma-4-26b-a4b-it:free",
-      "quality_score": 0.4818,
+      "quality_score": 0.4816,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T03:30:58.512776",
       "total_tasks": 9,
@@ -500,7 +500,7 @@
       "total_input_tokens": 0,
       "total_output_tokens": 0,
       "composite_score": 12.16,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -526,7 +526,7 @@
     },
     {
       "model_id": "google/gemma-4-31b-it:free",
-      "quality_score": 0.4813,
+      "quality_score": 0.4811,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T03:32:42.462957",
       "total_tasks": 9,
@@ -536,7 +536,7 @@
       "total_input_tokens": 0,
       "total_output_tokens": 0,
       "composite_score": 11.55,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -634,7 +634,7 @@
     },
     {
       "model_id": "nex-agi/nex-n2-pro:free",
-      "quality_score": 0.468,
+      "quality_score": 0.4678,
       "context_length": 262144,
       "benchmarked_at": "2026-06-21T03:46:13.043587",
       "total_tasks": 9,
@@ -644,7 +644,7 @@
       "total_input_tokens": 373571,
       "total_output_tokens": 3389,
       "composite_score": 45.12,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -670,7 +670,7 @@
     },
     {
       "model_id": "openai/gpt-oss-20b:free",
-      "quality_score": 0.2974,
+      "quality_score": 0.2971,
       "context_length": 131072,
       "benchmarked_at": "2026-06-11T03:52:47.673459",
       "total_tasks": 9,
@@ -814,7 +814,7 @@
     },
     {
       "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
-      "quality_score": 0.7607,
+      "quality_score": 0.7605,
       "context_length": 1000000,
       "benchmarked_at": "2026-06-21T05:26:10.003962",
       "total_tasks": 3,
@@ -824,7 +824,7 @@
       "total_input_tokens": 0,
       "total_output_tokens": 0,
       "composite_score": 10.0,
-      "cracker_benign_utility": null,
+      "cracker_benign_utility": 0.0,
       "cracker_attack_success_rate": null,
       "cracker_utility_under_attack": null,
       "scenarios": [
@@ -910,7 +910,7 @@
     },
     {
       "model_id": "nvidia/nemotron-nano-12b-v2-vl:free",
-      "quality_score": 0.2922,
+      "quality_score": 0.292,
       "context_length": 128000,
       "benchmarked_at": "2026-06-01T04:02:24.152998",
       "total_tasks": 9,
@@ -1162,7 +1162,7 @@
     },
     {
       "model_id": "cohere/north-mini-code:free",
-      "quality_score": 0.5206,
+      "quality_score": 0.5203,
       "context_length": 256000,
       "benchmarked_at": "2026-06-21T03:21:22.742817",
       "total_tasks": 9,
@@ -1172,9 +1172,9 @@
       "total_input_tokens": 531608,
       "total_output_tokens": 10712,
       "composite_score": 29.32,
-      "cracker_benign_utility": null,
-      "cracker_attack_success_rate": null,
-      "cracker_utility_under_attack": null,
+      "cracker_benign_utility": 50.0,
+      "cracker_attack_success_rate": 21.3,
+      "cracker_utility_under_attack": 52.78,
       "scenarios": [
         {
           "name": "file",
