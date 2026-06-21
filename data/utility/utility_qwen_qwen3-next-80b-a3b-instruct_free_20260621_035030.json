@@ -1,0 +1,75 @@
+{
+  "scenarios": [
+    {
+      "scenario_name": "web",
+      "task_results": [
+        {
+          "task_name": "mars-moon-count",
+          "scenario": "web",
+          "prompt": "How many natural moons does Mars have? Report only the number.",
+          "success": true,
+          "reward": 1.0,
+          "latency": 304.7428181171417,
+          "accuracy_score": 100.0,
+          "response_text": "2",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 18530,
+          "output_tokens": 2,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "npm-react-version",
+          "scenario": "web",
+          "prompt": "What is the latest version of the 'react' package on npm? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 233.115647315979,
+          "accuracy_score": 0.0,
+          "response_text": "\u26a0\ufe0f API rate limit reached. Please try again later.",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        },
+        {
+          "task_name": "pypi-requests-version",
+          "scenario": "web",
+          "prompt": "What is the latest stable version of the Python 'requests' package on PyPI? Report only the version number.",
+          "success": false,
+          "reward": 0.0,
+          "latency": 265.27667140960693,
+          "accuracy_score": 0.0,
+          "response_text": "\u26a0\ufe0f API rate limit reached. Please try again later.",
+          "error_message": null,
+          "conversation_turns": 1,
+          "conversation_history": [],
+          "completion_reason": "single_turn",
+          "input_tokens": 18177,
+          "output_tokens": 30,
+          "reasoning_tokens": 0,
+          "cache_read_tokens": 0
+        }
+      ],
+      "average_accuracy": 33.333333333333336,
+      "average_latency": 267.71171228090924,
+      "total_tokens": 36739,
+      "total_duration": 819.4368243217468
+    }
+  ],
+  "summary": {
+    "total_scenarios": 1,
+    "total_tasks": 3,
+    "tasks_passed": 1,
+    "overall_accuracy": 33.33333333333333
+  },
+  "model_id": "qwen/qwen3-next-80b-a3b-instruct:free",
+  "benchmarked_at": "2026-06-21T06:04:10.692417"
+}
